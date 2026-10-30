@@ -82,14 +82,14 @@ class ClienteTwitch:
             resultado.update({s["user_login"]: s for s in cuerpo.get("data", []) if s.get("type") == "live"})
         return resultado
 
-    def clips(self, broadcaster_id: str, desde_iso: str, hasta_iso: str, max_paginas: int) -> list:
-        params = {"broadcaster_id": broadcaster_id, "started_at": desde_iso, "ended_at": hasta_iso, "first": 100}
+    def clips(self, broadcaster_id: str, desde_iso: str, hasta_iso: str, max_paginas: int, por_pagina: int = 100):
+        params = {"broadcaster_id": broadcaster_id, "started_at": desde_iso, "ended_at": hasta_iso, "first": por_pagina}
         resultado = []
         for _ in range(max_paginas):
             cuerpo = self._get("clips", params)
             resultado.extend(cuerpo.get("data", []))
             cursor = (cuerpo.get("pagination") or {}).get("cursor")
             if not cursor:
-                break
+                return resultado, False
             params = {**params, "after": cursor}
-        return resultado
+        return resultado, True

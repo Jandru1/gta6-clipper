@@ -55,10 +55,15 @@ def desinstalar() -> bool:
     return False
 
 
-def estado() -> str:
+def estado():
     r = subprocess.run(["launchctl", "print", f"{_dominio()}/{ETIQUETA}"], capture_output=True, text=True)
     if r.returncode != 0:
-        return "No instalado (launchd no conoce el detector)."
-    lineas = [l.strip() for l in r.stdout.splitlines()]
-    claves = ("state =", "run interval =", "runs =", "last exit code =", "program =")
-    return "\n".join(l for l in lineas if l.startswith(claves)) or r.stdout
+        return None
+    datos = {}
+    for linea in r.stdout.splitlines():
+        clave, _, valor = linea.strip().partition(" = ")
+        if clave in ("state", "run interval", "runs", "last exit code") and clave not in datos:
+            datos[clave] = valor.strip()
+    argumentos = plistlib.loads(ruta_plist().read_bytes())["ProgramArguments"] if ruta_plist().exists() else []
+    datos["script"] = argumentos[1] if len(argumentos) > 1 else ""
+    return datos

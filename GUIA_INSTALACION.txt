@@ -201,21 +201,27 @@ PASO 8. ACTIVAR LA EJECUCION AUTOMATICA CADA 5 MINUTOS
     python3 clipper.py instalar
     python3 clipper.py estado
 
-"estado" debe mostrar el detector (por ejemplo "state = ..." y
-"run interval = 300 seconds").
+"estado" explica en espanol si esta activo, cada cuanto se ejecuta,
+cuantas veces lo ha hecho y como fue la ultima ejecucion. Que diga
+"en espera hasta la siguiente ejecucion" es lo NORMAL: el script se
+ejecuta unos segundos y se cierra hasta la siguiente vez.
 
-Nada mas instalar se hace una primera ejecucion y te llegara un
-mensaje: "Primera ejecucion: N clips registrados...". A partir de ahi,
-cada 5 minutos te avisara de los clips NUEVOS (como maximo 3 por
-ejecucion + un resumen "...y N mas").
+Por defecto la franja esta en modo "silencio": recoge datos pero NO
+te escribe (fase de 1-2 dias para calibrar). Para recibir avisos,
+cambia "silencio" por "alertas" en config.json. En modo alertas:
+- Al crearse la base de datos recibes un unico mensaje "Base de datos
+  iniciada...".
+- Despues solo te avisa de clips con potencial: creados hace menos de
+  "avisar_si_se_creo_hace_menos_de_minutos" y con al menos
+  "avisar_si_tiene_al_menos_visualizaciones" visualizaciones. Cada clip, una sola
+  vez. Como maximo "max_avisos_por_ejecucion" + un resumen.
 
-Si te llegan demasiados avisos, edita config.json:
-- "max_avisos_por_ejecucion": baja el numero, o
-- en "franjas", cambia "alertas" por "silencio" (sigue registrando
-  datos, pero no te escribe).
 Los cambios en config.json se aplican solos en la siguiente
-ejecucion. SOLO si cambias "intervalo_minutos" hay que repetir
-"python3 clipper.py instalar".
+ejecucion. SOLO si cambias "ejecucion_automatica_cada_minutos" hay que
+repetir "python3 clipper.py instalar".
+
+Repetir "instalar" sin "desinstalar" es seguro: para la version
+anterior y carga la nueva. La memoria (datos/) no se borra.
 
 ---------------------------------------------------------------------
 PASO 9. PRUEBA T6 (UNA NOCHE ENTERA)
@@ -226,6 +232,7 @@ Deja el portatil como en el paso 7 toda la noche. Por la manana:
 
 Resultado esperado:
 - "Ejecuciones en las ultimas 12 h: ~144 (esperadas aprox. 144)"
+  (con "ejecucion_automatica_cada_minutos": 5)
 - "Huecos de mas de 7 min: 0"
 - "Ejecuciones con error: 0"
 
@@ -239,6 +246,7 @@ COMANDOS UTILES
     python3 clipper.py prueba-fallos        T7
     python3 clipper.py revisar-ejecuciones  T6 (opcion --horas N)
     python3 clipper.py ejecutar             una ejecucion manual
+    python3 clipper.py exportar             fichas e historial a CSV (hora de Espana)
     python3 clipper.py estado               estado de la ejecucion automatica
     python3 clipper.py desinstalar          detener la ejecucion automatica
     python3 clipper.py chat-id              ver tu chat_id de Telegram
@@ -247,46 +255,134 @@ COMANDOS UTILES
 ---------------------------------------------------------------------
 DONDE SE GUARDAN LOS DATOS (carpeta ~/gta6-clipper/datos/)
 ---------------------------------------------------------------------
-- registro_ejecuciones.csv : una fila por ejecucion (hora, resultado,
-  modo, llamadas a Twitch, limite restante de la API, clips, avisos,
-  error).
-- clips_observaciones.csv  : cada clip visto en cada ejecucion, con
-  sus visualizaciones en ese momento. Es la base de las metricas
-  futuras (velocidad, densidad...).
-- estado.json              : memoria interna (token, clips ya
-  avisados). No editar.
+- clips.db                 : base de datos (SQLite) con las fichas de
+  los clips, su historial de visualizaciones y los directos. No se
+  abre con Excel: usa "python3 clipper.py exportar".
+- export_fichas.csv / export_historial.csv : se crean al ejecutar
+  "exportar". Se pueden abrir con Numbers o Excel.
+- registro_ejecuciones.csv : una fila por ejecucion.
+- estado.json              : memoria interna (token, horas del ultimo
+  repaso y de la ultima limpieza). No editar.
 - launchd_salida.log / launchd_errores.log : salida de la ejecucion
   automatica.
-Los .csv se pueden abrir con Numbers o Excel.
+- clips_observaciones.csv  : SOLO si venias de la version anterior.
+  Ya no se usa; puedes borrarlo.
 
-Campos de registro_ejecuciones.csv (una fila cada 5 min):
+Campos de registro_ejecuciones.csv (una fila por ejecucion):
   hora_espana          Hora de la ejecucion, hora de Espana (dd/mm/aaaa hh:mm:ss)
   inicio_utc           La misma hora en UTC (la que usa Twitch)
   duracion_s           Segundos que tardo la ejecucion
   resultado            ok / error
   modo                 Modo de la franja en ese momento (alertas / silencio)
+  repaso               completo (24 h) / reciente (2 h) / ninguno
   llamadas_twitch      Peticiones hechas a Twitch en esa ejecucion
   ratelimit_restante   Puntos que quedaban del limite de Twitch (de 800/min)
   streamers_en_directo Cuantos de tus streamers estaban emitiendo
-  clips_vistos         Clips recibidos de Twitch en esa ejecucion
-  clips_nuevos         Clips que no se habian visto nunca antes
+  espectadores         Suma de espectadores de esos directos
+  tramos_consultados   Tramos de tiempo preguntados a Twitch
+  tramos_truncados     Tramos con mas clips de los que caben (si no es 0,
+                       sube max_paginas_de_100_clips_por_trozo o baja minutos_por_trozo_de_consulta)
+  clips_recibidos      Clips distintos recibidos en el repaso
+  clips_nuevos         Clips que no estaban en la base de datos
+  clips_con_cambios    Clips cuyas visualizaciones cambiaron
   avisos_enviados      Mensajes de Telegram enviados
+  clips_borrados       Clips eliminados por la limpieza rapida
+  historiales_resumidos Clips cuyo historial se resumio (limpieza de no virales)
+  clips_en_base        Clips guardados en la base de datos
+  filas_historial      Filas del historial de visualizaciones
   error                Descripcion del error, si lo hubo
 
-Campos de clips_observaciones.csv (una fila por clip y ejecucion):
-  hora_consulta_espana Hora de Espana en que se consulto el clip
-  consulta_utc         La misma hora en UTC
-  clip_id              Identificador unico del clip en Twitch
-  streamer             Canal del que es el clip
-  creado_espana        Hora de Espana en que un espectador creo el clip
-  creado_utc           La misma hora en UTC
-  visualizaciones      Visualizaciones del clip EN ESE MOMENTO
-  duracion_s           Duracion del clip en segundos (max. 60)
-  vod_id               Identificador del VOD (grabacion del directo) de origen
-  vod_offset_s         Segundo del VOD en que empieza el clip (vacio los
-                       primeros minutos: Twitch tarda en calcularlo)
-  titulo               Titulo que puso quien creo el clip
-  url                  Enlace para ver el clip en Twitch
+Campos de export_fichas.csv (una fila por clip):
+  clip_id, streamer, titulo, url, creador (quien hizo el clip)
+  creado_espana                 Cuando se creo el clip
+  duracion_s, vod_id, vod_offset_s (segundo del VOD donde empieza;
+                                vacio los primeros minutos)
+  visto_por_primera_vez_espana  Cuando lo detecto el script
+  ultima_consulta_espana        Ultima vez que se consulto
+  visualizaciones               Visualizaciones en la ultima consulta
+  velocidad_actual_por_hora     Visualizaciones/hora en la ultima subida
+  velocidad_maxima_por_hora     La mayor velocidad que ha tenido
+  nota_viralidad_actual / nota_viralidad_maxima   Nota de 1 a 10 (ver
+                                GTA_VI_metricas.txt). Vacia = aun no hay
+                                datos suficientes para calcularla.
+  hito_alcanzado_espana         Cuando llego a "apuntar_cuando_llega_a_visualizaciones"
+  avisado                       si / no
+  historial_resumido            si = su historial detallado ya se borro
+
+Campos de export_historial.csv (una fila cada vez que cambiaron las
+visualizaciones de un clip):
+  clip_id, streamer, titulo, hora_espana, visualizaciones
+
+---------------------------------------------------------------------
+PARAMETROS DE config.json
+---------------------------------------------------------------------
+Generales
+  zona_horaria
+      Zona para mostrar las horas.
+  streamers
+      Lista de canales de Twitch.
+  franjas
+      Horarios y modo de cada uno (alertas / silencio).
+  ejecucion_automatica_cada_minutos
+      Cada cuanto lanza launchd el script (si lo cambias: repetir "instalar").
+
+Consultas a Twitch
+  repaso_reciente_cada_minutos
+      Cada cuanto se repasan las horas recientes.
+  horas_que_cubre_el_repaso_reciente
+      Cuantas horas cuentan como "recientes".
+  repaso_completo_cada_minutos
+      Cada cuanto se hace el repaso completo.
+  horas_que_cubre_el_repaso_completo
+      Cuantas horas abarca el repaso completo.
+  minutos_por_trozo_de_consulta
+      Twitch no se pregunta por todo de golpe sino en trozos de este tamano
+      ("clips creados de 12:00 a 13:00", "de 13:00 a 14:00"...).
+  minutos_de_solape_entre_trozos
+      Cada trozo se alarga estos minutos hacia atras para que ningun clip
+      creado justo en el borde se quede fuera. Los repetidos se cuentan una vez.
+  clips_por_pagina
+      Clips que devuelve Twitch por llamada (maximo de Twitch: 100).
+  max_paginas_de_100_clips_por_trozo
+      Llamadas maximas por trozo (freno de seguridad). 10 = 1.000 clips por trozo.
+
+Avisos
+  avisar_si_tiene_al_menos_visualizaciones
+      Visualizaciones minimas para avisar.
+  avisar_si_se_creo_hace_menos_de_minutos
+      Edad maxima del clip para avisar.
+  max_avisos_por_ejecucion
+      Avisos maximos por ejecucion (+1 mensaje de resumen).
+
+Viralidad (ver GTA_VI_metricas.txt)
+  viralidad_minutos_para_medir_crecimiento
+      Periodo con el que se mide el crecimiento por hora.
+  viralidad_minutos_minimos_de_calculo
+      Tiempo minimo considerado, para no dividir entre casi cero.
+  viralidad_dias_de_clips_para_comparar
+      Dias de clips del mismo streamer con los que se compara para dar la nota.
+  viralidad_clips_minimos_para_dar_nota
+      Clips minimos de comparacion; si hay menos, la nota queda vacia.
+  apuntar_cuando_llega_a_visualizaciones
+      Visualizaciones del "hito" cuya hora se apunta en la ficha.
+  guardar_historial_desde_visualizaciones
+      Visualizaciones minimas para guardar historial (0 = siempre).
+
+Limpiezas y espacio
+  limpieza_cada_minutos
+      Cada cuanto se hacen las dos limpiezas.
+  limpieza_rapida_tras_horas
+      Limpieza 1: edad a partir de la cual se borran los clips flojos
+      (debe ser mayor que horas_que_cubre_el_repaso_completo).
+  limpieza_rapida_si_tiene_menos_de_visualizaciones
+      Limpieza 1: por debajo de estas visualizaciones el clip es "flojo".
+  limpieza_no_virales_tras_dias
+      Limpieza 2: dias tras los que se borra el historial de los no virales.
+  no_limpiar_clips_con_nota_igual_o_mayor_que
+      Proteccion de las DOS limpiezas: con esta nota o mas, no se limpia.
+  compactar_base_datos_cada_horas
+      Cada cuanto se "pasa a limpio" el archivo clips.db para que encoja
+      tras las limpiezas (0 = nunca).
 
 Si se cambia el formato de un .csv en una version nueva, el fichero
 antiguo se renombra a *_formato_antiguo.csv (no se pierde nada).
@@ -302,5 +398,7 @@ PROBLEMAS FRECUENTES
 - "Error de configuracion: ... no es JSON valido": revisa comillas y
   comas del fichero indicado (usa nano, no TextEdit).
 - "Faltan credenciales": algun campo de credenciales.json esta vacio.
-- No llegan avisos en el paso 8: comprueba "python3 clipper.py estado"
-  y mira datos/launchd_errores.log.
+- No llegan avisos en el paso 8: comprueba que la franja esta en modo
+  "alertas", ejecuta "python3 clipper.py estado" y mira
+  datos/launchd_errores.log. Recuerda: solo avisa de clips con
+  potencial; si el streamer no esta en directo, lo normal es silencio.

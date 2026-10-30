@@ -1,11 +1,36 @@
 {
   "zona_horaria": "Europe/Madrid",
-  "intervalo_minutos": 1,
   "streamers": ["kaicenat"],
-  "ventana_clips_horas": 24,
-  "max_paginas_clips": 3,
-  "max_avisos_por_ejecucion": 3,
   "franjas": [
-    {"desde": "00:00", "hasta": "24:00", "modo": "alertas"}
-  ]
+    {"desde": "00:00", "hasta": "24:00", "modo": "silencio"}
+  ],
+
+  "ejecucion_automatica_cada_minutos": 5,
+
+  "repaso_reciente_cada_minutos": 5,
+  "horas_que_cubre_el_repaso_reciente": 2,
+  "repaso_completo_cada_minutos": 15,
+  "horas_que_cubre_el_repaso_completo": 24,
+  "minutos_por_trozo_de_consulta": 60,
+  "minutos_de_solape_entre_trozos": 2,
+  "clips_por_pagina": 100,
+  "max_paginas_de_100_clips_por_trozo": 10,
+
+  "avisar_si_tiene_al_menos_visualizaciones": 500,
+  "avisar_si_se_creo_hace_menos_de_minutos": 60,
+  "max_avisos_por_ejecucion": 3,
+
+  "viralidad_minutos_para_medir_crecimiento": 60,
+  "viralidad_minutos_minimos_de_calculo": 5,
+  "viralidad_dias_de_clips_para_comparar": 3,
+  "viralidad_clips_minimos_para_dar_nota": 20,
+  "no_limpiar_clips_con_nota_igual_o_mayor_que": 7,
+  "apuntar_cuando_llega_a_visualizaciones": 1000,
+  "guardar_historial_desde_visualizaciones": 0,
+
+  "limpieza_cada_minutos": 60,
+  "limpieza_rapida_tras_horas": 48,
+  "limpieza_rapida_si_tiene_menos_de_visualizaciones": 10,
+  "limpieza_no_virales_tras_dias": 3,
+  "compactar_base_datos_cada_horas": 1
 }

@@ -1,0 +1,11 @@
+{
+  "zona_horaria": "Europe/Madrid",
+  "intervalo_minutos": 1,
+  "streamers": ["kaicenat"],
+  "ventana_clips_horas": 24,
+  "max_paginas_clips": 3,
+  "max_avisos_por_ejecucion": 3,
+  "franjas": [
+    {"desde": "00:00", "hasta": "24:00", "modo": "alertas"}
+  ]
+}

@@ -1,0 +1,306 @@
+=====================================================================
+  GUIA DE INSTALACION - DETECTOR DE CLIPS GTA6 (PRUEBA TECNICA)
+  Para: MacBook Air M5 personal
+  Version: 29-10-2026
+=====================================================================
+
+Esta guia instala la PRUEBA TECNICA (T1-T7). Todavia no calcula
+metricas: solo comprueba que todo funciona (Twitch, ejecucion cada
+5 minutos y avisos al movil).
+
+Tiempo estimado de tu parte: 30-45 minutos, una sola vez.
+
+---------------------------------------------------------------------
+PASO 0. COPIAR LOS FICHEROS AL PORTATIL PERSONAL
+---------------------------------------------------------------------
+Crea esta estructura EXACTA en tu carpeta personal (~ = /Users/tu_usuario):
+
+  ~/gta6-clipper/
+      clipper.py
+      config.json
+      credenciales.ejemplo.json
+      GUIA_INSTALACION.txt
+      .gitignore
+      app/
+          __init__.py        (fichero vacio)
+          almacen.py
+          config.py
+          ejecucion.py
+          franjas.py
+          http.py
+          launchd.py
+          telegram.py
+          twitch.py
+      tests/
+          __init__.py        (fichero vacio)
+          test_detector.py
+
+IMPORTANTE:
+- Ponla en ~/gta6-clipper, NO dentro de Escritorio, Documentos o
+  Descargas: macOS puede impedir que el programa automatico acceda a
+  esas carpetas (precaucion; ver registro de requisitos, 6.8).
+- Los ficheros deben ser TEXTO PLANO. No uses TextEdit en modo
+  "texto enriquecido" ni con comillas tipograficas: rompe el codigo.
+  Para crear o editar ficheros usa el editor "nano" del Terminal
+  (instrucciones en el paso 4).
+
+---------------------------------------------------------------------
+PASO 1. INSTALAR PYTHON
+---------------------------------------------------------------------
+1. Ve a https://www.python.org/downloads/macos/ y descarga el
+   instalador "macOS 64-bit universal2" de la ultima version 3.x.
+2. Ejecutalo y sigue los pasos.
+3. Al terminar, abre la carpeta Aplicaciones > Python 3.x y haz doble
+   clic en "Install Certificates.command". SIN ESTE PASO, las
+   conexiones a Twitch y Telegram fallaran con el error
+   CERTIFICATE_VERIFY_FAILED.
+4. Abre la app Terminal y escribe:
+       python3 --version
+   Debe salir la version que acabas de instalar (no 3.9.x).
+
+---------------------------------------------------------------------
+PASO 2. TWITCH: CUENTA, 2FA Y APP DE DESARROLLADOR
+---------------------------------------------------------------------
+1. Ten una cuenta de Twitch con el email verificado.
+2. Activa la verificacion en dos pasos (2FA):
+   Twitch > Configuracion > Seguridad y privacidad > Activar 2FA.
+   Te pedira tu telefono (codigo por SMS).
+   Sin 2FA, Twitch NO te deja registrar la app.
+3. Entra en https://dev.twitch.tv/console/apps/create e inicia sesion.
+4. Rellena:
+   - Nombre: cualquiera unico, por ejemplo "detector-gta6-tunombre".
+   - OAuth Redirect URLs: http://localhost
+   - Categoria: la que mejor encaje (por ejemplo "Analytics Tool" u
+     "Other"; las opciones pueden variar).
+   - Client Type: Confidential.
+5. Pulsa Crear. Despues pulsa "Manage" (Administrar) en tu app:
+   - Copia el "Client ID".
+   - Pulsa "New Secret" y copia el "Client Secret".
+   Guardalos de momento en un sitio seguro. Son como contrasenas.
+
+---------------------------------------------------------------------
+PASO 3. TELEGRAM: CREAR TU BOT
+---------------------------------------------------------------------
+1. Instala Telegram en el movil (y si quieres, en el portatil).
+2. Busca "@BotFather" (cuenta oficial, con la marca de verificacion).
+3. Escribele: /newbot
+4. Elige un nombre (por ejemplo "Detector GTA6") y un usuario que
+   termine en "bot" (por ejemplo "detector_gta6_tunombre_bot").
+5. BotFather te dara un TOKEN. Copialo. Es como una contrasena.
+6. Abre el chat con TU bot (BotFather te da el enlace), pulsa
+   "Iniciar" y escribele "hola". Sin este paso, el bot no puede
+   escribirte.
+
+---------------------------------------------------------------------
+PASO 4. RELLENAR LAS CREDENCIALES (SOLO EN EL PORTATIL PERSONAL)
+---------------------------------------------------------------------
+En el Terminal:
+
+    cd ~/gta6-clipper
+    cp credenciales.ejemplo.json credenciales.json
+    chmod 600 credenciales.json
+    nano credenciales.json
+
+En nano, escribe tus valores ENTRE las comillas:
+
+    {
+      "twitch_client_id": "TU_CLIENT_ID",
+      "twitch_client_secret": "TU_CLIENT_SECRET",
+      "telegram_bot_token": "TU_TOKEN_DEL_BOT",
+      "telegram_chat_id": ""
+    }
+
+Deja telegram_chat_id vacio de momento.
+Guardar en nano: Control+O, Enter. Salir: Control+X.
+
+Ahora obten tu chat_id:
+
+    python3 clipper.py chat-id
+
+Saldra algo como "chat_id: 123456789 (TuNombre)". Vuelve a abrir el
+fichero (nano credenciales.json), pon ese numero en telegram_chat_id
+(entre comillas), guarda y sal.
+
+ALTERNATIVA: crear credenciales.json desde variables de ~/.zshrc
+En ~/.zshrc (formato exacto, sin dos puntos ni espacios junto al =):
+
+    export TWITCH_ID_CLIENTE="..."
+    export TWITCH_SECRETO="..."
+    export TELEGRAM_GTA6_BOT_TOKEN="..."
+    export TELEGRAM_CHAT_ID="..."
+
+Abre un Terminal NUEVO (o ejecuta: source ~/.zshrc) y despues:
+
+    cd ~/gta6-clipper
+    python3 clipper.py credenciales-desde-entorno
+
+Por que se genera un fichero y no se leen las variables directamente:
+la ejecucion automatica (launchd) NO carga ~/.zshrc, asi que no veria
+esas variables. Si cambias alguna variable, repite el comando.
+
+REGLAS DE SEGURIDAD:
+- credenciales.json no se comparte con nadie, no se pega en ningun
+  chat (tampoco con Devin) y no se copia al ordenador de la empresa.
+- Si crees que se ha filtrado: genera un "New Secret" en Twitch y
+  revoca el token del bot en @BotFather (/revoke).
+
+---------------------------------------------------------------------
+PASO 5. PRUEBAS T1-T5 (TWITCH Y TELEGRAM)
+---------------------------------------------------------------------
+    python3 clipper.py prueba
+
+Resultado esperado (los datos cambiaran):
+
+    T1 - Conexion con Twitch (token de app)
+      [OK]    Token obtenido. Valido durante 5X dias
+    T2 - Buscar el streamer 'kaicenat'
+      [OK]    ID de kaicenat: ...
+    T3 - Clips de las ultimas 24 h
+      [OK]    N clips recibidos (primera pagina)
+    T4 - Comprobar si esta en directo
+      [OK]    ...
+    T5 - Aviso al movil por Telegram
+      [OK]    Mensaje enviado. Comprueba que te ha llegado al movil
+
+    Resultado: TODO CORRECTO
+
+Y en el movil debe llegarte: "Prueba del detector GTA6: si lees
+esto, T5 funciona (...)".
+
+Si algo sale [FALLO], copia el mensaje de error (sin credenciales) y
+pasaselo a Devin.
+
+---------------------------------------------------------------------
+PASO 6. PRUEBA T7 (RESISTENCIA A FALLOS, SIMULADA)
+---------------------------------------------------------------------
+    python3 clipper.py prueba-fallos
+
+Debe terminar en "Resultado: TODO CORRECTO". Comprueba que el
+detector no se rompe sin internet, con el limite de la API superado
+ni con el token caducado.
+
+Opcional (pruebas automaticas del codigo):
+
+    python3 -m unittest discover -s tests
+
+Debe terminar en "OK".
+
+---------------------------------------------------------------------
+PASO 7. EVITAR QUE EL PORTATIL SE DUERMA POR LA NOCHE
+---------------------------------------------------------------------
+1. Ajustes del Sistema > Bateria > Opciones.
+2. Activa "Prevent automatic sleeping on power adapter when the
+   display is off" (en espanol, algo como "Evitar el reposo automatico
+   con el adaptador de corriente cuando la pantalla este apagada").
+3. Por la noche: portatil ENCHUFADO y con la TAPA ABIERTA. La
+   pantalla puede apagarse sola; no pasa nada.
+
+---------------------------------------------------------------------
+PASO 8. ACTIVAR LA EJECUCION AUTOMATICA CADA 5 MINUTOS
+---------------------------------------------------------------------
+    python3 clipper.py instalar
+    python3 clipper.py estado
+
+"estado" debe mostrar el detector (por ejemplo "state = ..." y
+"run interval = 300 seconds").
+
+Nada mas instalar se hace una primera ejecucion y te llegara un
+mensaje: "Primera ejecucion: N clips registrados...". A partir de ahi,
+cada 5 minutos te avisara de los clips NUEVOS (como maximo 3 por
+ejecucion + un resumen "...y N mas").
+
+Si te llegan demasiados avisos, edita config.json:
+- "max_avisos_por_ejecucion": baja el numero, o
+- en "franjas", cambia "alertas" por "silencio" (sigue registrando
+  datos, pero no te escribe).
+Los cambios en config.json se aplican solos en la siguiente
+ejecucion. SOLO si cambias "intervalo_minutos" hay que repetir
+"python3 clipper.py instalar".
+
+---------------------------------------------------------------------
+PASO 9. PRUEBA T6 (UNA NOCHE ENTERA)
+---------------------------------------------------------------------
+Deja el portatil como en el paso 7 toda la noche. Por la manana:
+
+    python3 clipper.py revisar-ejecuciones --horas 12
+
+Resultado esperado:
+- "Ejecuciones en las ultimas 12 h: ~144 (esperadas aprox. 144)"
+- "Huecos de mas de 7 min: 0"
+- "Ejecuciones con error: 0"
+
+Si hay huecos: el portatil se durmio o se apago en esas horas (revisa
+el paso 7). Si hay errores: pasale a Devin las lineas de error.
+
+---------------------------------------------------------------------
+COMANDOS UTILES
+---------------------------------------------------------------------
+    python3 clipper.py prueba               T1-T5
+    python3 clipper.py prueba-fallos        T7
+    python3 clipper.py revisar-ejecuciones  T6 (opcion --horas N)
+    python3 clipper.py ejecutar             una ejecucion manual
+    python3 clipper.py estado               estado de la ejecucion automatica
+    python3 clipper.py desinstalar          detener la ejecucion automatica
+    python3 clipper.py chat-id              ver tu chat_id de Telegram
+    python3 clipper.py credenciales-desde-entorno   crear credenciales.json desde ~/.zshrc
+
+---------------------------------------------------------------------
+DONDE SE GUARDAN LOS DATOS (carpeta ~/gta6-clipper/datos/)
+---------------------------------------------------------------------
+- registro_ejecuciones.csv : una fila por ejecucion (hora, resultado,
+  modo, llamadas a Twitch, limite restante de la API, clips, avisos,
+  error).
+- clips_observaciones.csv  : cada clip visto en cada ejecucion, con
+  sus visualizaciones en ese momento. Es la base de las metricas
+  futuras (velocidad, densidad...).
+- estado.json              : memoria interna (token, clips ya
+  avisados). No editar.
+- launchd_salida.log / launchd_errores.log : salida de la ejecucion
+  automatica.
+Los .csv se pueden abrir con Numbers o Excel.
+
+Campos de registro_ejecuciones.csv (una fila cada 5 min):
+  hora_espana          Hora de la ejecucion, hora de Espana (dd/mm/aaaa hh:mm:ss)
+  inicio_utc           La misma hora en UTC (la que usa Twitch)
+  duracion_s           Segundos que tardo la ejecucion
+  resultado            ok / error
+  modo                 Modo de la franja en ese momento (alertas / silencio)
+  llamadas_twitch      Peticiones hechas a Twitch en esa ejecucion
+  ratelimit_restante   Puntos que quedaban del limite de Twitch (de 800/min)
+  streamers_en_directo Cuantos de tus streamers estaban emitiendo
+  clips_vistos         Clips recibidos de Twitch en esa ejecucion
+  clips_nuevos         Clips que no se habian visto nunca antes
+  avisos_enviados      Mensajes de Telegram enviados
+  error                Descripcion del error, si lo hubo
+
+Campos de clips_observaciones.csv (una fila por clip y ejecucion):
+  hora_consulta_espana Hora de Espana en que se consulto el clip
+  consulta_utc         La misma hora en UTC
+  clip_id              Identificador unico del clip en Twitch
+  streamer             Canal del que es el clip
+  creado_espana        Hora de Espana en que un espectador creo el clip
+  creado_utc           La misma hora en UTC
+  visualizaciones      Visualizaciones del clip EN ESE MOMENTO
+  duracion_s           Duracion del clip en segundos (max. 60)
+  vod_id               Identificador del VOD (grabacion del directo) de origen
+  vod_offset_s         Segundo del VOD en que empieza el clip (vacio los
+                       primeros minutos: Twitch tarda en calcularlo)
+  titulo               Titulo que puso quien creo el clip
+  url                  Enlace para ver el clip en Twitch
+
+Si se cambia el formato de un .csv en una version nueva, el fichero
+antiguo se renombra a *_formato_antiguo.csv (no se pierde nada).
+
+---------------------------------------------------------------------
+PROBLEMAS FRECUENTES
+---------------------------------------------------------------------
+- "CERTIFICATE_VERIFY_FAILED": falta el paso 1.3 (Install
+  Certificates.command).
+- "user must have two factor auth enabled": activa el 2FA en Twitch
+  (paso 2.2).
+- "chat-id" no muestra nada: escribe "hola" a tu bot y repite.
+- "Error de configuracion: ... no es JSON valido": revisa comillas y
+  comas del fichero indicado (usa nano, no TextEdit).
+- "Faltan credenciales": algun campo de credenciales.json esta vacio.
+- No llegan avisos en el paso 8: comprueba "python3 clipper.py estado"
+  y mira datos/launchd_errores.log.

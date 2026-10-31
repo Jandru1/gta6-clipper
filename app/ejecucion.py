@@ -111,8 +111,44 @@ def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=ti
         resumen["ratelimit_restante"] = twitch.ratelimit.get("ratelimit-remaining", "")
         resumen["duracion_s"] = round(reloj() - inicio, 2)
         almacen.registrar_ejecucion(resumen)
+        _resumen_si_toca(config, almacen, bd, telegram, ahora, ahora_s)
         almacen.guardar_estado()
     return resumen
+
+
+def _resumen_si_toca(config, almacen, bd, telegram, ahora, ahora_s):
+    horas = config.resumen_de_funcionamiento_cada_horas
+    if horas == 0 or not _toca(almacen.estado, "ultimo_resumen_s", horas * 60, ahora_s):
+        return
+    desde_s = almacen.estado.get("ultimo_resumen_s") or ahora_s - horas * 3600
+    filas = [f for f in almacen.leer_ejecuciones()
+             if datetime.fromisoformat(f["inicio_utc"].replace("Z", "+00:00")).timestamp() >= desde_s]
+    errores = sum(1 for f in filas if f["resultado"] != "ok")
+    en_directo = "si" if filas and (filas[-1].get("streamers_en_directo") or "0") not in ("", "0") else "no"
+    zona = config.zona_horaria
+    lineas = [
+        f"Detector funcionando. Desde {texto_local(desde_s, zona)}:",
+        f"{len(filas)} ejecuciones ({errores} con error) | {bd.clips_nuevos_desde(desde_s)} clips nuevos | "
+        f"en directo ahora: {en_directo}",
+        f"Modo actual: {modo_actual(config.franjas, ahora.astimezone(ZoneInfo(zona)))}",
+    ]
+    if errores:
+        ultimo_error = next(f["error"] for f in reversed(filas) if f["resultado"] != "ok")
+        lineas.append(f"Ultimo error: {ultimo_error}")
+    lineas.append(f"Base de datos: {bd.totales()['clips_en_base']} clips guardados")
+    cuantos = config.clips_en_el_resumen
+    for titulo, clips in (("visualizaciones", bd.mas_vistos(desde_s, cuantos) if cuantos else []),
+                          ("viralidad", bd.mejores_clips(desde_s, cuantos) if cuantos else [])):
+        if clips:
+            lineas.append(f"\nTop {len(clips)} por {titulo}:")
+            for i, c in enumerate(clips, 1):
+                lineas.append(f"{i}. {c['visualizaciones']} vis | viralidad {_texto_nota(c['nota_maxima'])} | "
+                              f"{c['streamer']} | {c['titulo']} | {c['url']}")
+    try:
+        telegram.enviar("\n".join(lineas))
+        almacen.estado["ultimo_resumen_s"] = ahora_s
+    except Exception:
+        pass
 
 
 def registrar_fallo_previo(almacen, mensaje, telegram=None, zona="Europe/Madrid", ahora=None):

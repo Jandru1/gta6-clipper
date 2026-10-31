@@ -42,6 +42,8 @@ class Config:
     avisar_si_tiene_al_menos_visualizaciones: int
     avisar_si_se_creo_hace_menos_de_minutos: int
     max_avisos_por_ejecucion: int
+    resumen_de_funcionamiento_cada_horas: int
+    clips_en_el_resumen: int
     viralidad_minutos_para_medir_crecimiento: int
     viralidad_minutos_minimos_de_calculo: int
     viralidad_dias_de_clips_para_comparar: int

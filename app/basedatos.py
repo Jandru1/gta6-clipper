@@ -147,6 +147,23 @@ class BaseDatos:
         self.con.commit()
         self.con.execute("VACUUM")
 
+    def mejores_clips(self, desde_s, cuantos) -> list:
+        return [dict(r) for r in self.con.execute(
+            "SELECT * FROM clips WHERE ultima_vez_s >= ? ORDER BY nota_maxima IS NULL, nota_maxima DESC,"
+            " velocidad_maxima DESC LIMIT ?", (desde_s, cuantos))]
+
+    def mas_vistos(self, desde_s, cuantos) -> list:
+        return [dict(r) for r in self.con.execute(
+            "SELECT * FROM clips WHERE ultima_vez_s >= ? ORDER BY visualizaciones DESC LIMIT ?", (desde_s, cuantos))]
+
+    def clips_nuevos_desde(self, desde_s) -> int:
+        return self.con.execute("SELECT COUNT(*) FROM clips WHERE primera_vez_s >= ?", (desde_s,)).fetchone()[0]
+
+    def resumen_por_streamer(self) -> list:
+        return [dict(r) for r in self.con.execute(
+            "SELECT streamer, COUNT(*) AS clips, MAX(primera_vez_s) AS ultimo_guardado_s, MAX(visualizaciones) AS max_vis,"
+            " SUM(nota_maxima IS NOT NULL) AS con_nota FROM clips GROUP BY streamer ORDER BY clips DESC")]
+
     def totales(self) -> dict:
         return {
             "clips_en_base": self.con.execute("SELECT COUNT(*) FROM clips").fetchone()[0],

@@ -22,7 +22,10 @@ TOKEN = Respuesta(200, {}, {"access_token": "t1", "expires_in": 5_000_000})
 
 
 def config_base(**cambios):
-    return replace(cargar_config(RUTA_CONFIG), **cambios)
+    valores = {"franjas": [Franja("00:00", "24:00", "silencio")], "streamers": ["kaicenat"],
+               "avisar_si_tiene_al_menos_visualizaciones": 500, "avisar_si_se_creo_hace_menos_de_minutos": 60}
+    valores.update(cambios)
+    return replace(cargar_config(RUTA_CONFIG), **valores)
 
 
 def clip(id_, vistas, creado, streamer="kaicenat"):
@@ -190,7 +193,8 @@ class TestEjecucion(unittest.TestCase):
     def test_primera_ejecucion_hace_repaso_completo_y_guarda_todo_en_silencio(self):
         tw = TwitchFalso([clip("viejo", 5000, AHORA - timedelta(hours=20)), clip("joven", 900, AHORA - timedelta(minutes=10))])
         r, tg = self._ejecutar(tw)
-        self.assertEqual((r["repaso"], r["clips_nuevos"], r["clips_en_base"], tg.mensajes), ("completo", 2, 2, []))
+        self.assertEqual((r["repaso"], r["clips_nuevos"], r["clips_en_base"]), ("completo", 2, 2))
+        self.assertEqual([m for m in tg.mensajes if not m.startswith("Detector funcionando")], [])
 
     def test_programacion_de_repasos(self):
         tw = TwitchFalso([])
@@ -268,6 +272,23 @@ class TestEjecucion(unittest.TestCase):
         self.assertEqual([f["resultado"] for f in filas], ["error", "error"])
         self.assertIn("falta X", filas[0]["error"])
         self.assertEqual(len(tg.mensajes), 1)
+
+    def _resumenes(self, telegram):
+        return [m for m in telegram.mensajes if m.startswith("Detector funcionando")]
+
+    def test_resumen_de_funcionamiento_llega_en_silencio_y_respeta_el_intervalo(self):
+        tw = TwitchFalso([clip("a", 900, AHORA - timedelta(minutes=10)), clip("b", 50, AHORA - timedelta(hours=3))])
+        _, tg = self._ejecutar(tw)
+        self.assertEqual(len(self._resumenes(tg)), 1)
+        self.assertIn("clip a", self._resumenes(tg)[0])
+        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=1))
+        self.assertEqual(self._resumenes(tg), [])
+        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=6))
+        self.assertEqual(len(self._resumenes(tg)), 1)
+
+    def test_resumen_desactivado_con_cero(self):
+        _, tg = self._ejecutar(TwitchFalso([]), cfg=config_base(resumen_de_funcionamiento_cada_horas=0))
+        self.assertEqual(self._resumenes(tg), [])
 
     def test_exportar_con_hora_espanola(self):
         self._ejecutar(TwitchFalso([clip("a", 10, AHORA - timedelta(minutes=30))]))

@@ -1,8 +1,8 @@
 {
   "zona_horaria": "Europe/Madrid",
-  "streamers": ["kaicenat"],
+  "streamers": ["kaicenat", "xqc", "jynxzi"],
   "franjas": [
-    {"desde": "00:00", "hasta": "24:00", "modo": "silencio"}
+    {"desde": "00:00", "hasta": "24:00", "modo": "alertas"}
   ],
 
   "ejecucion_automatica_cada_minutos": 5,
@@ -16,9 +16,11 @@
   "clips_por_pagina": 100,
   "max_paginas_de_100_clips_por_trozo": 10,
 
-  "avisar_si_tiene_al_menos_visualizaciones": 500,
-  "avisar_si_se_creo_hace_menos_de_minutos": 60,
+  "avisar_si_tiene_al_menos_visualizaciones": 50,
+  "avisar_si_se_creo_hace_menos_de_minutos": 180,
   "max_avisos_por_ejecucion": 3,
+  "resumen_de_funcionamiento_cada_horas": 2,
+  "clips_en_el_resumen": 3,
 
   "viralidad_minutos_para_medir_crecimiento": 60,
   "viralidad_minutos_minimos_de_calculo": 5,

@@ -206,8 +206,14 @@ cuantas veces lo ha hecho y como fue la ultima ejecucion. Que diga
 "en espera hasta la siguiente ejecucion" es lo NORMAL: el script se
 ejecuta unos segundos y se cierra hasta la siguiente vez.
 
+Mensaje "Detector funcionando": nada mas instalar, y despues cada
+"resumen_de_funcionamiento_cada_horas" (2), te llega un resumen con
+las ejecuciones, errores, clips nuevos, clips guardados y dos tops:
+por visualizaciones y por viralidad. Llega
+en cualquier modo, tambien en silencio: si deja de llegar, algo pasa.
+
 Por defecto la franja esta en modo "silencio": recoge datos pero NO
-te escribe (fase de 1-2 dias para calibrar). Para recibir avisos,
+te manda avisos de clips (fase de 1-2 dias para calibrar). Para recibir avisos,
 cambia "silencio" por "alertas" en config.json. En modo alertas:
 - Al crearse la base de datos recibes un unico mensaje "Base de datos
   iniciada...".
@@ -247,6 +253,8 @@ COMANDOS UTILES
     python3 clipper.py revisar-ejecuciones  T6 (opcion --horas N)
     python3 clipper.py ejecutar             una ejecucion manual
     python3 clipper.py exportar             fichas e historial a CSV (hora de Espana)
+    python3 clipper.py informe              que hay guardado y top 10 por viralidad
+                                            (opciones: --horas N  --top N)
     python3 clipper.py estado               estado de la ejecucion automatica
     python3 clipper.py desinstalar          detener la ejecucion automatica
     python3 clipper.py chat-id              ver tu chat_id de Telegram
@@ -353,6 +361,12 @@ Avisos
       Edad maxima del clip para avisar.
   max_avisos_por_ejecucion
       Avisos maximos por ejecucion (+1 mensaje de resumen).
+  resumen_de_funcionamiento_cada_horas
+      Cada cuantas horas te llega el mensaje "Detector funcionando" (llega
+      TAMBIEN en modo silencio). 0 = nunca.
+  clips_en_el_resumen
+      Cuantos clips aparecen en cada top de ese mensaje (por visualizaciones
+      y por viralidad).
 
 Viralidad (ver GTA_VI_metricas.txt)
   viralidad_minutos_para_medir_crecimiento

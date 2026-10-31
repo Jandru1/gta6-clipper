@@ -7,14 +7,14 @@ from pathlib import Path
 
 from app import launchd
 from app.almacen import Almacen
-from app.basedatos import BaseDatos
+from app.basedatos import BaseDatos, texto_local
 from app.config import ErrorConfiguracion, cargar_config, cargar_credenciales, guardar_credenciales_desde_entorno
 from app.ejecucion import ejecutar_una_vez, hora_local, iso_utc, registrar_fallo_previo
 from app.http import ErrorRed, Respuesta
 from app.telegram import ClienteTelegram
 from app.twitch import ClienteTwitch, ErrorLimiteTwitch
 
-VERSION = "2026-10-30.4"
+VERSION = "2026-10-31.2"
 PROYECTO = Path(__file__).resolve().parent
 RUTA_CONFIG = PROYECTO / "config.json"
 RUTA_CREDENCIALES = PROYECTO / "credenciales.json"
@@ -164,6 +164,36 @@ def cmd_exportar(_args):
     print(f"Exportado ({totales['clips_en_base']} clips, {totales['filas_historial']} filas de historial):")
     for ruta in rutas:
         print(f"  {ruta}")
+    return 0
+
+
+def cmd_informe(args):
+    config = cargar_config(RUTA_CONFIG)
+    almacen = Almacen(CARPETA_DATOS)
+    if not almacen.ruta_base_datos.exists():
+        print("Todavia no hay base de datos (datos/clips.db): el detector aun no ha guardado nada.")
+        return 1
+    bd = BaseDatos(almacen.ruta_base_datos)
+    try:
+        zona = config.zona_horaria
+        totales = bd.totales()
+        print(f"Base de datos: {totales['clips_en_base']} clips | {totales['filas_historial']} filas de historial")
+        for s in bd.resumen_por_streamer():
+            print(f"  {s['streamer']}: {s['clips']} clips | maximo {s['max_vis']} vis | {s['con_nota']} con nota | "
+                  f"ultimo clip nuevo guardado: {texto_local(s['ultimo_guardado_s'], zona)}")
+        desde_s = int((datetime.now(timezone.utc) - timedelta(hours=args.horas)).timestamp())
+        mejores = bd.mejores_clips(desde_s, args.top)
+        print(f"\nTop {len(mejores)} por viralidad (clips consultados en las ultimas {args.horas} h):")
+        for i, c in enumerate(mejores, 1):
+            nota = "sin nota" if c["nota_maxima"] is None else f"{c['nota_maxima']}/10"
+            velocidad = round(c["velocidad_maxima"] or 0)
+            print(f"{i:>3}. {nota:>8} | {c['visualizaciones']:>7} vis | {velocidad:>7} vis/h max | "
+                  f"creado {texto_local(c['creado_s'], zona)} | {c['streamer']} | {c['titulo']}\n"
+                  f"      {c['url']}")
+        if not mejores:
+            print("  (ninguno: no se ha consultado ningun clip en ese periodo)")
+    finally:
+        bd.cerrar()
     return 0
 
 
@@ -327,6 +357,10 @@ def main():
                    help="Crea credenciales.json con las variables de ~/.zshrc").set_defaults(func=cmd_credenciales_desde_entorno)
     sub.add_parser("ejecutar", help="Una ejecucion (la que lanza launchd)").set_defaults(func=cmd_ejecutar)
     sub.add_parser("exportar", help="Exporta fichas e historial a CSV (hora de Espana)").set_defaults(func=cmd_exportar)
+    informe = sub.add_parser("informe", help="Muestra que hay guardado y los clips mas virales")
+    informe.add_argument("--horas", type=int, default=24)
+    informe.add_argument("--top", type=int, default=10)
+    informe.set_defaults(func=cmd_informe)
     revisar = sub.add_parser("revisar-ejecuciones", help="T6: comprueba huecos y errores")
     revisar.add_argument("--horas", type=float, default=12)
     revisar.set_defaults(func=cmd_revisar)

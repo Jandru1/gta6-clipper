@@ -1,4 +1,7 @@
 credenciales.json
+google_cliente.json
+youtube_tokens.json
+*.tmp
 datos/
 __pycache__/
 .DS_Store

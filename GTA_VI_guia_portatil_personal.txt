@@ -1,0 +1,289 @@
+=====================================================================
+  GUIA DE TAREAS EN EL PORTATIL PERSONAL (sin Devin)
+  Creada: 03-11-2026
+=====================================================================
+
+PARA QUE SIRVE
+  Lo que puedes avanzar tu solo en el MacBook Air M5 y en el iPhone XR
+  hasta la proxima sesion, segun lo hablado el 03-11-2026.
+  Las tareas estan en orden de prioridad. Ninguna es obligatoria salvo
+  la A; si una falla, NO improvises: apunta lo que paso (seccion H) y
+  lo vemos juntos.
+
+REGLAS DE SEGURIDAD (siempre)
+  1. NUNCA subas a GitHub ni compartas: credenciales.json,
+     datos/estado.json (contiene el token de Twitch), ni nada de la
+     carpeta datos/ salvo los dos CSV exportados (tarea B).
+  2. Copia comandos SOLO de esta guia. No pegues comandos de otras
+     webs ni de videos.
+  3. NO crees todavia cuentas en redes sociales, NO publiques nada y
+     NO te apuntes a campanas: falta definir el bloque B3 (cuentas) y
+     el paso 5 (filtro de cumplimiento).
+  4. Al instalar Homebrew te pedira la contrasena del Mac: es normal.
+     En ningun otro paso de esta guia deberia pedirtela.
+
+ANTES DE EMPEZAR
+  - Copia al portatil personal (si quieres tenerlos a mano) estos
+    documentos actualizados hoy: GTA_VI_hoja_de_ruta.txt,
+    GTA_VI_registro_requisitos.txt y esta guia. Son solo texto.
+  - El codigo del detector NO ha cambiado hoy. Version esperada:
+    2026-10-31.2.
+
+
+=====================================================================
+A. COMPROBAR QUE EL DETECTOR SIGUE FUNCIONANDO          (5 minutos)
+=====================================================================
+Abre la app Terminal y escribe, una linea cada vez:
+
+    cd ~/gta6-clipper
+    python3 clipper.py --version
+    python3 clipper.py estado
+
+Lo correcto:
+  - --version muestra 2026-10-31.2.
+  - "estado" empieza por "EN MARCHA: SI" y la ultima ejecucion no
+    tiene error.
+  - Por Telegram te llega el resumen "Detector funcionando" cada 2 h.
+
+Si dice "EN MARCHA: NO":
+    python3 clipper.py instalar
+    python3 clipper.py estado
+
+Para que recoja datos de noche (cuando emiten los streamers de
+EE. UU.), el Mac debe estar ENCHUFADO, ENCENDIDO y con la TAPA ABIERTA
+(la pantalla puede apagarse). Ajuste necesario (ya lo deberias tener):
+  Ajustes del Sistema > Bateria > Opciones > activar "Prevent automatic
+  sleeping on power adapter when the display is off" (o su traduccion
+  al espanol).
+
+
+=====================================================================
+B. PUBLICAR LOS DATOS PARA CALIBRAR LA NOTA DE VIRALIDAD (10 minutos)
+=====================================================================
+Objetivo: que Devin pueda leer los datos reales y corregir la nota
+(hoy sale casi siempre 10/10). Hacen falta 2-3 dias de datos: haz esta
+tarea al final del segundo o tercer dia de recogida (puedes repetirla
+cada dia; cada exportacion sustituye a la anterior).
+
+Riesgo aceptado por ti (registro, decision 1.42): son datos de Twitch
+publicados en un repositorio publico.
+
+1. En la Terminal:
+       cd ~/gta6-clipper
+       python3 clipper.py informe
+       python3 clipper.py exportar
+   "informe" te muestra en pantalla cuantos clips hay guardados y el
+   top por viralidad. "exportar" crea dos ficheros dentro de la
+   carpeta datos/:
+       export_fichas.csv
+       export_historial.csv
+
+2. En la carpeta del repositorio que subes a GitHub (ClipRed), crea una
+   carpeta llamada exportaciones/ y copia ahi SOLO esos dos ficheros.
+   (La carpeta datos/ esta excluida de GitHub a proposito: no la
+   cambies.)
+
+3. Sube los dos ficheros como haces habitualmente.
+
+4. Comprobacion final en la web de GitHub, dentro del repositorio:
+   - Aparecen exportaciones/export_fichas.csv y
+     exportaciones/export_historial.csv.
+   - NO aparece credenciales.json, NI estado.json, NI la carpeta datos/.
+   Si ves alguno de esos tres por error: borralo del repositorio y
+   avisame en la proxima sesion (habria que cambiar las credenciales
+   de Twitch).
+
+5. Si GitHub rechaza un fichero por tamano, no lo partas ni lo
+   comprimas: apunta el mensaje y el tamano (seccion H).
+
+
+=====================================================================
+C. CAPTURA DE COMO VES LOS CLIPS EN EL MOVIL              (2 minutos)
+=====================================================================
+Abre en el iPhone el enlace de 2-3 clips de los avisos de Telegram y
+haz una captura de pantalla de cada uno tal como se ve. Sirve para
+confirmar por que se ven "raros" (formato horizontal en un movil en
+vertical).
+
+
+=====================================================================
+D. INSTALAR LOS TRES PROGRAMAS (aprobado, decision 1.45) (20-30 min)
+=====================================================================
+Se instalan con Homebrew, el instalador estandar para Mac. Es seguro:
+cada descarga esta verificada con una huella digital y los paquetes los
+compila el propio Homebrew (comprobado en su documentacion oficial).
+
+D1. Instalar Homebrew
+    - Abre la web oficial https://brew.sh y comprueba que el comando
+      que aparece en la portada es exactamente este:
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    - Pegalo en la Terminal y pulsa Intro.
+    - El instalador explica lo que va a hacer antes de hacerlo y pide
+      confirmacion (Intro) y la contrasena del Mac.
+    - Si te propone instalar las "Command Line Tools" de Apple, acepta:
+      son oficiales de Apple y las necesitaremos mas adelante.
+    - AL TERMINAR muestra un apartado "Next steps" con 2-3 comandos
+      para anadir Homebrew a la Terminal. EJECUTALOS tal cual aparecen
+      (son distintos segun el equipo; no los copies de otro sitio).
+    - Cierra la Terminal, abre una nueva y comprueba:
+        brew --version
+      Debe mostrar un numero de version.
+
+D2. Instalar los tres programas (uno cada vez):
+        brew install yt-dlp
+        brew install ffmpeg
+        brew install whisper.cpp
+    Atencion al nombre del ultimo: es "whisper.cpp" (con punto). Antes
+    se llamaba "whisper-cpp"; si alguna web dice eso, esta anticuada.
+
+D3. Comprobar que funcionan:
+        yt-dlp --version
+        ffmpeg -version
+        whisper-cli --help
+    Cada uno debe mostrar texto (version o ayuda), no "command not
+    found".
+
+D4. NO descargues todavia el "modelo" de whisper (el archivo grande de
+    reconocimiento de voz). Lo descargara el script, desde la fuente
+    oficial y comprobando su huella. Si Homebrew te muestra un mensaje
+    diciendo que faltan los modelos, es normal: ignoralo.
+
+
+=====================================================================
+E. PRUEBA OPCIONAL: DESCARGAR UN CLIP Y VERLO EN VERTICAL (10 min)
+=====================================================================
+Solo si D salio bien. Es una prueba en tu Mac: NO se publica nada.
+Si algun comando da error, no pasa nada: copia el mensaje de error
+(seccion H).
+
+E1. Descargar un clip. Copia el enlace de un clip de un aviso de
+    Telegram (empieza por https://clips.twitch.tv/... o
+    https://www.twitch.tv/.../clip/...) y escribe, cambiando ENLACE
+    por el enlace y dejando las comillas:
+        cd ~/Desktop
+        yt-dlp -o "prueba_clip.%(ext)s" "ENLACE"
+    En el Escritorio aparecera prueba_clip.mp4 (si la extension no es
+    .mp4, apuntala en la seccion H y no sigas con E2).
+
+E2. Crear la version vertical con el DISENO 1 (clip entero en el
+    centro + el mismo video desenfocado de fondo). Copia el comando
+    entero en una sola linea:
+        ffmpeg -i prueba_clip.mp4 -filter_complex "[0:v]split=2[a][b];[a]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=luma_radius=40:luma_power=2[fondo];[b]scale=1080:-2[frente];[fondo][frente]overlay=(W-w)/2:(H-h)/2[v]" -map "[v]" -map "0:a?" -c:v libx264 -crf 23 -preset medium -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart prueba_vertical.mp4
+    En el Escritorio aparecera prueba_vertical.mp4. Abrelo y mira si
+    te gusta (es una primera version, sin subtitulos ni texto inicial
+    ni tema; eso lo anade el script mas adelante). Este comando no se
+    ha podido probar en el Mac de empresa (no tiene ffmpeg).
+
+E3. Mide el tamano del archivo (clic derecho > Obtener informacion).
+    Apuntalo: el limite para enviarlo por Telegram es 50 MB.
+
+
+=====================================================================
+F. PRUEBA EN EL IPHONE: DE TELEGRAM A INSTAGRAM/TIKTOK (5 minutos)
+=====================================================================
+Objetivo: comprobar si desde Telegram se puede pasar un video a
+Instagram o TikTok con el boton "Compartir", sin guardarlo antes en la
+galeria. NO PUBLIQUES NADA: cancela antes del ultimo paso.
+
+1. Haz llegar un video a tu Telegram del iPhone. Por ejemplo, envia
+   prueba_vertical.mp4 (de la tarea E) a "Mensajes guardados" desde
+   Telegram en el Mac, o cualquier otro video si no hiciste la E.
+2. En el iPhone, abre el video en Telegram y pulsa el boton de
+   compartir.
+3. Apunta:
+   a) Si aparecen Instagram y/o TikTok en el menu.
+   b) Si al elegirlos se abre la app con el video ya cargado y en que
+      pantalla (Reel, publicacion, historia, borrador...).
+   c) Si hace falta "Guardar video" en la galeria primero.
+4. Cancela sin publicar.
+   (Si no tienes Instagram o TikTok instalados en el iPhone, apuntalo:
+   no los instales todavia con cuentas nuevas.)
+
+
+=====================================================================
+G. TAREAS SIN ORDENADOR (cuando tengas un rato)
+=====================================================================
+G1. Gestor (bloque B2, no bloquea nada hasta cobrar). Pide cita y
+    lleva estas preguntas:
+    - Cobrare de plataformas de EE. UU. (Whop / Content Rewards) en
+      dolares, por campanas de clips pagadas por visualizaciones.
+      Como se declara en Espana? Hace falta alta de autonomo desde el
+      primer euro o hay algun umbral?
+    - IVA: aplica a estos servicios prestados a empresas extranjeras?
+    - Me piden el formulario W-8BEN de EE. UU.: como afecta al IRPF y a
+      la doble imposicion?
+    - Gastos deducibles (herramientas, parte del equipo).
+
+G2. Preguntas a las campanas (opcional ahora; necesitas cuenta de
+    Discord para Reach). Mensaje en ingles listo para copiar:
+
+    ----------------------------------------------------------------
+    Hi! I'm planning to join your GTA 6 / streamer clipping campaigns
+    and want to make sure I follow the rules before I start:
+
+    1. Which terms apply to campaigns paid through Content Rewards
+       inside Whop: the older "Clippers Terms of Service" or the new
+       Creator Terms (October 2026)?
+    2. The older terms ban "automating posting". Is it allowed to
+       upload a clip to YouTube Shorts with the official YouTube API
+       (a script I run myself, one clip at a time, after I review and
+       approve it)? Or must every post be made manually in the app?
+    3. My edits add automatic subtitles generated by speech-to-text
+       software. Does that count as "AI-generated content" under the
+       campaign rules?
+    4. Your FTC guide (5.4a) asks for an oral disclosure on YouTube,
+       but 5.1a only requires it if the creator is on camera or does a
+       voiceover. My clips have no voice or face of mine: is a text
+       overlay ("#Ad") + written disclosure + YouTube's paid promotion
+       checkbox enough?
+    5. Instagram's "Paid partnership" label needs the brand to approve
+       it. If the brand doesn't approve it, is "#Ad" at the start of
+       the caption plus the text overlay enough?
+    6. "Logos of any kind are not allowed": does that include logos
+       that are already part of the streamer's own stream overlay
+       (sponsors, his brand), or only logos added by the clipper?
+
+    Thanks!
+    ----------------------------------------------------------------
+    Donde enviarlo:
+    - Reach: en su Discord (enlace en reachclipping.com).
+    - Content Rewards: en el canal de soporte de contentrewards.com.
+      En sus Terminos aparece legal@contentrewards.com para pedir una
+      copia de los terminos antiguos.
+    Guarda las respuestas por escrito (captura o copia del texto).
+
+G3. OpusClip Starter (15 $/mes): en el flujo elegido no se usa. Si no
+    lo usas para otra cosa, puedes cancelarlo antes de su proxima
+    renovacion. Decision tuya.
+
+G4. Ideas de nombres para las cuentas (bloque B3): solo apuntalas, NO
+    crees nada. Las revisaremos juntos con las normas de cada red.
+
+
+=====================================================================
+H. QUE TRAER A LA PROXIMA SESION
+=====================================================================
+Copia esta lista y rellenala:
+
+  A  Detector: version ......  EN MARCHA: SI / NO
+     Resumenes por Telegram llegando: SI / NO
+  B  Datos subidos a GitHub (exportaciones/): SI / NO   fecha: ......
+     Dias de recogida que incluyen: ......
+     Problemas: ......
+  C  Capturas de como se ven los clips en el movil: SI / NO
+  D  brew --version: ......   yt-dlp: OK/ERROR   ffmpeg: OK/ERROR
+     whisper-cli: OK/ERROR
+     Mensajes de error (copiados tal cual): ......
+  E  prueba_vertical.mp4: OK / ERROR   tamano: ...... MB
+     Te gusta como queda: ......
+  F  Instagram en el menu Compartir: SI / NO   pantalla: ......
+     TikTok en el menu Compartir: SI / NO     pantalla: ......
+     Hace falta guardar en la galeria antes: SI / NO
+  G  Gestor: cita SI / NO.  Respuestas de Reach / Content Rewards: ......
+     OpusClip cancelado: SI / NO
+
+PROXIMA SESION CON DEVIN (por este orden)
+  1. Revisar lo de la lista H.
+  2. Paso 4 de la hoja de ruta: textos (titulo, descripcion, hashtags,
+     texto inicial).
+  3. Calibrar la nota de viralidad con los datos subidos.

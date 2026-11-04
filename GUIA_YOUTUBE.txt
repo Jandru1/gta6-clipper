@@ -1,0 +1,173 @@
+=====================================================================
+  GUIA: VIDEOS VERTICALES Y PUBLICACION EN YOUTUBE (version 2026-11-04.2)
+=====================================================================
+
+Que hace esta version
+  Cuando un momento merece aviso, el script:
+    1. descarga el clip (yt-dlp);
+    2. lo pasa a vertical con el diseno 1 (ffmpeg-full);
+    3. le pone subtitulos (whisper), el texto inicial y tu tema;
+    4. lo sube a YouTube en PRIVADO (si la cuenta esta autorizada);
+    5. te manda por Telegram el video, los textos para Instagram y
+       YouTube y los botones "Publicar en YouTube" / "Descartar".
+  Pulsar "Publicar" lo hace publico (el script lo ve en su siguiente
+  ejecucion, como maximo 5 min). "Descartar" lo borra de YouTube.
+  Instagram: lo subes tu desde el movil con el boton Compartir de
+  Telegram, pegando el texto que te llega.
+  TikTok esta aparcado (decision del 04-11-2026).
+
+Tiempo de tu parte: 30-40 minutos, una sola vez.
+
+---------------------------------------------------------------------
+PASO 1. INSTALAR ffmpeg-full (OBLIGATORIO)
+---------------------------------------------------------------------
+El ffmpeg normal de Homebrew ya NO puede poner subtitulos ni textos
+(le faltan libass y freetype). Hace falta la version completa, que se
+instala aparte sin tocar la otra:
+
+    brew install ffmpeg-full
+
+Queda en /opt/homebrew/opt/ffmpeg-full/bin/ffmpeg (es la ruta que usa
+config.json, "ruta_ffmpeg").
+
+---------------------------------------------------------------------
+PASO 2. DESCARGAR EL MODELO DE WHISPER Y COMPROBAR TODO
+---------------------------------------------------------------------
+    cd ~/gta6-clipper
+    python3 clipper.py preparar-herramientas
+    python3 clipper.py comprobar-herramientas
+
+"preparar-herramientas" descarga el modelo oficial (547 MB) desde
+huggingface.co/ggerganov/whisper.cpp y comprueba su huella; si no
+coincide, lo borra. Lo guarda en datos/modelos/.
+"comprobar-herramientas" debe dar [OK] en yt-dlp, ffmpeg-full,
+whisper-cli, "ffmpeg con subtitulos" y "modelo de whisper". Las
+lineas de YouTube saldran "--" hasta el paso 4.
+
+---------------------------------------------------------------------
+PASO 3. GOOGLE CLOUD: PROYECTO Y PERMISO PARA YOUTUBE (gratis)
+---------------------------------------------------------------------
+Usa la cuenta de Google de tus canales de YouTube.
+
+3.1 Entra en https://console.cloud.google.com y crea un proyecto
+    (arriba, selector de proyecto > Proyecto nuevo). Nombre:
+    gta6-clipper.
+3.2 Menu > "APIs y servicios" > "Biblioteca". Busca y pulsa
+    "Habilitar" en estas dos:
+      - YouTube Data API v3
+      - YouTube Analytics API
+3.3 Menu > "Google Auth Platform" (puede aparecer como "Pantalla de
+    consentimiento de OAuth"). Pulsa "Comenzar":
+      - Nombre de la app: gta6-clipper. Correo de asistencia: el tuyo.
+      - Publico (Audience): EXTERNO.
+      - Correo de contacto: el tuyo. Acepta y crea.
+3.4 En "Publico" (Audience) pulsa "Publicar app" y confirma: el estado
+    debe quedar "En produccion". MUY IMPORTANTE: si se queda en
+    "Prueba" (Testing), el permiso caduca cada 7 dias.
+    No hace falta pedir la verificacion de Google (uso personal).
+3.5 En "Clientes" pulsa "Crear cliente":
+      - Tipo de aplicacion: "App de escritorio". Nombre: clipper.
+      - Pulsa Crear y, en la ventana que aparece, "Descargar JSON".
+    (El secreto solo se muestra al crearlo: descargalo en ese momento.)
+3.6 Cambia el nombre del fichero descargado (client_secret_....json) a
+    google_cliente.json y muevelo a ~/gta6-clipper/.
+    NUNCA lo subas a GitHub (ya esta excluido en .gitignore).
+
+---------------------------------------------------------------------
+PASO 4. CONECTAR CADA CANAL
+---------------------------------------------------------------------
+Las cuentas son las de config.json ("cuentas"): "kai" y "gta".
+
+    python3 clipper.py autorizar-youtube --cuenta kai
+
+Se abre el navegador:
+  1. Elige tu cuenta de Google.
+  2. ELIGE EL CANAL de esa cuenta (p. ej. "Kai Cenat Fan Clips").
+  3. Saldra "Google no ha verificado esta app": pulsa "Configuracion
+     avanzada" > "Ir a gta6-clipper" (es tu propia app) y "Continuar".
+  4. Acepta los permisos.
+La terminal dira: Cuenta 'kai' conectada al canal de YouTube '...'.
+Si el canal no es el correcto, repite el comando y elige el bueno.
+
+Repite con la otra:
+
+    python3 clipper.py autorizar-youtube --cuenta gta
+
+El permiso se guarda en youtube_tokens.json (solo lectura para tu
+usuario). NUNCA lo subas a GitHub ni lo compartas.
+Comprueba: python3 clipper.py comprobar-herramientas (las dos cuentas
+deben salir "autorizada").
+
+---------------------------------------------------------------------
+PASO 5. PRUEBA CON UN CLIP REAL (sin publicar nada)
+---------------------------------------------------------------------
+1. Elige un clip guardado:  python3 clipper.py informe
+   El identificador es la ultima parte de su enlace
+   (https://clips.twitch.tv/ESTO).
+2. python3 clipper.py preparar-clip ESTO
+   Tarda 1-3 minutos. Al final dice "Resultado: preparado".
+3. En Telegram te llegan, por cada cuenta que recibe el clip:
+   el video vertical, un mensaje con los textos y, si la cuenta esta
+   autorizada, los botones.
+   - La cuenta "kai" recibe los clips de kaicenat.
+   - La cuenta "gta" recibe los clips de GTA V o GTA VI de cualquier
+     streamer. Un clip de otro juego de xqc o jynxzi no va a ninguna
+     cuenta (te lo dira).
+   - Un clip de GTA VI anterior al 19-11 se bloquea (filtraciones).
+4. En YouTube Studio veras el Short en PRIVADO.
+5. Pulsa "Descartar" (lo borra) o "Publicar en YouTube". El script lo
+   ejecuta en su siguiente pasada (como maximo 5 min) y te confirma.
+
+---------------------------------------------------------------------
+AJUSTES EN config.json
+---------------------------------------------------------------------
+  preparar_videos              true / false (apaga todo esto)
+  max_videos_por_ejecucion     clips que se preparan por pasada (2)
+  borrar_videos_preparados_tras_dias   limpieza de datos/videos (7)
+  ruta_yt_dlp / ruta_ffmpeg / ruta_whisper   rutas de los programas
+  tema                         fuente, tamanos, segundos del texto
+                               inicial y colores (hexadecimal)
+  palabras_a_censurar          se cambian por asteriscos en
+                               subtitulos y textos
+  recordatorio_antes_de_publicar   linea al final de los textos
+  fecha_lanzamiento_gta_vi     antes de esta fecha, GTA VI se bloquea
+  juegos                       juegos de Twitch conocidos (hashtag y
+                               si cuentan como GTA)
+  cuentas                      tus cuentas: id, tipo ("streamer" o
+                               "gta"), streamer, hashtags,
+                               youtube_automatico (true = subir en
+                               privado y botones; false = solo te
+                               manda el video) y campana:
+                                 activa true/false, hashtag_obligatorio,
+                                 desde / hasta (AAAA-MM-DD).
+                               Con campana activa y el clip dentro de
+                               las fechas: version con "#Ad" en el
+                               video y en el texto, y la casilla de
+                               promocion pagada de YouTube.
+  resumen_semanal_dia / hora   resumen semanal (6 = domingo, 11 h)
+
+---------------------------------------------------------------------
+RESUMEN SEMANAL Y DATOS DE INSTAGRAM
+---------------------------------------------------------------------
+Cada domingo a las 11:00 te llega el resumen de YouTube (visualizaciones
+y % de publico Tier 1 por canal) y la plantilla para Instagram.
+Responde en el chat del bot con una linea por cuenta, por ejemplo:
+
+    IG kai: 12500 / 45 / no
+
+(visualizaciones de la semana / % de EE. UU. / algo "no recomendable":
+si o no). El bot confirma "Guardado".
+Las visualizaciones de cada Short publicado se apuntan solas a la
+hora, a las 24 h y a los 7 dias.
+
+---------------------------------------------------------------------
+PROBLEMAS FRECUENTES
+---------------------------------------------------------------------
+- "este ffmpeg no puede poner subtitulos": falta el paso 1.
+- "No encuentro el programa ...": revisa la ruta en config.json
+  (brew --prefix te dice donde esta Homebrew).
+- "Falta google_cliente.json": paso 3.6.
+- "No se pudo renovar el permiso de YouTube": repite el paso 4 de esa
+  cuenta. Si pasa cada semana, la app sigue en "Prueba" (paso 3.4).
+- "YouTube no acepto la casilla de promocion pagada por API": el video
+  se sube igual; marca la casilla a mano en YouTube Studio.

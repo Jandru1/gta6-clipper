@@ -2,9 +2,10 @@ import time
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+from app import momentos as mom
+from app import videos
 from app.basedatos import texto_local
 from app.franjas import modo_actual
-from app.viralidad import nota_1_a_10
 
 MARGEN_PUNTUALIDAD_S = 30
 
@@ -40,19 +41,21 @@ def _texto_nota(nota):
     return "sin datos suficientes" if nota is None else f"{nota}/10"
 
 
-def _texto_aviso(obs, ahora_s, zona):
-    clip = obs["clip"]
+def _texto_aviso(momento, clip, ahora_s, zona):
+    temprana = momento["velocidad_temprana"]
     return (
-        f"Clip con potencial de {obs['streamer']}\n"
-        f"{clip.get('title', '(sin titulo)')}\n"
-        f"Viralidad: {_texto_nota(obs.get('nota'))} | {obs['visualizaciones']} visualizaciones "
-        f"| {round(obs['velocidad'] or 0)} vis/hora\n"
-        f"Creado: {texto_local(obs['creado_s'], zona)} (hace {(ahora_s - obs['creado_s']) // 60} min)\n"
+        f"Clip con potencial de {momento['streamer']}\n"
+        f"{clip.get('titulo') or '(sin titulo)'}\n"
+        f"Viralidad: {_texto_nota(momento.get('nota'))} | {clip.get('visualizaciones', 0)} visualizaciones "
+        f"(momento: {momento['clips']} clips, {momento['vistas']} vis)\n"
+        f"Por que: {'?' if temprana is None else round(temprana, 1)} vis/min al principio | "
+        f"{round(momento['velocidad_actual'])} vis/hora ahora | clipeado por {momento['consenso']} persona(s)\n"
+        f"Inicio del momento: {texto_local(momento['inicio_s'], zona)} (hace {(ahora_s - momento['inicio_s']) // 60} min)\n"
         f"{clip.get('url', '')}"
     )
 
 
-def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=time.time):
+def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=time.time, servicios=None):
     inicio = reloj()
     ahora = ahora or datetime.now(timezone.utc)
     ahora_s = int(ahora.timestamp())
@@ -80,15 +83,30 @@ def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=ti
         resumen["espectadores"] = sum(int(d.get("viewer_count", 0)) for d in directos.values())
 
         observaciones = _repasar(config, estado, bd, twitch, ids, ahora, ahora_s, resumen)
-        _poner_notas(config, bd, observaciones, ahora_s)
+        momentos = actualizar_momentos(config, bd, ahora_s) if observaciones else []
+        resumen["momentos_puntuados"] = len(momentos)
         bd.guardar()
 
+        con_videos = servicios is not None and config.preparar_videos
+        if con_videos:
+            videos.procesar_telegram(config, estado, bd, telegram, servicios, ahora_s)
         if modo == "alertas":
-            resumen["avisos_enviados"] = _avisar(config, bd, telegram, observaciones, ahora_s, base_vacia, desconocidos)
+            if estado.get("ultimo_modo") == "silencio" and not base_vacia:
+                resumen["avisos_enviados"] += _resumen_al_despertar(config, bd, telegram, ahora_s, con_videos)
+            resumen["avisos_enviados"] += _avisar(config, bd, telegram, observaciones, momentos, ahora_s, base_vacia,
+                                                  desconocidos, con_videos)
+        estado["ultimo_modo"] = modo
         bd.guardar()
+        if con_videos and modo == "alertas":
+            resumen["avisos_enviados"] += videos.procesar_cola(config, bd, telegram, servicios, ahora_s)
+            resumen["avisos_enviados"] += videos.resumen_semanal(config, estado, bd, telegram, servicios, ahora)
+        if con_videos:
+            videos.medir(bd, servicios, ahora_s)
 
         if _toca(estado, "ultima_limpieza_s", config.limpieza_cada_minutos, ahora_s):
             resumen.update(bd.limpiar(config, ahora_s))
+            if servicios is not None:
+                videos.limpiar_videos(config, bd, servicios.preparador.carpeta_videos, ahora_s)
             estado["ultima_limpieza_s"] = ahora_s
         if config.compactar_base_datos_cada_horas > 0 and _toca(
                 estado, "ultima_compactacion_s", config.compactar_base_datos_cada_horas * 60, ahora_s):
@@ -137,13 +155,18 @@ def _resumen_si_toca(config, almacen, bd, telegram, ahora, ahora_s):
         lineas.append(f"Ultimo error: {ultimo_error}")
     lineas.append(f"Base de datos: {bd.totales()['clips_en_base']} clips guardados")
     cuantos = config.clips_en_el_resumen
-    for titulo, clips in (("visualizaciones", bd.mas_vistos(desde_s, cuantos) if cuantos else []),
-                          ("viralidad", bd.mejores_clips(desde_s, cuantos) if cuantos else [])):
-        if clips:
-            lineas.append(f"\nTop {len(clips)} por {titulo}:")
-            for i, c in enumerate(clips, 1):
-                lineas.append(f"{i}. {c['visualizaciones']} vis | viralidad {_texto_nota(c['nota_maxima'])} | "
-                              f"{c['streamer']} | {c['titulo']} | {c['url']}")
+    vistos = bd.mas_vistos(desde_s, cuantos) if cuantos else []
+    if vistos:
+        lineas.append(f"\nTop {len(vistos)} clips por visualizaciones:")
+        for i, c in enumerate(vistos, 1):
+            lineas.append(f"{i}. {c['visualizaciones']} vis | viralidad {_texto_nota(c['nota_maxima'])} | "
+                          f"{c['streamer']} | {c['titulo']} | {c['url']}")
+    mejores = bd.mejores_momentos(desde_s, cuantos) if cuantos else []
+    if mejores:
+        lineas.append(f"\nTop {len(mejores)} momentos por viralidad:")
+        for i, m in enumerate(mejores, 1):
+            lineas.append(f"{i}. viralidad {_texto_nota(m['nota_maxima'])} | {m['vistas_representante']} vis "
+                          f"({m['clips']} clips) | {m['streamer']} | {m['titulo']} | {m['url']}")
     try:
         telegram.enviar("\n".join(lineas))
         almacen.estado["ultimo_resumen_s"] = ahora_s
@@ -198,19 +221,44 @@ def _repasar(config, estado, bd, twitch, ids, ahora, ahora_s, resumen):
     return observaciones
 
 
-def _poner_notas(config, bd, observaciones, ahora_s):
-    referencias = {}
-    desde_s = ahora_s - config.viralidad_dias_de_clips_para_comparar * 86400
-    for obs in observaciones:
-        if obs["velocidad"] is None:
-            continue
-        if obs["streamer"] not in referencias:
-            referencias[obs["streamer"]] = bd.velocidades_de_referencia(obs["streamer"], desde_s)
-        obs["nota"] = nota_1_a_10(obs["velocidad"], referencias[obs["streamer"]], config.viralidad_clips_minimos_para_dar_nota)
-        bd.poner_nota(obs["clip_id"], obs["nota"])
+def actualizar_momentos(config, bd, ahora_s):
+    desde_ventana_s = ahora_s - config.horas_que_cubre_el_repaso_completo * 3600
+    desde_referencias_s = ahora_s - config.viralidad_dias_de_clips_para_comparar * 86400
+    clips = bd.clips_desde(desde_ventana_s)
+    grupos = mom.agrupar(clips, config.momento_segundos_de_cercania_en_el_vod,
+                         config.momento_minutos_de_cercania_al_crearse * 60)
+    externas = bd.momentos_de_referencia(desde_referencias_s, desde_ventana_s,
+                                         config.viralidad_visualizaciones_minimas_para_comparar)
+    momentos = mom.calcular(grupos, bd.historiales_desde(desde_ventana_s), bd.directos_desde(desde_ventana_s - 3600),
+                            ahora_s, config, externas)
+    bd.guardar_momentos(momentos, desde_ventana_s, ahora_s)
+    return momentos
 
 
-def _avisar(config, bd, telegram, observaciones, ahora_s, base_vacia, desconocidos):
+def _resumen_al_despertar(config, bd, telegram, ahora_s, con_videos=False):
+    horas = config.resumen_al_despertar_momentos_de_las_ultimas_horas
+    if horas == 0:
+        return 0
+    pendientes = bd.momentos_pendientes(ahora_s - horas * 3600, config.avisar_si_la_nota_es_al_menos,
+                                        config.avisar_si_tiene_al_menos_visualizaciones,
+                                        config.max_momentos_en_el_resumen_al_despertar)
+    if not pendientes:
+        return 0
+    zona = config.zona_horaria
+    lineas = [f"Mientras estabas en silencio ({horas} h): {len(pendientes)} momentos con potencial"]
+    for i, m in enumerate(pendientes, 1):
+        lineas.append(f"\n{i}. Viralidad {_texto_nota(m['nota_maxima'])} | {m['vistas_representante']} vis "
+                      f"({m['clips']} clips) | {m['streamer']} | inicio {texto_local(m['inicio_s'], zona)} "
+                      f"(hace {(ahora_s - m['inicio_s']) // 3600} h)\n{m['titulo']}\n{m['url']}")
+    telegram.enviar("\n".join(lineas))
+    bd.marcar_momentos_avisados_por_id([m["momento_id"] for m in pendientes])
+    if con_videos:
+        videos.encolar_momentos(bd, pendientes, ahora_s)
+    bd.guardar()
+    return 1
+
+
+def _avisar(config, bd, telegram, observaciones, momentos, ahora_s, base_vacia, desconocidos, con_videos=False):
     enviados = 0
     if desconocidos:
         telegram.enviar(f"Aviso: no encuentro en Twitch estos streamers: {', '.join(desconocidos)}. Revisa config.json")
@@ -219,15 +267,21 @@ def _avisar(config, bd, telegram, observaciones, ahora_s, base_vacia, desconocid
         telegram.enviar(f"Base de datos iniciada: {len(observaciones)} clips registrados. "
                         f"A partir de ahora solo te avisare de clips con potencial.")
         enviados += 1
+        return enviados
     edad_maxima_s = config.avisar_si_se_creo_hace_menos_de_minutos * 60
-    candidatos = [o for o in observaciones
-                  if o["visualizaciones"] >= config.avisar_si_tiene_al_menos_visualizaciones
-                  and ahora_s - o["creado_s"] <= edad_maxima_s
-                  and not bd.esta_avisado(o["clip_id"])]
-    candidatos.sort(key=lambda o: o["velocidad"] or 0, reverse=True)
-    for obs in candidatos[:config.max_avisos_por_ejecucion]:
-        telegram.enviar(_texto_aviso(obs, ahora_s, config.zona_horaria))
-        bd.marcar_avisado([obs["clip_id"]])
+    candidatos = [m for m in momentos
+                  if m["nota"] is not None and m["nota"] >= config.avisar_si_la_nota_es_al_menos
+                  and m["vistas"] >= config.avisar_si_tiene_al_menos_visualizaciones
+                  and ahora_s - m["inicio_s"] <= edad_maxima_s
+                  and not m["avisado"]]
+    candidatos.sort(key=lambda m: (m["nota"], m["puntuacion"]), reverse=True)
+    for m in candidatos[:config.max_avisos_por_ejecucion]:
+        telegram.enviar(_texto_aviso(m, bd.clip(m["representante"]), ahora_s, config.zona_horaria)
+                        + ("\n(Preparando el video vertical...)" if con_videos else ""))
+        bd.marcar_momento_avisado(m)
+        if con_videos:
+            videos.encolar_momentos(bd, [m], ahora_s)
+        bd.guardar()
         enviados += 1
     restantes = len(candidatos) - config.max_avisos_por_ejecucion
     if restantes > 0:

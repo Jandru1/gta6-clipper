@@ -1,0 +1,154 @@
+=====================================================================
+  METRICAS DEL DETECTOR DE CLIPS (SOLO LAS IMPLEMENTADAS)
+  Version del script: 2026-11-04.1
+  Ultima actualizacion: 04-11-2026
+=====================================================================
+
+Este fichero describe EXACTAMENTE como calcula el script cada metrica
+y como selecciona los clips. Solo entra aqui lo que ya esta
+programado. Todos los numeros son parametros de config.json (valor
+actual entre parentesis).
+
+---------------------------------------------------------------------
+1. VELOCIDAD DE UN CLIP (visualizaciones por hora)
+---------------------------------------------------------------------
+Cuando se calcula: cada vez que cambian las visualizaciones del clip.
+  a) Observacion actual: (ahora, V_ahora).
+  b) Referencia: la ultima observacion con al menos
+     "viralidad_minutos_para_medir_crecimiento" (60) de antiguedad; si
+     no hay, la mas antigua disponible.
+  c) velocidad = (V_ahora - V_referencia) / horas transcurridas.
+  d) Clip sin referencia: V_ahora / horas desde que se creo.
+  e) Tiempo minimo: "viralidad_minutos_minimos_de_calculo" (5).
+
+---------------------------------------------------------------------
+2. MOMENTOS (agrupar clips del mismo instante)
+---------------------------------------------------------------------
+Un momento fuerte genera varios clips casi iguales. Se puntua el
+MOMENTO, no cada clip. En cada ejecucion con repaso se recalculan los
+momentos de las ultimas "horas_que_cubre_el_repaso_completo" (24).
+
+Regla (mismo streamer):
+  - Si Twitch ya da la posicion en el directo (vod_offset): clips del
+    mismo directo cuya posicion esta a menos de
+    "momento_segundos_de_cercania_en_el_vod" (90) del PRIMER clip del
+    grupo.
+  - Si aun no la da: clips creados a menos de
+    "momento_minutos_de_cercania_al_crearse" (2) del primer clip.
+  - Se mide desde el primer clip del grupo (no se encadena): un grupo
+    nunca abarca mas de 90 s.
+Clip representante: el de mas visualizaciones (en empate, el mas largo).
+
+---------------------------------------------------------------------
+3. LAS 4 SENALES DE UN MOMENTO
+---------------------------------------------------------------------
+S1 consenso                 = personas distintas que lo clipearon en
+                              sus primeros minutos.
+S2 velocidad temprana       = visualizaciones por minuto del momento
+                              (suma de sus clips) en sus primeros
+                              "viralidad_minutos_de_vida_tempranos" (30)
+                              minutos (si es mas joven, con lo que lleve).
+                              Vacia si el script no lo vio a tiempo.
+S3 velocidad actual         = suma de las velocidades de sus clips (vis/h).
+S4 tamano relativo          = visualizaciones del momento por cada 1.000
+                              espectadores del directo cuando empezo.
+                              Vacia si no habia dato de espectadores.
+
+Cada senal se convierte en un PERCENTIL (0-100) = % de momentos de
+referencia con un valor MENOR.
+Momentos de referencia: los del mismo streamer de los ultimos
+"viralidad_dias_de_clips_para_comparar" (3) dias cuyo mejor clip tiene
+al menos "viralidad_visualizaciones_minimas_para_comparar" (10)
+visualizaciones.
+
+---------------------------------------------------------------------
+4. PUNTUACION Y NOTA
+---------------------------------------------------------------------
+Puntuacion (0-100) = media ponderada de los percentiles disponibles:
+  peso_velocidad_temprana          60
+  peso_velocidad_actual            20
+  peso_consenso                    10
+  peso_tamano_relativo_al_directo  10
+(si una senal esta vacia, su peso se reparte entre las demas)
+
+Nota (1-10) segun el % de momentos de referencia con puntuacion MAYOR
+("cortes_de_nota_en_porcentaje" = [1, 2, 4, 8, 10, 15, 15, 15, 15]):
+  10 = esta en el 1% mejor   9 = siguiente 2%   8 = siguiente 4%
+   7 = siguiente 8%          6 = siguiente 10%  5..2 = siguientes 15%
+   1 = el resto.
+Si hay menos de "viralidad_clips_minimos_para_dar_nota" (15) momentos
+de referencia: nota vacia ("sin datos suficientes").
+Se guardan la nota actual y la maxima del momento, y se copian a todos
+sus clips (nota_viralidad_* de export_fichas.csv).
+
+Por que estos pesos (analisis de 4 dias de datos reales, 04-11-2026):
+  - La velocidad en los primeros 30-45 min fue la senal que mejor
+    anticipo los momentos del 10% mas visto: acerto en torno a la
+    mitad (por azar seria el 10%).
+  - El consenso (personas distintas) ayudo poco y la emocion del
+    titulo nada: la emocion del titulo se ha QUITADO del diseno.
+  - El tamano relativo al directo no se pudo comprobar (los directos
+    no estaban en los datos exportados).
+  - Muestra pequena (~380 momentos): hay que volver a comprobarlo con
+    "python3 clipper.py prueba-algoritmo" cuando haya mas datos.
+
+---------------------------------------------------------------------
+5. AVISOS (solo en franjas en modo "alertas")
+---------------------------------------------------------------------
+Un MOMENTO genera aviso si cumple TODO:
+  - nota >= "avisar_si_la_nota_es_al_menos" (8);
+  - visualizaciones del momento >= "avisar_si_tiene_al_menos_visualizaciones" (50);
+  - empezo hace como maximo "avisar_si_se_creo_hace_menos_de_minutos" (180);
+  - no se ha avisado antes (ni ninguno de sus clips).
+Orden: mayor nota y puntuacion. Maximo "max_avisos_por_ejecucion" (3)
++ 1 mensaje con los restantes. El aviso trae el clip representante, la
+nota, por que (velocidad temprana, velocidad actual, personas que lo
+clipearon) y cuantos clips tiene el momento.
+La primera ejecucion (base de datos vacia) no avisa: solo confirma.
+Si Telegram falla, el momento no se marca y se reintenta.
+
+Resumen al despertar: en la primera ejecucion en modo "alertas" tras
+una franja en "silencio", llega un mensaje con los momentos de las
+ultimas "resumen_al_despertar_momentos_de_las_ultimas_horas" (12) h
+con nota >= 8 y >= 50 visualizaciones que no se avisaron (maximo
+"max_momentos_en_el_resumen_al_despertar", 5), de mayor a menor nota.
+Franjas por defecto: alertas 09:00-01:00, silencio 01:00-09:00.
+
+---------------------------------------------------------------------
+6. RESUMEN "DETECTOR FUNCIONANDO" Y COMANDO "informe"
+---------------------------------------------------------------------
+- Top por visualizaciones: clips.
+- Top por viralidad: MOMENTOS (por nota maxima y puntuacion maxima).
+
+---------------------------------------------------------------------
+7. LIMPIEZA
+---------------------------------------------------------------------
+Igual que antes, pero la proteccion usa la nota maxima del MOMENTO:
+  - Limpieza rapida: se borran los clips de mas de
+    "limpieza_rapida_tras_horas" (48) con menos de
+    "limpieza_rapida_si_tiene_menos_de_visualizaciones" (10) y nota
+    menor que "no_limpiar_clips_con_nota_igual_o_mayor_que" (7).
+  - Limpieza de no virales: pasados "limpieza_no_virales_tras_dias" (3),
+    se borra el historial detallado de los clips con nota menor que 7 y
+    los momentos con nota menor que 7.
+Al instalar esta version se BORRAN las notas antiguas de todos los
+clips (la nota antigua estaba inflada); los clips y su historial se
+conservan.
+
+---------------------------------------------------------------------
+8. PRUEBA HACIA ATRAS ("python3 clipper.py prueba-algoritmo")
+---------------------------------------------------------------------
+Para cada momento de hace mas de 24 h con historial temprano:
+  - reconstruye lo que se sabia a los 30 min de empezar;
+  - calcula su nota frente a los momentos anteriores del streamer;
+  - mira si acabo en el 10% de momentos con mas visualizaciones.
+Muestra, por streamer: momentos evaluados, avisados (nota >= 8),
+cuantos de ellos acabaron en el top 10% y que parte del top 10% se
+detecto. Limitacion: los momentos de referencia se eligen con sus
+visualizaciones finales (pequena ventaja que en vivo no existe).
+
+---------------------------------------------------------------------
+PENDIENTE (no implementado)
+---------------------------------------------------------------------
+- Recalibrar pesos y cortes con mas dias de datos.
+- Pico de chat, tipo de momento, saturacion en YouTube (V2).

@@ -217,10 +217,20 @@ te manda avisos de clips (fase de 1-2 dias para calibrar). Para recibir avisos,
 cambia "silencio" por "alertas" en config.json. En modo alertas:
 - Al crearse la base de datos recibes un unico mensaje "Base de datos
   iniciada...".
-- Despues solo te avisa de clips con potencial: creados hace menos de
+- Despues solo te avisa de MOMENTOS con potencial (varios clips del
+  mismo instante cuentan como un solo momento): nota de viralidad de
+  al menos "avisar_si_la_nota_es_al_menos", empezados hace menos de
   "avisar_si_se_creo_hace_menos_de_minutos" y con al menos
-  "avisar_si_tiene_al_menos_visualizaciones" visualizaciones. Cada clip, una sola
-  vez. Como maximo "max_avisos_por_ejecucion" + un resumen.
+  "avisar_si_tiene_al_menos_visualizaciones" visualizaciones entre
+  todos sus clips. Cada momento, una sola vez; te llega el clip mas
+  visto del momento. Como maximo "max_avisos_por_ejecucion" + un resumen.
+- Resumen al despertar: al pasar de una franja en "silencio" (por
+  ejemplo, mientras duermes) a una en "alertas", te llega UN mensaje
+  con los mejores momentos de las ultimas
+  "resumen_al_despertar_momentos_de_las_ultimas_horas" (12) que no se
+  te avisaron (maximo "max_momentos_en_el_resumen_al_despertar", 5).
+  Franjas por defecto: alertas de 09:00 a 01:00 y silencio de 01:00 a
+  09:00. Cambialas en config.json a tus horas de sueno.
 
 Los cambios en config.json se aplican solos en la siguiente
 ejecucion. SOLO si cambias "ejecucion_automatica_cada_minutos" hay que
@@ -252,9 +262,15 @@ COMANDOS UTILES
     python3 clipper.py prueba-fallos        T7
     python3 clipper.py revisar-ejecuciones  T6 (opcion --horas N)
     python3 clipper.py ejecutar             una ejecucion manual
-    python3 clipper.py exportar             fichas e historial a CSV (hora de Espana)
-    python3 clipper.py informe              que hay guardado y top 10 por viralidad
+    python3 clipper.py exportar             fichas, historial y momentos a CSV (hora de Espana)
+    python3 clipper.py informe              que hay guardado y top 10 momentos por viralidad
                                             (opciones: --horas N  --top N)
+    python3 clipper.py prueba-algoritmo     mide con tus datos si la nota acierta
+    python3 clipper.py comprobar-herramientas   yt-dlp, ffmpeg-full, whisper y YouTube
+    python3 clipper.py preparar-herramientas    descarga el modelo de whisper (una vez)
+    python3 clipper.py preparar-clip ID     prepara a mano el video de un clip
+    python3 clipper.py autorizar-youtube --cuenta ID   conecta un canal de YouTube
+    (Videos y YouTube: ver GUIA_YOUTUBE.txt)
     python3 clipper.py estado               estado de la ejecucion automatica
     python3 clipper.py desinstalar          detener la ejecucion automatica
     python3 clipper.py chat-id              ver tu chat_id de Telegram
@@ -264,10 +280,10 @@ COMANDOS UTILES
 DONDE SE GUARDAN LOS DATOS (carpeta ~/gta6-clipper/datos/)
 ---------------------------------------------------------------------
 - clips.db                 : base de datos (SQLite) con las fichas de
-  los clips, su historial de visualizaciones y los directos. No se
-  abre con Excel: usa "python3 clipper.py exportar".
-- export_fichas.csv / export_historial.csv : se crean al ejecutar
-  "exportar". Se pueden abrir con Numbers o Excel.
+  los clips, su historial de visualizaciones, los directos y los
+  momentos. No se abre con Excel: usa "python3 clipper.py exportar".
+- export_fichas.csv / export_historial.csv / export_momentos.csv : se
+  crean al ejecutar "exportar". Se pueden abrir con Numbers o Excel.
 - registro_ejecuciones.csv : una fila por ejecucion.
 - estado.json              : memoria interna (token, horas del ultimo
   repaso y de la ultima limpieza). No editar.
@@ -310,16 +326,36 @@ Campos de export_fichas.csv (una fila por clip):
   visualizaciones               Visualizaciones en la ultima consulta
   velocidad_actual_por_hora     Visualizaciones/hora en la ultima subida
   velocidad_maxima_por_hora     La mayor velocidad que ha tenido
-  nota_viralidad_actual / nota_viralidad_maxima   Nota de 1 a 10 (ver
-                                GTA_VI_metricas.txt). Vacia = aun no hay
-                                datos suficientes para calcularla.
+  nota_viralidad_actual / nota_viralidad_maxima   Nota de 1 a 10 de SU
+                                MOMENTO (ver GTA_VI_metricas.txt). Vacia =
+                                aun no hay datos suficientes.
   hito_alcanzado_espana         Cuando llego a "apuntar_cuando_llega_a_visualizaciones"
   avisado                       si / no
   historial_resumido            si = su historial detallado ya se borro
+  creador_id                    Identificador de Twitch de quien hizo el clip
+  juego_id                      Identificador del juego en Twitch
+                                (GTA VI: 1867279146 segun webs de terceros)
+  momento_id                    Momento al que pertenece el clip
 
 Campos de export_historial.csv (una fila cada vez que cambiaron las
 visualizaciones de un clip):
   clip_id, streamer, titulo, hora_espana, visualizaciones
+
+Campos de export_momentos.csv (una fila por momento):
+  momento_id, streamer, inicio_espana (cuando se creo su primer clip)
+  clips                         Cuantos clips tiene el momento
+  clip_representante            El clip mas visto (el que se te avisa)
+  vistas_totales / vistas_mejor_clip
+  creadores_distintos           Personas distintas que lo clipearon (en
+                                sus primeros minutos)
+  vistas_por_minuto_tempranas   Visualizaciones por minuto en sus primeros
+                                "viralidad_minutos_de_vida_tempranos"
+  velocidad_actual_por_hora / velocidad_maxima_por_hora
+  vistas_por_1000_espectadores  Vistas por cada 1.000 espectadores del directo
+  puntuacion_actual / puntuacion_maxima   De 0 a 100
+  nota_actual / nota_maxima     De 1 a 10
+  desglose_percentiles          Percentil de cada senal (0-100)
+  actualizado_espana, avisado
 
 ---------------------------------------------------------------------
 PARAMETROS DE config.json
@@ -355,12 +391,19 @@ Consultas a Twitch
       Llamadas maximas por trozo (freno de seguridad). 10 = 1.000 clips por trozo.
 
 Avisos
+  avisar_si_la_nota_es_al_menos
+      Nota minima del momento para avisar (1-10).
   avisar_si_tiene_al_menos_visualizaciones
-      Visualizaciones minimas para avisar.
+      Visualizaciones minimas del momento (suma de sus clips) para avisar.
   avisar_si_se_creo_hace_menos_de_minutos
-      Edad maxima del clip para avisar.
+      Edad maxima del momento para avisar.
   max_avisos_por_ejecucion
       Avisos maximos por ejecucion (+1 mensaje de resumen).
+  resumen_al_despertar_momentos_de_las_ultimas_horas
+      Al pasar de "silencio" a "alertas", horas hacia atras que cubre el
+      resumen de momentos no avisados (0 = no enviar ese resumen).
+  max_momentos_en_el_resumen_al_despertar
+      Momentos maximos en ese resumen.
   resumen_de_funcionamiento_cada_horas
       Cada cuantas horas te llega el mensaje "Detector funcionando" (llega
       TAMBIEN en modo silencio). 0 = nunca.
@@ -374,9 +417,24 @@ Viralidad (ver GTA_VI_metricas.txt)
   viralidad_minutos_minimos_de_calculo
       Tiempo minimo considerado, para no dividir entre casi cero.
   viralidad_dias_de_clips_para_comparar
-      Dias de clips del mismo streamer con los que se compara para dar la nota.
+      Dias de momentos del mismo streamer con los que se compara.
   viralidad_clips_minimos_para_dar_nota
-      Clips minimos de comparacion; si hay menos, la nota queda vacia.
+      Momentos de comparacion minimos; si hay menos, la nota queda vacia.
+  viralidad_visualizaciones_minimas_para_comparar
+      Solo se compara con momentos cuyo mejor clip tiene al menos estas
+      visualizaciones (evita comparar con clips de 1-2 visualizaciones).
+  viralidad_minutos_de_vida_tempranos
+      Minutos iniciales con los que se mide la velocidad temprana.
+  momento_segundos_de_cercania_en_el_vod
+      Clips del mismo directo a menos de estos segundos = mismo momento.
+  momento_minutos_de_cercania_al_crearse
+      Igual, cuando Twitch aun no da la posicion en el directo.
+  peso_consenso / peso_velocidad_temprana / peso_velocidad_actual /
+  peso_tamano_relativo_al_directo
+      Peso de cada senal en la puntuacion. Deben sumar 100.
+  cortes_de_nota_en_porcentaje
+      9 porcentajes para las notas 10, 9, ..., 2 (el resto es 1).
+      [1, 2, 4, ...] = 10 solo el 1% mejor, 9 el 2% siguiente, etc.
   apuntar_cuando_llega_a_visualizaciones
       Visualizaciones del "hito" cuya hora se apunta en la ficha.
   guardar_historial_desde_visualizaciones
@@ -393,7 +451,8 @@ Limpiezas y espacio
   limpieza_no_virales_tras_dias
       Limpieza 2: dias tras los que se borra el historial de los no virales.
   no_limpiar_clips_con_nota_igual_o_mayor_que
-      Proteccion de las DOS limpiezas: con esta nota o mas, no se limpia.
+      Proteccion de las DOS limpiezas: si la nota maxima de su momento
+      es esta o mas, no se limpia.
   compactar_base_datos_cada_horas
       Cada cuanto se "pasa a limpio" el archivo clips.db para que encoja
       tras las limpiezas (0 = nunca).

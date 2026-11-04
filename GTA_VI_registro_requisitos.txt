@@ -1,0 +1,1627 @@
+=====================================================================
+  REGISTRO DE REQUISITOS, DECISIONES Y VERIFICACIONES
+  Proyecto: clipping de streamers de EE. UU. - lanzamiento de GTA VI
+  Ultima actualizacion: 03-11-2026
+  Mapa del proyecto (estado de cada pieza): GTA_VI_hoja_de_ruta.txt
+=====================================================================
+
+COMO SE USA ESTE FICHERO
+  - Cada capitulo tiene dos apartados:
+      [VERIFICADO] -> comprobado en fuente oficial o fiable (con fuente).
+      [PENDIENTE]  -> NO dar por cierto hasta verificarlo.
+  - Las plataformas cambian sus normas: revisar antes de cada fase.
+  - Fecha de comprobacion de todo lo verificado: 28-10-2026, salvo
+    que se indique otra.
+
+INDICE
+  1. Decisiones del proyecto
+  2. Contexto: GTA VI
+  3. Plataformas de redes sociales
+       3.1 YouTube (Shorts)
+       3.2 Instagram (Reels)
+       3.3 TikTok
+       3.4 Facebook
+       3.5 X (Twitter)
+       3.6 Comun a todas: mismo clip en varias cuentas
+  4. Campanas de clipping
+       4.1 Funcionamiento general y modelos de pago
+       4.2 Verificacion del publico
+       4.3 Content Rewards (Whop)
+       4.4 Vyro
+       4.5 Reach - campana Kai Cenat (ejemplo real)
+  5. Normas de terceros sobre el contenido (Rockstar / Take-Two)
+  6. Herramientas
+       6.1 API de Twitch
+       6.2 OpusClip
+       6.3 StreamLadder
+       6.4 Eklipse
+       6.5 Metricool
+       6.6 Claude (plan gratuito)
+       6.7 Telegram (avisos del script)
+       6.8 Ejecucion periodica del script
+       6.9 YouTube Data API
+       6.10 Resumen de limites de uso (cuotas)
+  7. Legal y fiscal
+  8. Prueba de publico (B1)
+  9. Detector de clips: estado de la implementacion
+
+
+=====================================================================
+1. DECISIONES DEL PROYECTO
+=====================================================================
+1.1  El usuario reside en Espana.
+1.2  Contenido: clips de streamers estadounidenses, para publico de
+     EE. UU.
+1.3  Sin gameplay propio. Sin contactar con streamers reales.
+1.4  Ingresos del primer mes: campanas de clipping de pago por
+     visualizaciones.
+1.5  Prioridad de plataformas (provisional, pendiente de la prueba):
+     1) YouTube Shorts  2) Instagram Reels  3) TikTok.
+1.6  DESCARTADO: cualquier truco de ubicacion (VPN, SIM de EE. UU.,
+     moviles en EE. UU.).
+1.7  DESCARTADO: socio en EE. UU. No hay nadie de confianza.
+1.8  Arquitectura de cuentas (confirmada de nuevo en 1.56):
+     - 1 cuenta por streamer (YouTube + Instagram + TikTok), creada una
+       sola vez y reutilizada en todas las campanas de ese streamer.
+     - 1 cuenta generica GTA, orientada a la viralidad.
+     - Se puede subir el mismo clip editado a la cuenta del streamer y
+       a la cuenta GTA.
+     - A la campana SOLO se envia la copia de la cuenta del streamer.
+1.9  Las cuentas se crean ANTES de necesitarlas para campanas, para que
+     lleguen con historial (ver 4.2).
+1.10 Antes de la prueba se construye un MVP del proceso de clipping:
+     deteccion, obtencion, edicion, texto, filtro, publicacion y
+     registro.
+1.11 Plan de OpusClip actual del usuario: Starter.
+1.12 Metricas del script de deteccion (aprobado 29-10-2026):
+     - MVP: velocidad y aceleracion, densidad de clips, agrupar
+       duplicados, antiguedad, visualizaciones relativas al tamano del
+       directo, encaje con campana (lista manual), puntuacion
+       combinada y aviso.
+     - V2: pico de chat, clasificacion del tipo de momento,
+       saturacion en YouTube.
+     - V3: puntuacion personalizada, eventos entre streamers.
+1.13 Disponibilidad del usuario: trabajo aparte durante el dia; ratos
+     libres. El script debe funcionar de noche (hora de Espana), que
+     es cuando emiten los streamers de EE. UU.
+1.14 Entornos:
+     - Mac de empresa: SOLO para hablar con Devin y escribir/probar el
+       codigo con datos de prueba. Nunca credenciales personales ni
+       ejecucion real del negocio.
+     - Portatil personal: donde se ejecuta todo (script, cuentas,
+       credenciales).
+1.15 Avisos e informes del script: por Telegram (bot propio).
+1.16 El script tendra un fichero de configuracion con los horarios del
+     usuario y el modo de aviso de cada franja (silencio, informe,
+     alertas en tiempo real).
+1.17 Primer hito del MVP: prueba tecnica (llamadas a Twitch, respuestas,
+     ejecucion periodica, avisos al movil) antes de cualquier metrica.
+1.18 Portatil personal: MacBook Air M5 (macOS). Ejecucion periodica con
+     launchd.
+1.19 Franjas horarias y modos de aviso: centralizados en UN fichero de
+     configuracion, editable sin tocar el codigo. Para la prueba
+     tecnica: avisos siempre activos, para comprobar que llegan.
+1.20 El usuario pasa los ficheros al portatil por su cuenta (son
+     textos). Las credenciales NO viajan en esos ficheros: se crean
+     directamente en el portatil personal.
+1.21 Decision tecnica: el script usara solo la biblioteca estandar de
+     Python (sin paquetes externos), para minimizar instalacion y
+     fallos.
+1.22 Las metricas del script y el criterio de ordenacion de los clips
+     se documentaran en un fichero aparte (GTA_VI_metricas.txt) en
+     cuanto esten IMPLEMENTADAS, no antes.
+1.23 Procedimiento de actualizacion del portatil personal (30-10-2026):
+     - Devin indica al FINAL de cada mensaje con cambios: los ficheros
+       a sustituir y la version que debe mostrar
+       "python3 clipper.py --version".
+     - El usuario sustituye SOLO esos ficheros, nunca la carpeta
+       entera (si no, se pierden credenciales.json y datos/).
+     - Tras copiar: "cd ~/gta6-clipper" (o abrir una terminal nueva) y
+       comprobar la version. Motivo: una terminal abierta sigue dentro
+       de la carpeta antigua si esta se reemplazo (va a la Papelera).
+1.24 La prueba T6 (una noche entera) se aplaza hasta que el detector
+     este mas completo (30-10-2026).
+1.26 Nueva forma de consultar clips a Twitch (acordado 30-10-2026,
+     pendiente de implementar):
+     - Cada ejecucion (cada minuto): clips de las 2 ultimas horas, por
+       tramos de 1 hora, con todas las paginas necesarias (prioridad a
+       lo reciente) + comprobar si el streamer esta en directo.
+     - Cada 15 minutos: las 24 horas completas, por tramos de 1 hora,
+       para actualizar las visualizaciones de los clips mas antiguos.
+     - Motivo: con una sola consulta de 24 h solo se ven los 300 mas
+       vistos (tope propio de 3 paginas de 100) y los demas aparecen
+       mas tarde como falsos "nuevos".
+     - Se descarta el "seguimiento por identificador" (el repaso de
+       24 h ya actualiza las visualizaciones).
+     - Coste estimado: ~5 llamadas por minuto de media (limite: 800).
+1.27 Regla de avisos (acordado 30-10-2026, pendiente de implementar):
+     - Objetivo final: avisar SOLO de clips con potencial, segun la
+       puntuacion de las metricas (cuando esten definidas).
+     - Provisional: avisar una sola vez de un clip cuando supera N
+       visualizaciones durante su primera hora de vida.
+     - N se elegira con datos reales: 1-2 dias en modo "silencio"
+       recogiendo clips de Kai antes de fijarlo.
+1.28 Todos los intervalos de consulta seran configurables en
+     config.json (cada cuanto se repasan las horas recientes, cuantas
+     horas cuentan como recientes, cada cuanto se hace el repaso
+     completo y de cuantas horas). (30-10-2026)
+1.29 Indice de viralidad del 1 al 10 (idea del usuario, 30-10-2026):
+     se recalcula cada vez que suben las visualizaciones de un clip, a
+     partir de su crecimiento por hora. Sera el criterio principal para
+     elegir que clips subir. Calibracion de la escala: pendiente, con
+     los datos reales de los dias en silencio.
+1.30 Guardado de datos (30-10-2026, pendiente de implementar):
+     - Ficha por clip (una vez) + historial de visualizaciones (solo
+       cuando cambian), en datos/clips.db (SQLite); comando "exportar"
+       a CSV con hora de Espana.
+     - Limpieza automatica: el historial detallado se borra pasados X
+       dias SOLO si el clip no es viral; los clips con viralidad alta se
+       conservan aunque sean antiguos. Siempre queda un resumen en la
+       ficha.
+1.31 Dos limpiezas automaticas, todo configurable (30-10-2026):
+     - Limpieza rapida: clips que, pasadas H horas (propuesta: 48), no
+       han llegado a un minimo de visualizaciones -> se borran del todo
+       (ficha e historial). H debe ser mayor que las horas del repaso
+       completo (24), para que no se redescubran como "nuevos".
+     - Limpieza de no virales: pasados D dias (propuesta: 3), se borra
+       el historial detallado de los clips con viralidad baja; queda el
+       resumen en la ficha.
+     - Los clips con viralidad alta no se limpian.
+     - El minimo de visualizaciones y el umbral de "viral" se fijaran
+       con los datos de los dias en silencio.
+     - Durante los dias en silencio se apuntan TODOS los clips.
+1.32 Ajustes de configuracion (30-10-2026, pendiente de implementar):
+     - Compactar la base de datos cada 1 hora.
+     - La proteccion por nota alta se aplica a las DOS limpiezas.
+     - Trozos de consulta de 60 minutos (como estaba).
+     - Se mantiene el formato JSON para config.json.
+     - Renombrar los parametros poco legibles: se elige la 1.a
+       propuesta (la que el usuario ya tiene en su portatil).
+       IMPLEMENTADO en la version 2026-10-30.3 (23 pruebas OK).
+1.33 Algoritmo de potencial de viralidad (aprobado 01-11-2026,
+     PENDIENTE de implementar): diseno completo en
+     GTA_VI_diseno_algoritmo_viralidad.txt. Se implementara cuando el
+     usuario tenga su portatil y haya 2-3 dias de datos exportados a
+     GitHub.
+1.34 El usuario NO usara ni su voz ni su cara en el contenido
+     (03-11-2026). La personalizacion sera solo visual y de texto.
+1.35 Prioridad numero 1 (03-11-2026): terminar la HOJA DE RUTA completa
+     antes de crear cuentas o publicar.
+1.36 Objetivo de diseno: automatizar el proceso al maximo; nada de
+     flujos manuales tediosos.
+1.37 Presupuesto maximo para herramientas: 25 EUR/mes en total, pago
+     mensual sin permanencia (nada anual). OpusClip Pro + Upload-Post
+     descartado por precio (03-11-2026).
+1.38 Edicion de cada clip (03-11-2026): nivel 2 (vertical, subtitulos,
+     sin logos ajenos) + un texto inicial muy breve basado en el titulo
+     del clip + un "tema" (colores y estilo de texto) solo si es
+     sencillo. Nada mas por ahora.
+1.39 Publicacion en el orden de prioridad: YouTube Shorts -> Instagram
+     -> TikTok (decision 1.5).
+1.40 REGLA DE TRABAJO (03-11-2026): toda comprobacion de normas,
+     condiciones o requisitos se hace ANTES de proponer una solucion,
+     no se deja como "pendiente" para despues. Solo queda pendiente lo
+     que no se puede verificar sin preguntar a un tercero o sin
+     probarlo, y se indica asi.
+1.41 Se ACEPTA el riesgo de descargar clips de otros canales con yt-dlp
+     aunque las condiciones de Twitch no lo permitan expresamente
+     (03-11-2026).
+1.42 Se ACEPTA el riesgo de guardar datos de Twitch mas de 24 h en el
+     detector, aunque el acuerdo de desarrolladores lo limite; no se
+     redisena el almacenamiento (03-11-2026).
+1.43 OPCION GRATUITA elegida (03-11-2026): edicion en el Mac (yt-dlp +
+     ffmpeg + whisper.cpp); YouTube se publica AUTOMATICAMENTE con su
+     API oficial; Instagram y TikTok, A MANO desde el movil con el
+     video y el texto que el script envia por Telegram. Upload-Post
+     descartado (no se paga).
+1.44 Ajuste por cuenta "publicacion automatica: si/no". En cuentas que
+     participen en campanas con el contrato antiguo de Content Rewards,
+     YouTube tambien ira a mano salvo confirmacion escrita de que se
+     permite.
+1.45 Aprobada la instalacion de yt-dlp, ffmpeg y whisper.cpp
+     (03-11-2026), con condiciones de seguridad: solo desde Homebrew
+     (formulas oficiales de homebrew/core), modelo de whisper solo desde
+     el repositorio oficial y comprobando su huella (SHA). El script
+     sigue usando solo la biblioteca estandar de Python; llama a estos
+     programas desde fuera.
+1.46 Movil del usuario: iPhone XR (iOS 18 como maximo).
+1.47 YouTube con APROBACION (03-11-2026): el script sube el Short en
+     PRIVADO y envia el video por Telegram con botones "Publicar" /
+     "Descartar"; al pulsar "Publicar" pasa a publico. Ajuste
+     configurable para pasar mas adelante a publicacion directa.
+1.48 La posicion y el tamano de la camara del streamer cambian de un
+     clip a otro (observacion del usuario, 03-11-2026): NO sirve una
+     posicion fija por streamer.
+1.49 Edicion vertical (03-11-2026): el MVP usa el DISENO 1 (clip entero
+     centrado + el mismo video desenfocado de fondo) en todos los
+     clips. El diseno 2 (deteccion automatica de la camara) se intentara
+     DESPUES del MVP, primero en modo prueba sin publicar.
+1.50 Idea aprobada para la fase del diseno 2 (03-11-2026): cada clip
+     llega por Telegram en diseno 2 con botones. Una sola decision por
+     clip para todas las redes:
+       - "Valido": se usa el diseno 2 (en YouTube, se publica).
+       - "Diseno 1": el script envia el mismo clip en diseno 1 (en
+         YouTube, publica esa version).
+       - "Descartar": no se publica en ningun sitio.
+     El diseno 1 se prepara a la vez que el 2 para enviarlo al
+     instante.
+1.51 Paso 4 (textos) APROBADO (04-11-2026):
+     - Texto inicial: titulo del clip si pasa el filtro (>= 3 palabras,
+       <= 60 caracteres, no es el titulo del directo con emojis, en
+       ingles; se limpian emojis) -> si no, frase corta de los
+       subtitulos -> si no, solo el nombre del streamer.
+     - YouTube: titulo "Streamer: titulo" (<= 100 caracteres, sin todo
+       en mayusculas), 3 hashtags. Instagram: maximo 5 hashtags.
+       TikTok: 3-5. Sin hashtags genericos (#fyp, #viral).
+     - Texto: [#Ad si es cuenta de campana] + frase + "Credit:
+       twitch.tv/streamer" + hashtags (incluido el obligatorio de la
+       campana).
+     - Hashtag del juego solo si Twitch indica ese juego (el detector
+       debe guardar game_id).
+     - Cuentas de campana: "#Ad" al principio del texto, rotulo "#Ad"
+       en el video, casilla de promocion pagada en YouTube (API) e
+       interruptor de contenido comercial en TikTok (a mano). Dos
+       versiones del clip si va tambien a la cuenta GTA.
+     - Telegram: video + texto de cada red listo para copiar +
+       recordatorio del interruptor de TikTok.
+     - IA generativa: fuera del MVP.
+1.52 Paso 5 (filtro) APROBADO en version simplificada (04-11-2026):
+     bloqueos automaticos (GTA VI antes del 19-11, fuera de campana,
+     momento ya publicado en la cuenta, cuenta GTA solo con clips de
+     GTA), avisos automaticos (posible musica, idioma, palabrotas
+     censuradas) y UNA linea de recordatorio al final del mensaje:
+     "Antes de publicar: sin spoilers, sin musica de fondo, sin dejar
+     mal al streamer, sin contenido sexual o violento."
+1.53 Paso 8 (medicion) APROBADO (04-11-2026):
+     - Automatico: registro de cada clip (nota, texto inicial, cuenta,
+       decision en Telegram, enlace de YouTube) y datos de YouTube
+       (visualizaciones a 1 h, 24 h y 7 dias; % por pais del canal,
+       semanal).
+     - Manual, cada domingo: el bot manda un mensaje con las
+       instrucciones y una plantilla; el usuario responde con 3 datos
+       por cuenta de Instagram y TikTok: visualizaciones de la semana,
+       % de publico de EE. UU. y si hay algo "no recomendable".
+     - Sin pegar enlaces de Instagram/TikTok en el bot (descartado
+       para simplificar).
+1.54 Bloque B3 (cuentas) APROBADO; el usuario las crea por su cuenta
+     (04-11-2026): 2 juegos de cuentas (Kai Cenat + GTA) en YouTube,
+     Instagram y TikTok = 6 cuentas. Nombres con "Fan" en el nombre de
+     la cuenta (p. ej. "Kai Cenat Fan Clips", @kaicenatfanclips), bio
+     "Fan account. Not affiliated with Kai Cenat. Clips from
+     twitch.tv/kaicenat", logo propio. Un Gmail nuevo para YouTube (2
+     canales) e Instagram; TikTok necesita un correo distinto por
+     cuenta. Instagram como Creador; verificacion en dos pasos.
+     [CORREGIDO por 1.56: se mantiene la decision 1.8]
+1.56 Un mismo clip SI puede subirse a la cuenta del streamer y a la
+     cuenta GTA (04-11-2026, se mantiene 1.8). Riesgos aceptados:
+     Instagram puede recomendar solo una copia; una reclamacion afecta
+     a las dos cuentas. A la campana SOLO se envia la copia de la
+     cuenta del streamer (con "#Ad"); la copia de la cuenta GTA va sin
+     aviso de publicidad.
+1.57 TikTok APARCADO por ahora (04-11-2026): un correo por cuenta y el
+     nombre de usuario no se puede cambiar en 7 dias tras crearla. Se
+     trabaja solo con YouTube e Instagram; TikTok se retomara mas
+     adelante (era la prioridad 3).
+1.58 Avisos y sueno (04-11-2026): mientras el usuario duerme la franja
+     va en "silencio"; al pasar a "alertas" llega un "resumen al
+     despertar" con los mejores momentos no avisados de las ultimas
+     12 h (maximo 5). Franjas por defecto: alertas 09:00-01:00,
+     silencio 01:00-09:00 (el usuario las ajusta a sus horas).
+1.59 Confirmado por el usuario: el Mac se durmio varias veces durante la
+     recogida de datos (explica los huecos sin observaciones).
+1.55 Flujo de publicacion SIN CAMBIOS (04-11-2026): cada clip que supera
+     la nota minima llega por Telegram con el video, los textos y el
+     boton de YouTube; al pulsar "Publicar" se publica en YouTube en
+     ese momento, y el usuario lo sube a Instagram y TikTok cuando lo
+     ve. Sin limite diario ni horas de publicacion programadas por
+     defecto (quedan como parametros opcionales en config.json,
+     desactivados).
+1.25 Repositorio publico del usuario en GitHub (proyecto ClipRed,
+     30-10-2026): Devin NUNCA sube nada ni lo clona/descarga desde el
+     Mac de empresa. Solo puede LEER el codigo por la web si hace falta.
+     Al ser publico, nunca debe contener credenciales.json ni datos/.
+
+
+=====================================================================
+2. CONTEXTO: GTA VI
+=====================================================================
+[VERIFICADO]
+- Lanzamiento: 19-11-2026, solo PS5 y Xbox Series X|S.
+  Precarga: 12-11-2026. (Rockstar Newswire, PlayStation, Xbox)
+- De salida es "single-player experience". (Take-Two, PlayStation Store)
+- No hay version de PC anunciada.
+
+[PENDIENTE]
+- Fecha del multijugador: solo hay una declaracion del CEO de Twitch
+  ("el ano que viene", segun Polygon). No es un anuncio de Rockstar.
+- Hora exacta de desbloqueo por pais: Rockstar no la ha publicado.
+
+
+=====================================================================
+3. PLATAFORMAS DE REDES SOCIALES
+=====================================================================
+
+---------------------------------------------------------------------
+3.1 YOUTUBE (SHORTS)
+---------------------------------------------------------------------
+[VERIFICADO]
+Monetizacion (YouTube Help, oficial):
+- YPP con anuncios:
+    * Hoy: 1.000 suscriptores + 10 M de visualizaciones de Shorts en
+      90 dias (o 4.000 h de visualizacion en 12 meses).
+    * Desde el 01-02-2027: 1.000 suscriptores + 20 M de
+      visualizaciones de Shorts en 90 dias (o 8.000 h en 365 dias).
+    * Te pagan el 45% de los ingresos de anuncios en Shorts. La
+      revision tarda unas 4 semanas.
+    * Requisitos: vivir en un pais con YPP, sin strikes, 2FA activado,
+      cuenta de AdSense.
+- YPP de nivel bajo (solo propinas, membresias y Shopping; sin
+  anuncios): 500 suscriptores + 3 videos en 90 dias + 3 M de
+  visualizaciones de Shorts en 90 dias.
+- Pueden quitarte la monetizacion si el canal pasa 6 meses sin
+  publicar.
+Alcance y ubicacion (YouTube Help):
+- Los Shorts se recomiendan segun el comportamiento del espectador
+  (canales y temas que ve, audios). La documentacion no menciona el
+  pais de quien sube el video.
+- El pais del canal tiene que ser el real (Espana).
+Estadisticas (YouTube Help, "Understand limited data"):
+- Los datos de paises se limitan si no hay trafico suficiente. El
+  umbral no se publica.
+- Recomiendan ampliar el periodo a mas de 30 dias.
+- Nunca hay datos de paises en videos privados u ocultos, ni en
+  tiempo real.
+- Con menos de 10 espectadores en un video no se muestra el pais.
+  (Google Looker Studio)
+Normas de contenido:
+- Contenido reutilizado: se evalua el canal entero; si gran parte no
+  aporta valor propio, se puede perder la monetizacion de todo el
+  canal.
+- Politica de spam: prohibe el contenido extraido ("scraped") sin
+  edicion transformadora, la produccion masiva automatizada, eludir la
+  deteccion (espejo, filtros, recortes) y las redes coordinadas de
+  canales.
+- "Slight variations on the same video won't cut it".
+- Sanciones: suspension de la monetizacion, strikes; 3 strikes en 90
+  dias = cierre del canal.
+
+Contenido reutilizado - ejemplos oficiales (YouTube Help, "YouTube
+channel monetization policies", verificado 03-11-2026):
+- SI monetiza: clips para una critica; videos de reaccion comentando el
+  original; metraje de otros creadores con una historia y comentario
+  anadidos; contenido donde el creador que sube aparece; contenido
+  reutilizado donde el creador es visible o explica lo que ha aportado.
+- NO monetiza: clips de momentos editados con poca o ninguna
+  narrativa; videos cortos recopilados de otras redes; contenido
+  subido muchas veces por otros creadores; promocion del contenido de
+  otros (AUNQUE tengas permiso); reacciones mayormente no verbales sin
+  voz anadida.
+- La politica aplica AUNQUE tengas permiso del creador original: no va
+  de copyright, va de aportacion propia.
+- Afecta a la MONETIZACION (YPP), no necesariamente al alcance.
+
+[PENDIENTE]
+- Si YouTube lleva a publico de EE. UU. un Short en ingles subido
+  desde Espana. Se comprobara en la prueba (capitulo 8).
+
+---------------------------------------------------------------------
+3.2 INSTAGRAM (REELS)
+---------------------------------------------------------------------
+[VERIFICADO]
+Monetizacion:
+- NO paga por visualizaciones en Espana. Los bonos son por invitacion
+  y en otros paises. (Instagram Help, segun terceros)
+- Regalos: cuenta profesional y minimo de seguidores (las fuentes no
+  coinciden: 500 o 5.000). Suscripciones: 10.000 seguidores.
+Alcance y ubicacion:
+- El lugar de publicacion es "una de las consideraciones" de las
+  recomendaciones. (Instagram Help, segun algos.wiki)
+- Mosseri: llegar a otros paises es posible pero depende de las
+  senales iniciales. Recomienda activar las traducciones.
+  (Q&A de julio de 2026, segun Kontentino)
+Estadisticas (Instagram Help Center, oficial):
+- Paises de los ESPECTADORES: mas de 100 cuentas alcanzadas (personas
+  distintas que han visto el contenido) en un periodo fijo (7, 30 o
+  90 dias).
+- Paises de las cuentas que INTERACTUAN: mas de 100 cuentas.
+- Paises de los SEGUIDORES: al menos 100 seguidores.
+- Son metricas "estimadas y en desarrollo".
+- Los datos llegan con 24-72 h de retraso (documentacion de su API,
+  terceros).
+Normas de contenido:
+- Saca de las recomendaciones a quien publica contenido ajeno sin
+  editarlo de forma material mas de 10 veces en 30 dias.
+- Si hay varias copias de un video, recomienda el original.
+- El remix o la edicion significativa cuenta como contenido original.
+  (BBC, Nieman Lab, NBC)
+
+Publicacion automatica por API (documentacion de Meta via Postman y
+guias de terceros; verificado 03-11-2026):
+- Solo cuentas profesionales (empresa o creador).
+- Para publicar en TUS PROPIAS cuentas basta una app de Meta en modo
+  desarrollo con tu cuenta como "Instagram Tester" (sin revision de
+  Meta). La revision solo hace falta para cuentas de otras personas.
+- Permisos: instagram_business_basic e instagram_business_content_publish.
+- El video debe estar en un servidor PUBLICO en el momento de publicar
+  (Meta lo descarga desde una URL).
+- Limite: 100 publicaciones por API en 24 h por cuenta.
+- Reels: MP4/MOV, H.264, 23-60 fps, 3 s a 15 min, maximo 300 MB.
+- CONCLUSION: viable desde el script propio, pero necesita alojar el
+  video en una URL publica temporal.
+Cuenta profesional (guias de terceros que resumen las senales
+oficiales de Mosseri 2021/2023; verificado 03-11-2026):
+- Es la misma cuenta, con un ajuste gratuito (Creador o Empresa); se
+  puede volver atras sin perder seguidores.
+- El tipo de cuenta NO es una senal de ranking: no reduce el alcance.
+- Las cuentas de EMPRESA tienen acceso limitado a la musica en
+  tendencia; las de CREADOR tienen la biblioteca completa.
+  -> Usar cuenta de CREADOR.
+
+[PENDIENTE]
+- Si los paises se pueden ver por reel o solo por cuenta.
+- Donde alojar temporalmente el video para publicarlo en Instagram.
+- Limite de cuentas por dispositivo.
+
+---------------------------------------------------------------------
+3.3 TIKTOK
+---------------------------------------------------------------------
+[VERIFICADO]
+Monetizacion:
+- Creator Rewards: NO disponible en Espana. Solo en EE. UU., Reino
+  Unido, Alemania, Japon, Corea del Sur, Francia, Mexico y Brasil.
+  Hay que vivir en el pais y tener la cuenta registrada alli.
+  Prohibe VPN. (TikTok Creator Academy, 10-09-2026)
+- Requisitos del programa (para referencia): 18 anos, 10.000
+  seguidores, 100.000 visualizaciones en 30 dias, videos de mas de
+  1 minuto.
+Alcance y ubicacion:
+- El pais de la cuenta se fija al crearla, segun la SIM o la IP.
+- El pais de publicacion es una senal de recomendacion, aunque
+  "debil" frente a ver el video entero. (TikTok Newsroom)
+- Para cambiar de region hay que vivir en el nuevo pais.
+- TikTok EE. UU. es una empresa conjunta desde enero de 2026 y
+  reentrena su algoritmo con datos de EE. UU. Dice mantener la
+  conexion con el resto del mundo. (Newsroom, Reuters, The Verge)
+Cuentas y normas:
+- Se permiten varias cuentas, pero no para engañar ni para manipular
+  las recomendaciones.
+- Prohibe automatizaciones o trucos para eludir sus sistemas.
+- Puede banear tambien las otras cuentas del mismo usuario.
+  (Normas de la comunidad, "Integrity & Authenticity")
+- No se permite el contenido no original ni el que infringe derechos.
+- Normas de la comunidad vigentes desde el 24-09-2026: el contenido
+  "unoriginal or reused material without anything new" NO se recomienda
+  en "Para ti". Ejemplos: contenido reutilizado sin ediciones
+  creativas, clips con la marca de agua o el logo de otro, contenido de
+  baja calidad o minimamente editado. Consecuencia: deja de
+  recomendarse (no se borra ni hay strike). Segun guias de terceros
+  (ContentIQ), un texto o hashtags nuevos NO cuentan como edicion
+  creativa. (Normas de la comunidad de TikTok; Creator Academy,
+  26-09-2026, segun Clyper/NoobClaw)
+- Avisa cuando un video no se recomienda en "Para ti" y permite
+  recurrir.
+Estadisticas:
+- Estan en TikTok Studio; hay que activarlas.
+- El Help Center avisa: "not available to everyone".
+- La pestana de espectadores incluye paises. (Shopify, terceros)
+
+Publicacion automatica por API (TikTok for Developers: Content Sharing
+Guidelines, App Review Guidelines, Direct Post y Upload; verificado
+03-11-2026):
+- Direct Post sin auditar: todo se publica en privado (SELF_ONLY), solo
+  en cuentas privadas, maximo 5 usuarios en 24 h.
+- Para publicar en publico hace falta pasar una auditoria. Las normas
+  dicen EXPRESAMENTE que no se acepta:
+    * "A utility tool to help upload contents to the account(s) you or
+      your team manages";
+    * "An app that copies arbitrary contents from other platforms to
+      TikTok";
+    * apps de uso privado o personal (App Review Guidelines).
+  Casos reales de rechazo por "uso personal o interno" (n8n, Postiz,
+  DEV Community, octubre de 2026).
+- Limite incluso auditado: unas 15 publicaciones al dia por cuenta via
+  Direct Post.
+- Modo "Upload" (borrador en la bandeja de TikTok): el usuario termina
+  la publicacion en la app; requiere aprobar el permiso video.upload.
+- CONCLUSION: publicar en TikTok en publico desde un script propio NO es
+  viable. Alternativas: herramientas ya aprobadas (StreamLadder,
+  programadores con API) o publicar a mano.
+
+[PENDIENTE]
+- Minimo de espectadores para ver paises en la pestana de
+  espectadores.
+- Condiciones de uso de Upload-Post (contenido de terceros, cuentas
+  propias) antes de contratar.
+
+Uso de la API de publicacion de Upload-Post (docs oficiales;
+verificado 03-11-2026):
+- Una sola llamada (POST /api/upload) con el ARCHIVO del video (no hace
+  falta alojarlo en una URL publica) y platform[]=youtube, instagram,
+  tiktok.
+- YouTube: usa su propia cuota; no hace falta proyecto de Google.
+- TikTok: post_mode DIRECT_POST (publica) o MEDIA_UPLOAD (borrador);
+  privacy_level; desactivar duo/stitch; declarar contenido IA.
+- Permite programar (scheduled_date).
+- Empresa: TONVI TECH SL (Malaga, Espana); condiciones bajo ley
+  espanola. Basic ~19 EUR/mes segun un directorio (tools-ofm,
+  14-09-2026).
+- Condiciones (upload-post.com/terms-of-use, 02-10-2026): pago
+  mensual o anual por adelantado; renovacion automatica; se puede
+  CANCELAR EN CUALQUIER MOMENTO desde la cuenta; sin reembolso de
+  meses parciales.
+- El IVA no aparece en su web. Si se suma el 21%: 24 $ x 1,21 = 29 $,
+  unos 25 EUR (segun el cambio del dia): justo en el limite.
+[PENDIENTE] (solo comprobable en la pantalla de pago, sin pagar)
+- El importe final con impuestos.
+
+Que edita Upload-Post (docs.upload-post.com; verificado 03-11-2026):
+- "FFmpeg Editor API": ejecuta en su nube un comando FFmpeg que
+  escribimos NOSOTROS (recortar, pasar a vertical, superponer texto o
+  imagen, marca propia). NO genera subtitulos, NO detecta la cara ni
+  reencuadra de forma inteligente. Cuenta minutos (Basic: 300 min/mes).
+- "AI Shorts": analiza el video con IA (Gemini) y devuelve titulo,
+  descripcion y hashtags por plataforma. NO edita el video.
+- Su propia web: "Upload-Post does not generate video... The clip is
+  made by a separate tool".
+- CONCLUSION: Upload-Post sirve para PUBLICAR y para textos; la edicion
+  "organica" no la resuelve por si solo.
+
+Servicios de publicacion con API ya auditados por TikTok (webs
+oficiales; verificado 03-11-2026). Publican en PUBLICO desde el primer
+dia a traves de su propia app auditada:
+- Upload-Post: Free 0 $ (10 subidas/mes, SIN TikTok); Basic 24 $/mes
+  (16 $/mes anual): 5 perfiles (cada perfil = 1 cuenta por red),
+  subidas ilimitadas, TikTok incluido, API de edicion FFmpeg
+  300 min/mes, generador IA de titulos/descripciones 100/mes. Limite
+  propio: ~15 publicaciones/dia por cuenta de TikTok.
+- Blotato: Starter 29 $/mes, 20 cuentas (3 de TikTok), 25 TikTok/dia
+  por cuenta; API en todos los planes de pago.
+- Ayrshare: Premium 149 $/mes (1 perfil, 14 redes).
+- QPost: gratis en beta (TikTok, Instagram, YouTube) [segun web de
+  QPost; beta, sin garantias].
+- TikTok exige en cada publicacion la eleccion de privacidad y los
+  indicadores de contenido comercial; estos servicios los exponen como
+  campos de la API.
+- Como trata el algoritmo de TikTok EE. UU. a los creadores de fuera.
+- Limite de cuentas por dispositivo.
+
+---------------------------------------------------------------------
+3.4 FACEBOOK
+---------------------------------------------------------------------
+[VERIFICADO]
+- Content Monetization: Espana esta en la lista de paises. Solo por
+  invitacion; reels de al menos 10 segundos. (Lista de Meta, segun
+  terceros)
+
+---------------------------------------------------------------------
+3.5 X (TWITTER)
+---------------------------------------------------------------------
+[VERIFICADO]
+- Original Content Rewards excluye el contenido descargado de otra
+  plataforma y resubido, y el contenido publicado de forma
+  automatizada. NO sirve para clipping.
+  Requisitos: Premium, 500 seguidores verificados y 500.000
+  impresiones en 90 dias. (Help Center de X, segun The Verge y Mint)
+
+---------------------------------------------------------------------
+3.7 COMUN A TODAS: CUENTAS DE FANS Y VARIAS CUENTAS (verificado 04-11-2026)
+---------------------------------------------------------------------
+[VERIFICADO]
+- Cuentas de fans permitidas si se declaran:
+    * YouTube (Help 2801947): el canal de fans debe decirlo
+      EXPLICITAMENTE en el nombre o el identificador. Prohibido anadir
+      "Real", "Official", "Backup", "Shorts" o "Live" al nombre del
+      creador, usar trucos tipograficos o copiar su foto, banner o
+      colores.
+    * TikTok (Normas de la comunidad): cuentas de fans permitidas si lo
+      indican claramente en el NOMBRE de la cuenta (no basta el
+      @usuario).
+    * Instagram/Meta (Authentic Identity Representation): cuentas de
+      fans permitidas si su caracter no oficial queda claro, como
+      minimo en el nombre de la cuenta.
+- Varias cuentas:
+    * YouTube: hasta 100 canales desde una cuenta de Google (canales
+      de "cuenta de marca"; no hace falta otro correo).
+    * Instagram: hasta 10 cuentas abiertas a la vez en la app; un correo
+      puede ir asociado a hasta 5 cuentas (Ayuda de Instagram, segun
+      terceros).
+    * TikTok: se permiten varias cuentas "for fan content", pero cada
+      correo y cada telefono solo puede ir en UNA cuenta (Ayuda de
+      TikTok).
+    * TikTok y Content Rewards pueden actuar sobre todas las cuentas
+      relacionadas a la vez.
+- Programar publicaciones:
+    * Instagram: en la app, hasta 75 dias antes y 25 al dia (cuentas
+      publicas).
+    * TikTok: solo desde la web en ordenador (tiktok.com), de 15 min a
+      10 dias antes; no desde la app del movil (TikTok Business blog y
+      guias de terceros).
+    * YouTube: por API con status.publishAt (ver 6.9).
+
+---------------------------------------------------------------------
+3.6 COMUN A TODAS: MISMO CLIP EN VARIAS CUENTAS
+---------------------------------------------------------------------
+[VERIFICADO]
+- Ninguna de las tres plataformas prohibe en sus normas oficiales
+  subir el mismo clip a dos cuentas propias.
+- Efectos reales:
+    a) Riesgo encadenado: una reclamacion de copyright afecta a las dos
+       cuentas a la vez, y TikTok puede banear las cuentas vinculadas.
+    b) Instagram puede recomendar solo una de las copias.
+    c) Enviar las dos copias a una campana = manipulacion de
+       visualizaciones (Reach lo castiga con la expulsion).
+
+
+=====================================================================
+4. CAMPANAS DE CLIPPING
+=====================================================================
+
+---------------------------------------------------------------------
+4.1 FUNCIONAMIENTO GENERAL Y MODELOS DE PAGO
+---------------------------------------------------------------------
+[VERIFICADO]
+- El streamer o la marca paga por cada 1.000 visualizaciones de los
+  clips publicados en TUS cuentas, tras aprobar cada clip.
+- Precio fijo por cada 1.000 visualizaciones: previsible, pero el
+  presupuesto se agota (ejemplo: Modern Warfare 4 DMZ gasto 19.400 $
+  de 20.000 $ en 2 dias).
+- Bote repartido: el pago se divide segun la cuota de visualizaciones
+  de cada clipper; la tarifa efectiva es desconocida y se cobra al
+  final.
+- Ya ha habido campanas de GTA 6 (ClipScales, "GTA 6 x AI Clipping"):
+  hoy esta PAUSADA, solo YouTube y solo paises Tier 1.
+
+Como se "envia" un clip a una campana (Vyro Help, Content Rewards
+FAQ, reachclipping.com, Whop Docs):
+  1. Conectar antes tus redes sociales a la plataforma de la campana
+     (Whop: Settings > Connected Accounts; Vyro: hay que vincular la
+     cuenta antes de enviar).
+  2. Publicar el clip en TU cuenta (TikTok, Instagram o YouTube).
+  3. ENVIAR: pegar el enlace de esa publicacion en la campana. Reach
+     exige hacerlo en menos de 30 min desde que se publica.
+  4. Revision: la marca aprueba o rechaza el clip segun sus normas.
+     Algunas campanas exigen aprobar un borrador ANTES de publicar
+     (ej.: ClipScales, "Drafts require pre-approval before posting").
+  5. Seguimiento automatico: la plataforma de la campana cuenta las
+     visualizaciones de esa publicacion (Vyro actualiza cada 30 min
+     y cuenta desde el envio, no desde la publicacion).
+  6. Pago: segun el modelo de la campana, con su pago minimo y su
+     tope por clip.
+- Un clip que no se envia NO cobra nada, aunque se haga viral: la
+  campana no sabe que existe.
+- Las visualizaciones anteriores al envio no cuentan (Vyro).
+
+[PENDIENTE]
+- Si se abriran campanas de GTA 6 alrededor del 19-11 (es una
+  deduccion, no un dato).
+- Si el envio del enlace se puede automatizar o tiene que hacerse a
+  mano.
+- Si en Content Rewards las visualizaciones tambien cuentan solo desde
+  el envio (en Vyro si).
+
+---------------------------------------------------------------------
+4.2 VERIFICACION DEL PUBLICO
+---------------------------------------------------------------------
+[VERIFICADO]
+- Lo habitual es exigir un 40-50% o mas de publico Tier 1 (EE. UU.,
+  Reino Unido, Canada, Australia y Nueva Zelanda).
+- Se demuestra con una captura de las estadisticas de paises de la
+  cuenta o conectando la cuenta. (Content Rewards Help, GetClippd,
+  ClippingAlpha)
+- Ejemplo: la campana NBA2K26 exigia adjuntar en cada envio una
+  captura con 40% o mas de publico Tier 1.
+- Si mientes sobre el publico, incumples las condiciones y el clip se
+  rechaza. (Content Rewards Help)
+- Consecuencia: una cuenta sin espectadores no tiene datos de paises
+  que mostrar, asi que no puede demostrar su publico. Los clips que
+  envie a campanas con requisito de pais se pueden rechazar o no
+  pagar. Por eso las cuentas se crean y se usan antes (decision 1.9).
+
+[PENDIENTE]
+- Cuando verifica cada campana el publico: al conectar la cuenta, al
+  enviar el clip o al pagar.
+- Si cada campana pide los paises de los espectadores o de los
+  seguidores (Instagram solo muestra los de seguidores a partir de
+  100).
+
+---------------------------------------------------------------------
+4.3 CONTENT REWARDS (WHOP)
+---------------------------------------------------------------------
+[VERIFICADO] (FAQ oficial)
+- No hacen falta seguidores para participar. Algunas campanas exigen
+  cuentas nuevas.
+- Comision del 7% sobre lo que cobra el clipper.
+- Pago cada 7 dias, una vez verificado el envio.
+- Cada campana fija su pago minimo por clip y su tope maximo por clip.
+- Las restricciones de pais dependen de cada campana.
+- Se cobra a traves del saldo de Whop.
+
+- DOS CONTRATOS (contentrewards.com/terms, "Creator Terms", 04-10-2026):
+  las campanas unidas en la experiencia antigua dentro de Whop siguen
+  regidas por los "Clippers Terms of Service" antiguos; lo demas, por
+  los nuevos Creator Terms.
+- Clippers Terms antiguos (contentrewards.com/terms-of-service/
+  clippers), seccion 3.1: BANEO PERMANENTE sin apelacion y perdida de
+  todos los pagos por, entre otros: "(c) Automating posting or
+  engagement", "(g) Multi-posting the same asset solely to farm
+  payouts", "(h) ... rotating accounts to hide patterns".
+- Creator Terms nuevos: NO incluyen la prohibicion de automatizar la
+  publicacion; prohiben inflar visualizaciones (bots, granjas), el
+  contenido que infringe derechos y el que incumple las normas de la
+  red social. Comision del 10% en CPM y bote (antes 7%).
+- Las cuentas que parecen del mismo operador se evaluan juntas (9.4).
+- Las campanas de Reach pagan "through Whop's Content Rewards"
+  (reachclipping.com).
+- Envio de enlaces: sin API publica; se hace a mano (segun terceros).
+
+[PENDIENTE] (solo se puede resolver preguntando)
+- Si las campanas de Reach / GTA 6 caen bajo los terminos antiguos o
+  los nuevos, y si consideran "automating posting" publicar con un
+  programador por API. Preguntar por escrito a Content Rewards y en el
+  Discord de Reach ANTES de automatizar cuentas de campana.
+- Verificacion de identidad (KYC) y formularios fiscales de EE. UU.
+  (W-8BEN).
+- Metodos de retirada disponibles desde Espana.
+
+---------------------------------------------------------------------
+4.4 VYRO
+---------------------------------------------------------------------
+[VERIFICADO] (Help Center oficial)
+- Minimo de 5.000 visualizaciones POR clip para empezar a ganar.
+- Maximo de 1.000 $ por clip.
+- Retirada minima de 10 $, por PayPal o Stripe (no IBAN ni cripto).
+- Las visualizaciones cuentan desde que ENVIAS el clip; conviene
+  enviarlo nada mas publicarlo.
+- Si el presupuesto se esta agotando, los pagos se reparten de forma
+  proporcional.
+- El pago se aprueba unos 7-10 dias despues de terminar la campana.
+
+---------------------------------------------------------------------
+4.5 REACH - CAMPANA KAI CENAT (EJEMPLO REAL)
+---------------------------------------------------------------------
+[VERIFICADO] (reachclipping.com/KaiCenat, consultado el 28-10-2026)
+- Bote de 10.000 $ repartido por visualizaciones. Minimo de 350.000
+  visualizaciones para contar. Se cobra al terminar la campana.
+- Solo contenido del Twitch y el YouTube de Kai, con Kai como
+  protagonista. Solo clips del 21 al 31-10.
+- Solo TikTok, Instagram Reels y YouTube Shorts.
+- Al menos un 50% del publico de EE. UU., Canada, Australia, Reino
+  Unido o Nueva Zelanda.
+- Hashtag obligatorio #KaiCenat. Enviar el clip en menos de 30 min
+  desde que se publica.
+- Prohibido: logos, dejar mal a Kai, "hate farming", bots, reposts y
+  publicaciones colaborativas.
+- "One strike and you're out": bots o "AI-generated content" supone la
+  expulsion de TODAS las campanas de Reach.
+- Recomiendan una cuenta dedicada con el nombre del streamer si no
+  tienes ya una pagina relacionada con mas de 100 seguidores.
+- Hay que conectar las redes sociales en Whop (Settings > Connected
+  Accounts) para poder cobrar.
+
+[PENDIENTE]
+- Si editar con OpusClip o StreamLadder cuenta como "AI-generated
+  content". Preguntarlo en el Discord de Reach.
+- Si el minimo de 350.000 visualizaciones es por clipper o por clip.
+
+
+=====================================================================
+5. NORMAS DE TERCEROS SOBRE EL CONTENIDO (ROCKSTAR / TAKE-TWO)
+=====================================================================
+[VERIFICADO] (pagina de soporte oficial de Rockstar)
+- Se retira:
+    * contenido filtrado antes del lanzamiento (incluidos los
+      "unboxing" anticipados);
+    * spoilers (final, giros del argumento);
+    * cinematicas aisladas;
+    * entretenimiento del juego (TV y comedia).
+- Las cinematicas se permiten dentro de un gameplay o "Let's Play"
+  narrado.
+- Take-Two puede pedir la retirada de material en cualquier momento.
+- Take-Two persigue las filtraciones de forma agresiva (EBRAND, 300
+  publicaciones de X en una sola notificacion; Game File).
+
+
+=====================================================================
+6. HERRAMIENTAS
+=====================================================================
+
+---------------------------------------------------------------------
+6.1 API DE TWITCH
+---------------------------------------------------------------------
+[VERIFICADO] (Twitch Dev, UserVoice)
+- El endpoint "Get Clips" devuelve los clips de un streamer
+  (broadcaster_id) o de un juego (game_id), ordenados por
+  visualizaciones y filtrables por fecha (started_at / ended_at).
+- El campo "vod_offset" indica el segundo en que empieza el clip
+  dentro del VOD.
+- Los clips de Twitch duran como maximo 60 segundos. (Twitch Help,
+  "How to Create, Edit, and Share Clips")
+- Conservacion de los VODs en Twitch: 14 dias (normal), 60 dias
+  (afiliados) o indefinida (partners con Highlights). (Blog de
+  OpusClip)
+Credenciales y tokens de Twitch (twitchdev/twitch-cli docs, blog de
+Twitch, foro de desarrolladores; verificado 29-10-2026):
+- Client ID: se genera al registrar la app. Identifica la app.
+- Client Secret: hay que generarlo a mano ("New Secret" en la consola).
+  Es como una contrasena: no compartirlo nunca.
+- Token de app (flujo "client credentials"): se obtiene con Client ID
+  + Client Secret. No tiene refresh token: cuando caduca se pide otro.
+  Suele durar entre 50 y 70 dias (moderador del foro de Twitch); la
+  respuesta incluye "expires_in" en segundos.
+- El token de app solo sirve para datos publicos (clips, directos). No
+  sirve para leer el chat (eso requiere token de usuario, V2).
+Requisitos para usar la API:
+- Registrar una app en dev.twitch.tv/console exige tener la
+  verificacion en dos pasos (2FA) activada en la cuenta de Twitch.
+  (Mensaje de error oficial: "user must have two factor auth enabled",
+  foro de desarrolladores de Twitch)
+- Para activar el 2FA hace falta tener el email verificado y un
+  telefono (primero SMS; despues, opcionalmente, una app
+  autenticadora). Twitch crea automaticamente una cuenta de Authy
+  vinculada al telefono. (Twitch Help, "Setting up 2FA")
+- Limite de uso: 800 puntos por minuto con token de app; la mayoria de
+  peticiones cuestan 1 punto. Si se supera, error 429. (Foro de
+  desarrolladores de Twitch y GitHub twitchdev/issues #597)
+Latencias y limitaciones (ver tambien "Cronologia" abajo):
+- Los clips los crean los espectadores durante el directo (o sobre el
+  VOD). El editor permite elegir hasta 60 s dentro de los ultimos
+  ~90 s emitidos (guias de terceros: forkoff, stream-rise). El clip se
+  publica "en segundos" (stream-rise, terceros).
+- "vod_offset" es null durante un retraso tras crear el clip;
+  segun la documentacion oficial, el retraso es indeterminado pero
+  "normalmente de minutos". (Tipos oficiales de la API)
+- La API de Twitch usa cache: en otros endpoints se han observado
+  retrasos de unos 10 min y recuentos de visualizaciones actualizados
+  cada ~5 min. (Foro de desarrolladores, endpoint de streams)
+- Bug conocido #1147: con "started_at" la API devolvia clips de 1
+  visualizacion en lugar de ordenarlos por visualizaciones. CERRADO
+  como resuelto el 11-06-2026. (GitHub twitchdev/issues)
+- Bug abierto #80: con rangos de fechas amplios faltan clips en la
+  respuesta. Solucion: consultar ventanas de tiempo cortas. (GitHub
+  twitchdev/issues, abierto desde 2020)
+Cronologia de un momento viral (resumen):
+  T0: ocurre el momento en directo.
+  T0 + segundos/minutos: un espectador crea el clip (como mucho
+      ~90 s despues, porque el editor solo cubre ese margen; despues
+      hay que hacerlo desde el VOD).
+  + minutos: el clip aparece en la API (cache, sin cifra oficial).
+  + minutos: "vod_offset" disponible.
+  + horas: el clip acumula visualizaciones. Ordenar por
+      visualizaciones es una senal TARDIA: un clip recien creado tiene
+      pocas aunque vaya a ser viral.
+
+Campos que devuelve "Get Clips" (tipos derivados de la documentacion
+oficial: twitch-dev-types y docs.rs/twitch_api; verificado 29-10-2026):
+- id, url, embed_url, broadcaster_id, broadcaster_name, creator_id,
+  creator_name, video_id, game_id, language, title, view_count,
+  created_at, thumbnail_url, duration (segundos, precision 0,1),
+  vod_offset, is_featured.
+"Get Streams" (mismas fuentes; verificado 29-10-2026):
+- Devuelve, entre otros: user_login, game_name, type ("live"),
+  title, viewer_count (espectadores en ese momento), started_at,
+  language.
+- Maximo 100 canales por peticion.
+- viewer_count pasa por cache (actualizacion observada de ~5 min).
+Leer el chat de un canal (foro oficial de desarrolladores de Twitch,
+anuncios de EventSub; verificado 29-10-2026):
+- Via EventSub WebSockets: basta un token de usuario con el permiso
+  "user:read:chat" de la cuenta con la que se lee (la tuya). NO hace
+  falta permiso del streamer.
+- Ese usuario tiene que poder entrar en el chat del canal y aparece en
+  la lista de "chatters" mientras dure la suscripcion.
+- Limite de 100 canales a la vez (de sobra para este proyecto).
+- No se puede leer de forma anonima via EventSub.
+- Via IRC: hace falta un usuario que pueda leer el chat del canal.
+
+[PENDIENTE]
+- Retraso real entre crear un clip y que aparezca en "Get Clips". Se
+  medira con el propio script.
+- Coste en puntos exacto del endpoint "Get Clips".
+- Si los streamers objetivo tienen los clips restringidos (solo
+  seguidores o suscriptores, o desactivados).
+- Plazo con que cada streamer objetivo sube sus propios highlights a
+  YouTube (posible competencia directa).
+- Caducidad y renovacion del token de usuario necesario para leer el
+  chat.
+
+---------------------------------------------------------------------
+6.2 OPUSCLIP
+---------------------------------------------------------------------
+[VERIFICADO] (pagina oficial de precios y web oficial)
+- 1 credito = 1 minuto de video de origen procesado.
+- Planes: gratis (60 creditos, marca de agua, solo archivos subidos,
+  los clips caducan en 3 dias), Starter 15 $/mes (150 creditos),
+  Pro 29 $/mes (300 creditos).
+- ClipAnything: busca momentos a partir de una instruccion de texto
+  y sirve para video con poco dialogo.
+- "Select clipping timeframe" para limitar el tramo analizado.
+- Reencuadre con distribucion para gameplay y subtitulos automaticos.
+- Procesar con ClipAnything tarda unos 20-40 minutos por video.
+
+- API de OpusClip: SOLO en los planes Pro (Beta), Max y Business (NO en
+  Starter). Limite: 30 peticiones/min. Incluye endpoints de
+  publicacion en redes. (help.opus.pro, API reference; verificado
+  03-11-2026)
+- API "Create a New Project": acepta una URL publica de Twitch (entre
+  otras), una PLANTILLA DE MARCA (brandTemplateId: estilo de
+  subtitulos y diseno, creada en el panel), formato vertical
+  (layoutAspectRatio: portrait), un tramo (range: startSec/endSec) y
+  "skipCurate" (no recortar con IA, procesar solo el original). Aviso
+  por webhook al terminar.
+- Pro: 29 $/mes (14,50 $/mes anual), 300 creditos/mes; 1 credito = 1
+  minuto del video original (un clip de menos de 1 min = 1 credito).
+  2 plantillas de marca, 6 cuentas sociales, programador.
+- Starter: 15 $/mes, 150 creditos, 1 plantilla, sin API.
+  (help.opus.pro "Plans", "How do credits work"; videomake.ai)
+
+[PENDIENTE]
+- Si la API acepta URLs de CLIPS de Twitch (clips.twitch.tv) o solo de
+  emisiones (VODs). Probar con el plan Pro.
+- Si la API aplica "Auto hook" y subtitulos animados con skipCurate.
+- El limite mensual de la API en Pro Beta (texto cortado en la doc).
+
+[PENDIENTE]
+- Si limitar el tramo con "Select clipping timeframe" gasta menos
+  creditos.
+
+---------------------------------------------------------------------
+6.3 STREAMLADDER
+---------------------------------------------------------------------
+[VERIFICADO] (web oficial)
+- Importa enlaces de clips de Twitch, YouTube y Kick, o archivos.
+- Plantillas verticales (camara arriba y juego abajo, pantalla
+  partida, imagen en imagen) que se pueden guardar.
+- Subtitulos animados automaticos, generador de ganchos y eliminacion
+  de silencios.
+- Editor basico gratis.
+- Planes Starter, Creator y Pro (desde 09-2026). Starter: exportacion
+  1080p 60 fps y publicacion en TikTok, Instagram y YouTube con varias
+  cuentas por plataforma.
+- Tiene app movil (iOS y Android).
+
+- Precios (G2, SaaSHunter 14-10-2026, ReelShift 22-10-2026):
+  Gratis 0 $ (sin marca de agua, plantillas de camara + juego,
+  720p/30fps, archivos hasta 200 MB); Starter 15 $/mes (subtitulos IA,
+  efectos, plantillas propias, publicar y programar en TikTok, YouTube,
+  Instagram y Facebook con varias cuentas, 1080p/60fps); Creator
+  27 $/mes (ClipGPT: busca momentos en VODs); Pro 39 $/mes (4K, X).
+
+- Importa clips de Twitch pegando la URL publica del clip
+  (clips.twitch.tv/...) sin conectar cuenta; aplica vertical y
+  subtitulos automaticamente. (guides.streamladder.com; web oficial)
+- No se ha encontrado una API publica de StreamLadder: el uso es desde
+  el navegador o la app (manual / semiautomatico).
+- Editor (web oficial, verificado 03-11-2026): plantillas de camara +
+  juego, GUARDAR PLANTILLAS ("set up your brand once... apply it to
+  every new clip in one click"), subtitulos automaticos en 90+
+  idiomas, censura automatica de palabrotas, eliminar silencios,
+  stickers/GIFs, zooms, texto a voz (no usar).
+- Content Publisher (web oficial y guia de planes): TikTok, YouTube
+  Shorts e Instagram Reels (Instagram: cuenta profesional; solo
+  Reels); cola de programacion con fecha y hora; grupos de hashtags
+  guardados; texto distinto por plataforma; Starter permite VARIAS
+  cuentas por plataforma.
+- Ganchos y hashtags automaticos con IA: solo en Creator (27 $/mes).
+
+[PENDIENTE]
+- Verificar los precios en la propia web de StreamLadder antes de pagar.
+- Confirmar que Starter permite plantillas guardadas + programar en las
+  3 redes con varias cuentas por red.
+
+---------------------------------------------------------------------
+6.4 EKLIPSE
+---------------------------------------------------------------------
+[VERIFICADO] (Help oficial)
+- Esta pensado para que un streamer conecte SU PROPIO canal. No sirve
+  para clipear a otros.
+- Premium desde 24,99 $/mes.
+
+---------------------------------------------------------------------
+6.5 METRICOOL
+---------------------------------------------------------------------
+[VERIFICADO] (Help oficial)
+- Plan gratis: maximo 20 publicaciones al mes, 30 dias de historial,
+  1 perfil por red social, sin X.
+- Publicando en TikTok desde Metricool (API oficial) se usa la region
+  registrada de la cuenta, no tu IP. (Help de Metricool)
+
+---------------------------------------------------------------------
+6.6 CLAUDE (PLAN GRATUITO)
+---------------------------------------------------------------------
+[PENDIENTE]
+- Para que se usaria: ganchos y textos en ingles, convertir normas de
+  campanas en checklists, analizar capturas y hojas pequenas.
+- Pendiente de verificar: limites del plan gratuito, que tipos de
+  archivo admite y si analiza video.
+
+---------------------------------------------------------------------
+6.7 TELEGRAM (AVISOS DEL SCRIPT)
+---------------------------------------------------------------------
+[VERIFICADO] (core.telegram.org: Bots, Bot API, Bots FAQ, tutorial;
+verificado 29-10-2026)
+- La plataforma de bots es gratuita para usuarios y desarrolladores.
+- Se crea un bot hablando con @BotFather y usando /newbot; te da un
+  token. El token da control total del bot: guardarlo como una
+  contrasena y no compartirlo. Se puede revocar desde @BotFather.
+- Los bots no necesitan numero de telefono.
+- Para que el bot te pueda escribir, TU tienes que escribirle primero.
+- El script envia mensajes por HTTPS a la Bot API (metodo sendMessage).
+- Limite: no mas de 1 mensaje por segundo en un mismo chat (si se
+  supera, error 429). Mas que suficiente para avisos.
+- La documentacion no indica que el token del bot caduque; se puede
+  revocar y generar uno nuevo desde @BotFather.
+- Botones de los mensajes (InlineKeyboardButton, verificado
+  03-11-2026): el enlace solo puede ser "HTTP or tg:// URL". NO admite
+  enlaces de apps como instagram:// o tiktok://.
+
+Abrir Instagram/TikTok directamente en "subir video" con un video
+concreto (verificado 03-11-2026):
+- TikTok: la via oficial es su SDK para apps nativas (OpenSDK / Share
+  Kit). No hay enlace publico que abra la subida con un video dado.
+- Instagram: el enlace no oficial instagram://library?LocalIdentifier=
+  necesita el identificador del video en la galeria del movil, que
+  solo puede obtener una app instalada en el telefono.
+- Los esquemas de URL de las apps no son oficiales y pueden cambiar
+  (DSLink, 24-10-2026).
+- CONCLUSION: desde un mensaje de Telegram NO es posible. Alternativa:
+  el menu "Compartir" del propio telefono desde el video en Telegram.
+- [PROBADO por el usuario, 03-11-2026, iPhone XR] Desde un video en
+  Telegram, el boton Compartir permite pasarlo a Instagram y TikTok
+  (no se llego a publicar).
+
+---------------------------------------------------------------------
+6.8 EJECUCION PERIODICA DEL SCRIPT (macOS)
+---------------------------------------------------------------------
+[VERIFICADO] (Apple Developer, "Creating Launch Daemons and Agents" y
+"Scheduling Timed Jobs"; verificado 29-10-2026)
+- macOS trae de serie launchd. Un "LaunchAgent" con la clave
+  StartInterval = 300 ejecuta el script cada 5 minutos.
+- Si el ordenador esta APAGADO o EN REPOSO, los trabajos con
+  StartInterval se SALTAN y no se recuperan: se ejecutan en el
+  siguiente intervalo cuando el equipo vuelva a estar activo.
+- Consecuencia: el portatil debe estar encendido, conectado a la
+  corriente y sin entrar en reposo durante la noche.
+
+Evitar el reposo en un MacBook (Apple Support, "Set sleep and wake
+settings" y "Change Battery settings"; verificado 29-10-2026):
+- Ajustes del Sistema > Bateria > Opciones > activar "Prevent
+  automatic sleeping on power adapter when the display is off". Solo
+  aplica con el cargador conectado; la pantalla puede apagarse.
+- Usar el portatil con la tapa cerrada requiere corriente, pantalla
+  externa y teclado/raton externos (Apple Support). Sin eso: dejar la
+  tapa abierta.
+- Apple avisa: evitar el reposo aumenta el consumo de energia.
+Bateria con el portatil enchufado mucho tiempo (Apple Support 102338,
+102589 y guia del MacBook Air; verificado 01-11-2026):
+- El desgaste depende de la edad quimica: historial de temperatura y
+  patron de carga (incluido el tiempo que pasa cargada al 100%).
+- "Optimized Battery Charging" (macOS Big Sur o posterior) retrasa la
+  carga por encima del 80% cuando prevé que el Mac estara enchufado
+  mucho tiempo.
+- "Charge Limit" (macOS Tahoe 26.4 o posterior) permite fijar un
+  limite de carga. De vez en cuando carga al 100% para calibrar.
+- Recomendado para dejar el portatil enchufado de noche: activar
+  Charge Limit (por ejemplo 80%) u Optimized Battery Charging, y
+  mantenerlo ventilado.
+Python en macOS (docs.python.org, "Using Python on macOS"):
+- macOS incluye un "python3" que depende de las Command Line Tools de
+  Xcode y suele ser una version antigua.
+- Recomendado: instalar Python desde python.org (convive con el del
+  sistema sin problemas).
+- Tras instalar Python de python.org hay que ejecutar "Install
+  Certificates.command" (carpeta Aplicaciones > Python 3.x); si no,
+  las conexiones HTTPS fallan con CERTIFICATE_VERIFY_FAILED.
+  (bugs.python.org issue 28150; ReadMe del instalador)
+
+[PENDIENTE]
+- Nombre exacto del ajuste en la version de macOS del portatil
+  personal (comprobarlo en el propio portatil).
+- Si macOS (privacidad, "TCC") bloquea a launchd el acceso a
+  Escritorio, Documentos o Descargas. Por precaucion el proyecto va en
+  ~/gta6-clipper.
+- Version de Python que se instalara en el portatil personal.
+
+---------------------------------------------------------------------
+6.9 YOUTUBE DATA API (para la metrica de saturacion)
+---------------------------------------------------------------------
+[VERIFICADO] (Google for Developers, Quota Calculator y search.list;
+verificado 29-10-2026)
+- Cuota por defecto por proyecto: 100 llamadas al dia a search.list
+  (bucket propio, 1 unidad por llamada), 100 a videos.insert y
+  10.000 unidades al dia para el resto de metodos.
+- Cada pagina adicional de resultados cuenta como otra llamada.
+- La cuota se reinicia a medianoche, hora del Pacifico.
+- Para pedir mas cuota hay que pasar una auditoria de cumplimiento.
+- Implicacion: como mucho 100 busquedas al dia (por ejemplo, 5
+  streamers x 20 comprobaciones).
+
+- Subida de videos por API (videos.insert): los proyectos NO
+  verificados ya pueden publicar en publico; la restriccion a
+  "privado" de 2020 se levanto. (Google Issue Tracker 572863050;
+  referencia de videos.insert; verificado 03-11-2026)
+- Cuota por defecto: 100 subidas (videos.insert) al dia por proyecto,
+  en su propio cupo, a 1 unidad por llamada; el resto de llamadas
+  comparten 10.000 unidades/dia. Sin auditoria. El canal tiene ademas
+  un limite diario propio no publicado. (Quota Calculator y
+  videos.insert, actualizados 15-10-2026)
+- Un video de 3 min o menos en formato 9:16 o 1:1 se clasifica
+  automaticamente como Short. (docs de Upload-Post)
+
+Textos de cada red (verificado 04-11-2026):
+- YouTube: titulo hasta 100 caracteres; descripcion hasta 5.000.
+  Hashtags en titulo o descripcion; se muestran hasta 3 junto al
+  titulo; con mas de 60 se ignoran TODOS; hashtags sin relacion con el
+  video pueden hacer que se retire (YouTube Help 6390658).
+- YouTube recomienda titulos que representen el video con precision y
+  evitar los enganosos, chocantes o "Loud: ALL CAPS o !!!!!"
+  (YouTube Help 141805). El clickbait enganoso infringe la politica de
+  spam (YouTube Help 2801973).
+- Instagram: maximo 5 hashtags por publicacion o Reel desde diciembre
+  de 2025 (anuncio de @creators y Mosseri; The Verge, BusinessToday).
+  Texto hasta 2.200 caracteres. Instagram dice que hashtags genericos
+  como #reels o #explore no ayudan y pueden perjudicar.
+- TikTok: texto hasta 2.200 caracteres (API oficial y anuncio de
+  TikTok de 2022), hashtags incluidos. TikTok no publica un maximo de
+  hashtags; "3 a 5" es una recomendacion de CapCut, no una norma.
+
+Medicion de resultados por API (verificado 04-11-2026):
+- YouTube Data API: estadisticas publicas de cada video (visualizaciones,
+  me gusta, comentarios).
+- YouTube Analytics API (reports.query, permiso yt-analytics.readonly):
+  visualizaciones de TU canal por pais (dimension "country", codigo
+  ISO; "ZZ" = desconocido). Sirve para el % de publico Tier 1.
+- TikTok Display API (video.list): exige aprobacion de la app por
+  TikTok, que no acepta apps de uso personal -> los datos de TikTok se
+  apuntan a mano.
+- Instagram: las estadisticas se miran en la app (por API exigiria
+  configurar una app de Meta; fuera del MVP).
+Donde se ven a mano (verificado 04-11-2026):
+- TikTok: Perfil > menu (tres rayas) > TikTok Studio > Analitica
+  (hay que activarla la primera vez). Pestana "Resumen" =
+  visualizaciones; pestana "Espectadores" = paises. Videos no aptos
+  para "Para ti": aviso en la analitica de cada video y en
+  TikTok Studio > Mas herramientas > Comprobacion de la cuenta
+  (Ayuda de TikTok). Seguidores por pais: solo con 100 seguidores o
+  mas (Buffer).
+- Instagram: Perfil > Panel profesional > Estadisticas (paises del
+  publico). Contenido no recomendable: Configuracion y actividad >
+  Estado de la cuenta > "Lo que no se puede recomendar" (guias de
+  terceros; la ubicacion exacta cambia segun la version).
+
+Categoria de GTA VI en Twitch (verificado 04-11-2026):
+- Existe la categoria "Grand Theft Auto VI"
+  (twitch.tv/directory/category/grand-theft-auto-vi), con cuenta atras
+  al 19-11. Su identificador es 1867279146 segun TwitchMetrics y
+  StreamStats [PROBAR con la API de Twitch desde el portatil].
+- Los directos de rol de xQc y otros (NoPixel) son de GTA V, no de
+  GTA VI: son otra categoria.
+
+Titulos reales de los clips (analisis de exportaciones/, 04-11-2026,
+4.341 clips):
+- 2.076 (48%) estan vacios o tienen 1 sola palabra (".", "lol", "kai",
+  "w", "thumbnail").
+- Muchos son el titulo del directo por defecto, lleno de emojis y
+  mayusculas (p. ej. "LIVE CLICK HERE DRAMA GTA V NOPIXEL V...", 113
+  clips).
+- 865 con emojis; 970 todo en mayusculas; 132 con caracteres no
+  ingleses.
+- Los mas vistos si suelen tener titulo util ("Kai was Shook from ai
+  video", "Brick boys hit the first Paleto of NPV").
+- CONCLUSION: el titulo del clip NO sirve siempre como texto inicial;
+  hace falta un filtro de calidad y una alternativa.
+- Autorizacion OAuth de Google (developers.google.com/identity,
+  verificado 03-11-2026):
+    * Proyecto en estado "Testing": el token de renovacion CADUCA A LOS
+      7 DIAS -> la publicacion automatica se romperia cada semana.
+    * Estado "In production" sin verificar: el token NO caduca a los 7
+      dias (solo si no se usa en 6 meses, si se revoca o si se superan
+      100 tokens). Al autorizar aparece una vez el aviso "Google hasn't
+      verified this app" y se acepta.
+    * Google: las apps de uso personal (menos de 100 usuarios) no
+      necesitan verificacion.
+  -> El proyecto se pondra "In production" (sin verificar).
+
+Telegram (core.telegram.org/bots/api, verificado 03-11-2026):
+- Un bot puede enviar videos y archivos de hasta 50 MB. El clip editado
+  debe quedar por debajo (un clip de 60 s en 1080p cabe con una
+  compresion normal).
+
+Descarga de clips de Twitch (verificado 03-11-2026):
+- El endpoint oficial "Get Clips Download" (beta abierta) exige un
+  token con editor:manage:clips o channel:manage:clips, es decir, ser
+  el streamer o su editor. NO sirve para clips de otros canales.
+  (Twitch Developer Forums, 2025)
+- Alternativa: yt-dlp (gratuito) descarga clips publicos de Twitch.
+- Twitch, al anunciar ese endpoint: "streamers should have control
+  over who can download their content... Programmatic downloads of
+  content is seen differently from the ability to watch clips or even
+  manually download clips one at a time".
+- Terminos de servicio de Twitch (legal.twitch.com, verificado
+  03-11-2026): la licencia es para uso personal y NO permite "(e)
+  downloading (except page caching) of any portion of the Twitch
+  Services, the Materials, or any information contained in them,
+  except as expressly permitted on the Twitch Services". (Los
+  "Materials" excluyen el User Content, pero la prohibicion tambien
+  menciona "any portion of the Twitch Services".) Tambien prohibe
+  esquivar funciones que restringen la copia de contenido.
+- Lo que Twitch permite expresamente: descargar clips de TU canal o
+  clips que TU has creado (Clips Manager), y compartir clips de otros
+  a TikTok/YouTube/Instagram con el boton de Twitch SOLO si el streamer
+  activa "Let viewers upload clips to their socials" (anade el
+  hashtag del canal; segun guias de terceros).
+- CONCLUSION: descargar automaticamente clips de otros canales con
+  yt-dlp no esta expresamente permitido por Twitch. Es la practica
+  habitual del sector y en las campanas el streamer (dueno del
+  contenido) autoriza usar su contenido, pero el permiso del streamer
+  no es un permiso de Twitch. Riesgo: incumplimiento contractual con
+  Twitch (posible cierre de la cuenta de Twitch asociada).
+- Content Rewards: 17.1 si la marca aporta el material ("footage or
+  assets"), da licencia para usarlo; 17.2 el clipper GARANTIZA que el
+  clip no infringe derechos de nadie, INCLUIDA LA MUSICA.
+
+Almacenamiento de datos de Twitch (Developer Services Agreement,
+Schedule 1-C, citado en el foro oficial de desarrolladores, 23-10-2026):
+- "Do not store copies of Twitch Content or Program Materials, unless
+  you: (a) obtain prior written authorization from Twitch; (b) control
+  the rights associated with such content; or (c) cache such
+  information for only a twenty-four hour time period without further
+  sharing it with third parties."
+- Opinion de un moderador del foro (no es Twitch ni asesoria legal):
+  guardar resultados DERIVADOS (calculos agregados) es aceptable.
+- IMPACTO: el detector guarda fichas e historial de clips mas de 24 h,
+  y se propuso publicar los CSV en GitHub (compartir con terceros).
+  Hay que redisenarlo (ver capitulo del detector).
+
+Seguridad de la instalacion (verificado 03-11-2026):
+- Homebrew (docs.brew.sh, "Homebrew Security and Supply Chain" y
+  "Checksum Requirements"): cada descarga esta fijada a una huella
+  SHA-256 revisada por personas; si no coincide, NO instala. Los
+  paquetes de homebrew/core los compila Homebrew en su propia
+  infraestructura a partir del codigo fuente.
+- Modelos de whisper.cpp: fuente oficial
+  huggingface.co/ggerganov/whisper.cpp (README del proyecto), con la
+  huella SHA de cada modelo publicada en models/README.md.
+- Proyectos de codigo abierto y muy usados: yt-dlp (GitHub
+  yt-dlp/yt-dlp), FFmpeg (ffmpeg.org), whisper.cpp (GitHub
+  ggml-org/whisper.cpp).
+
+Deteccion automatica de la camara del streamer (verificado 03-11-2026):
+- Apple Vision (incluido en macOS desde 10.13, gratis, de Apple):
+  VNDetectFaceRectanglesRequest localiza caras en una imagen y
+  devuelve su recuadro. Se usa desde un pequeno programa en Swift.
+- Para compilar ese programa hacen falta las Command Line Tools de
+  Apple (gratis, oficiales: "xcode-select --install"). En Apple
+  Silicon, Homebrew NO las exige para instalar paquetes ya compilados
+  (docs.brew.sh, Installation).
+- Como lo hacen las herramientas comerciales (descripciones de
+  Zoupyu, Clipflap, Unisona y StreamLadder; no es un estandar):
+    * La camara es un recuadro superpuesto al juego: sus BORDES estan
+      quietos en los mismos pixeles mientras el juego se mueve.
+    * Se buscan esos bordes persistentes alrededor de la cara; la cara
+      sola da un recuadro equivocado.
+    * Las caras dentro del juego (personajes) se descartan porque no
+      tienen un marco quieto alrededor.
+    * Si el streamer pone la camara a pantalla completa, se sigue la
+      cara.
+    * Con poca confianza, no se inventa el recuadro.
+
+iPhone XR (verificado 03-11-2026):
+- No puede instalar iOS 26 ni iOS 27; se queda en iOS 18, que sigue
+  recibiendo parches de seguridad (iOS 18.7.10, agosto de 2026;
+  Macworld, GSMArena).
+- Instagram exige iOS 16.3 o posterior y TikTok iOS 15.0 o posterior
+  (App Store, 03-11-2026): ambas funcionan en el XR.
+[PENDIENTE] (no depende de nosotros)
+- Que Instagram o TikTok dejen de admitir iOS 18 en el futuro.
+
+Herramientas gratuitas para editar en el Mac (verificado 03-11-2026):
+- ffmpeg: recortar, pasar a vertical, superponer texto y "quemar"
+  subtitulos con estilo propio (fuente, colores, borde).
+- whisper.cpp (Homebrew: "brew install whisper.cpp"): transcripcion
+  local y gratuita; genera subtitulos SRT; usa la GPU de Apple
+  Silicon. Modelo recomendado por pruebas de terceros:
+  large-v3-turbo q8_0 (874 MB, ~2 s por audio corto en un M4 Pro).
+
+[PENDIENTE]
+- Requisitos para crear el proyecto en Google Cloud y la clave de API.
+- Publicacion automatica en Instagram (Graph API) y TikTok (Content
+  Posting API): requisitos y revisiones necesarias.
+
+---------------------------------------------------------------------
+6.10 RESUMEN DE LIMITES DE USO (CUOTAS)
+---------------------------------------------------------------------
+[VERIFICADO]
+- Twitch API: 800 puntos por minuto por token de app; la mayoria de
+  peticiones cuestan 1 punto. Se recarga de forma continua. Si se
+  agota: error 429 y hay que esperar a que se recargue. Sin token de
+  app (solo Client ID): 30 por minuto. (Foro de desarrolladores de
+  Twitch; GitHub twitchdev/issues #597)
+  No se ha encontrado ningun limite diario documentado.
+  Uso estimado del MVP: por ejecucion, 1 peticion de directos (hasta
+  100 canales en una) + 1-2 de clips por streamer. Con 5 streamers
+  cada 5 min: unas 2 peticiones por minuto de media, el 0,25% del
+  limite.
+- Telegram: 1 mensaje por segundo en un mismo chat; 20 por minuto en
+  grupos. (Bots FAQ oficial)
+- YouTube Data API: 100 busquedas al dia (search.list) + 10.000
+  unidades al dia para el resto. (Google for Developers)
+- OpusClip Starter: 150 creditos al mes (1 credito = 1 minuto de video
+  de origen). (Pagina oficial de precios)
+- Metricool gratis: 20 publicaciones al mes. (Help oficial)
+
+[PENDIENTE]
+- Coste en puntos exacto de "Get Clips" y "Get Streams" (el script
+  leera las cabeceras Ratelimit-Limit / Ratelimit-Remaining para
+  medirlo en real).
+- Limites del plan gratuito de Claude.
+- Limites de subida diaria de videos en YouTube, Instagram y TikTok
+  (cuantos clips al dia se pueden publicar sin restricciones).
+
+
+=====================================================================
+7. LEGAL Y FISCAL
+=====================================================================
+[VERIFICADO] Etiquetado de publicidad en campanas (Content Rewards,
+"FTC Compliance & Transparency Guide", 12-02-2025, incorporada a sus
+Creator Terms; tambien en los Clippers Terms antiguos, seccion 20;
+verificado 04-11-2026):
+- 3.2: TODO contenido publicado para una campana es una "Material
+  Connection" que EXIGE aviso de publicidad (se cobra por
+  visualizaciones).
+- 4.3: el aviso debe ir al principio del video, al principio del
+  texto, en TODAS las redes y en todos los formatos (video, texto,
+  rotulo); sin tener que pulsar "mas".
+- 5.1 (Shorts, Reels, TikTok): aviso oral en los 10 primeros segundos
+  SOLO si el creador sale en camara o pone voz; rotulo en el video
+  visible el tiempo suficiente; aviso escrito en el texto; y la
+  herramienta propia de cada red cuando exista.
+- 5.2 Instagram: etiqueta "Paid Partnership" cuando proceda y "#Ad" o
+  equivalente al principio del texto, no escondido entre hashtags.
+- 5.3 TikTok: interruptor de contenido comercial ("Paid Partnership" /
+  "Sponsored"), rotulo o aviso oral en los 10 primeros segundos y
+  aviso escrito en la descripcion.
+- 5.4 YouTube (largos y Shorts): "(a) Oral disclosure in the video
+  content", aviso escrito en la descripcion y casilla de "promocion
+  pagada" de YouTube.
+- 6.1 Validos: "#Ad", "Paid partnership with [Brand]", "Sponsored by
+  [Brand]", "Advertisement"... 6.2 NO validos: "#Collab", "#Sp",
+  solo etiquetar a la marca, avisos al final o entre muchos hashtags.
+- Sin el aviso, el clip se puede rechazar y perder el pago (20.3
+  antiguo, 12.9 nuevo).
+- Herramientas de cada red:
+    * YouTube: la API tiene el campo
+      paidProductPlacementDetails.hasPaidProductPlacement (equivale a
+      la casilla de YouTube Studio). (Bibliotecas oficiales de la API,
+      revision 19-10-2026)
+    * Instagram: la etiqueta "Paid partnership" exige que la marca
+      apruebe la etiqueta (Meta, segun MakeInfluence y CreatorIQ).
+    * TikTok: "Commercial Content Disclosure" con "Your brand" o
+      "Branded content"; lo activa el creador sin aprobacion de la
+      marca (MakeInfluence).
+- La cuenta GTA (sin campana) NO necesita aviso.
+
+[PENDIENTE] (preguntar a Content Rewards)
+- Si en YouTube Shorts se exige aviso ORAL (5.4a) aunque el creador no
+  salga ni ponga voz (5.1a dice que solo en ese caso).
+
+[PENDIENTE]
+- Fiscalidad en Espana: declaracion de ingresos y si hace falta darse
+  de alta como autonomo. Consultar con un gestor.
+- Formularios fiscales de EE. UU. (W-8BEN) en Whop o Vyro.
+- Verificacion de identidad (KYC) en Whop, Stripe y PayPal.
+- Normativa espanola de influencers aplicable a un clipper.
+- Edad minima: 18 anos en las campanas y programas revisados
+  (verificado para Content Rewards y TikTok Rewards).
+
+
+=====================================================================
+8. PRUEBA DE PUBLICO (B1)
+=====================================================================
+[DEFINIDO]
+- Objetivo: comprobar, en cada plataforma, si una cuenta creada en
+  Espana con contenido en ingles llega a publico Tier 1.
+- Metodo: 1 cuenta de streamer en YouTube, Instagram y TikTok;
+  10-15 clips en cada plataforma; medir el % de espectadores de
+  paises Tier 1 por cuenta, en periodos de 28-30 dias.
+- Regla de decision: 40% o mas de espectadores Tier 1 = la plataforma
+  entra en las campanas.
+- Objetivo de cada cuenta antes del 19-11: mas de 100 espectadores
+  distintos con datos de paises visibles (imprescindible) y
+  100 seguidores (deseable).
+- Requisito previo: tener el MVP del proceso de clipping.
+
+
+=====================================================================
+9. DETECTOR DE CLIPS: ESTADO DE LA IMPLEMENTACION
+=====================================================================
+Carpeta del proyecto (en el Mac de empresa, solo codigo):
+  /Users/n158897/GitHub/gta6-clipper/
+Instalacion en el portatil personal: ver GUIA_INSTALACION.txt dentro
+de esa carpeta.
+
+[IMPLEMENTADO - 29-10-2026] Prueba tecnica (sin metricas todavia)
+- T1 token de app de Twitch (con renovacion automatica si caduca o si
+  Twitch responde 401).
+- T2 busqueda del ID del streamer.
+- T3 clips de la ventana configurada (por defecto 24 h), con
+  paginacion (max. 3 paginas de 100).
+- T4 estado del directo y espectadores.
+- T5 aviso por Telegram.
+- T6 comando "revisar-ejecuciones": detecta huecos (> 1,5 x intervalo)
+  y errores.
+- T7 comando "prueba-fallos": simula sin internet, 429 y token
+  caducado.
+- Ejecucion automatica con launchd (cada "intervalo_minutos").
+- Franjas horarias y modos ("alertas" / "silencio") en config.json.
+- Avisos: primera ejecucion = un solo resumen; despues, solo clips
+  nuevos, ordenados por visualizaciones, maximo
+  "max_avisos_por_ejecucion" + un resumen.
+- Ante un error: se registra, se avisa UNA vez por Telegram y se
+  reintenta en la siguiente ejecucion. Si falla Telegram, los clips no
+  se dan por avisados y se reintentan.
+- Registro de datos en datos/: registro_ejecuciones.csv,
+  clips_observaciones.csv (base de las futuras metricas) y estado.json.
+- Lee las cabeceras de limite de la API y guarda el restante en cada
+  ejecucion.
+- 13 pruebas automaticas con datos ficticios: todas OK en el Mac de
+  empresa (Python 3.14.7), sin credenciales reales.
+- [29-10-2026] Columnas con hora de Espana (dd/mm/aaaa hh:mm:ss) en
+  ambos .csv y en los avisos; "revisar-ejecuciones" muestra hora de
+  Espana. Si cambia el formato de un .csv, el antiguo se aparta como
+  *_formato_antiguo.csv. Diccionario de campos en GUIA_INSTALACION.txt.
+- [29-10-2026] T1-T5 superadas en el portatil personal con
+  credenciales reales (aviso de Telegram recibido).
+- [30-10-2026] Comando "credenciales-desde-entorno": genera
+  credenciales.json (permisos 600) a partir de las variables
+  TWITCH_ID_CLIENTE, TWITCH_SECRETO, TELEGRAM_GTA6_BOT_TOKEN y
+  TELEGRAM_CHAT_ID de ~/.zshrc. Se genera un fichero porque launchd no
+  carga ~/.zshrc. 15 pruebas automaticas OK.
+
+[IMPLEMENTADO - 30-10-2026, version 2026-10-30.2] Decisiones 1.26-1.31
+- Consulta por tramos (repaso reciente cada 5 min de 2 h; completo
+  cada 15 min de 24 h), deteccion de tramos truncados.
+- Base de datos SQLite datos/clips.db: fichas, historial solo cuando
+  cambian las visualizaciones, directos (espectadores). Comando
+  "exportar" a CSV con hora de Espana.
+- Velocidad y nota de viralidad 1-10 (documentadas en
+  GTA_VI_metricas.txt).
+- Avisos provisionales (minimo de visualizaciones + edad maxima, una
+  vez por clip). Modo por defecto: "silencio" (fase de calibracion).
+- Limpieza rapida, limpieza de no virales (respetando los virales) y
+  compactacion periodica.
+- Bloqueo para que nunca haya dos ejecuciones a la vez.
+- Comando "estado" explicado en espanol (y avisa si launchd ejecuta
+  otra carpeta).
+- Todos los valores enteros son parametros de config.json, con
+  validacion y mensajes claros.
+- 23 pruebas automaticas OK + prueba-fallos OK.
+
+Prueba de volumen (simulada en el Mac de empresa, 30-10-2026):
+- 50.000 clips en 24 h (~2.000/hora). Con los valores por defecto
+  (tramos de 60 min, max. 10 paginas = 1.000 clips por tramo):
+  TODOS los tramos salieron truncados -> solo se vieron ~23.000.
+  Se pierden los menos vistos de cada hora (incluidos recien creados).
+- Llamadas a Twitch: ~240 por repaso completo, ~21 por reciente.
+- Procesado local: < 1 s por repaso; base de datos ~6 MB tras 4
+  repasos.
+- Ajuste recomendado para el lanzamiento si hay truncados:
+  tramo_consulta_minutos = 15 (o subir max_paginas_por_tramo).
+  Con 50.000 clips/dia serian ~600 llamadas por repaso completo
+  (cabe en el limite de 800/min) pero en red real puede tardar
+  varios minutos [no verificado: depende de la latencia].
+
+[IMPLEMENTADO - 30-10-2026, version 2026-10-30.4]
+- Si el script no puede arrancar (config.json o credenciales con
+  errores), ahora lo registra en registro_ejecuciones.csv y avisa UNA
+  vez por Telegram. Antes fallaba en silencio (codigo 2) sin dejar
+  rastro en el registro.
+- "estado" empieza con "EN MARCHA: SI/NO", muestra el error de la
+  ultima ejecucion y los ultimos mensajes de error de launchd.
+
+[IMPLEMENTADO - 30-10-2026, version 2026-10-30.5]
+- Mensaje "Detector funcionando" por Telegram cada
+  "resumen_de_funcionamiento_cada_horas" (3 desde el 01-11-2026; 0 = nunca), tambien en
+  modo silencio: ejecuciones, errores (y el ultimo), clips nuevos, si
+  hay directo, modo actual y top "clips_en_el_resumen" (3) por nota
+  de viralidad. El primero llega nada mas arrancar. Si Telegram falla,
+  se reintenta en la siguiente ejecucion. 26 pruebas OK.
+
+[IMPLEMENTADO - 31-10-2026, version 2026-10-31]
+- Comando "informe": clips guardados por streamer (cuantos, maximo de
+  visualizaciones, cuantos con nota, ultimo guardado) y top N por
+  viralidad con enlace, en la terminal.
+- Resumen "Detector funcionando" cada 3 horas.
+- Comprobado en GitHub (31-10-2026): el repositorio del usuario sigue
+  en la version 2026-10-30.4 (no tiene el resumen de funcionamiento).
+
+[IMPLEMENTADO - 31-10-2026, version 2026-10-31.2]
+- Resumen "Detector funcionando" cada 2 horas, con numero de clips
+  guardados y DOS tops: por visualizaciones y por viralidad.
+- config.json en "modo prueba del MVP" (decision del usuario):
+  streamers kaicenat, xqc y jynxzi; modo alertas; avisar con 50
+  visualizaciones o mas y clips de menos de 180 min. Valores
+  provisionales hasta calibrar con datos reales.
+- Las pruebas automaticas ya no dependen de los valores de config.json.
+
+[HECHO POR EL USUARIO - 03-11-2026] (GTA_VI_guia_portatil_personal.txt)
+- A: detector en marcha, version 2026-10-31.2.
+- B: exportaciones subidas a Jandru1/gta6-clipper/exportaciones/.
+  Comprobado por Devin (solo lectura, 04-11-2026): en el repositorio
+  NO hay credenciales.json, estado.json ni datos/. Contenido:
+  4.341 clips (kaicenat 2.297, jynxzi 1.320, xqc 724), creados entre
+  el 29-10 y el 03-11-2026 (dias completos: 31-10 a 03-11) y 10.120
+  filas de historial. Nota maxima 10 en 752 clips (17%): confirma que
+  la nota es demasiado generosa.
+- D: Homebrew, yt-dlp, ffmpeg y whisper.cpp instalados.
+- E: comando del diseno 1 probado con un clip real: funciona; el
+  resultado se ve bien (6,6 MB). Enviado por Telegram correctamente.
+- F: compartir desde Telegram a Instagram/TikTok en el iPhone: funciona.
+
+[IMPLEMENTADO - 04-11-2026, version 2026-11-04.1] Entrega E1
+- Se guarda el juego (juego_id) y el creador (creador_id) de cada clip.
+- Nuevo algoritmo de viralidad por MOMENTOS (GTA_VI_metricas.txt):
+  agrupacion de clips, 4 senales, puntuacion, nota estricta, avisos
+  por momento, top de momentos en el resumen y en "informe",
+  export_momentos.csv y comando "prueba-algoritmo".
+- Al instalarla se borran las notas antiguas (infladas) de los clips.
+- Analisis previo con los datos de exportaciones/ (~380 momentos
+  evaluables): la velocidad en los primeros 30-45 min acerto ~50% del
+  top 10% (azar: 10%); el consenso aporto poco; la emocion del titulo,
+  nada. Simulacion en vivo con esos datos: 9 de 441 momentos de 24 h
+  con nota 8 o mas (antes: 17% de los clips con nota 10).
+- Limitacion: muestra pequena y muchos clips vistos tarde (mediana
+  9 min con el detector activo, pero hay periodos sin observaciones:
+  posible portatil dormido). Recalibrar con mas datos.
+- 32 pruebas automaticas OK + prueba-fallos OK.
+
+[IMPLEMENTADO - 04-11-2026, version 2026-11-04.2] Entregas E2-E5
+- Cola de preparacion: cada momento avisado (y los del resumen al
+  despertar) se prepara: yt-dlp -> ffmpeg-full (diseno 1) -> whisper
+  (modelo large-v3-turbo-q5_0, huella SHA-1 oficial) -> subtitulos,
+  texto inicial, tema y "#Ad" en un fichero ASS.
+- Filtro: GTA VI antes de "fecha_lanzamiento_gta_vi" bloqueado; cuenta
+  "gta" solo con juegos GTA (GTA V 32982, GTA VI 1867279146); version
+  con "#Ad" solo con campana activa y clip dentro de sus fechas.
+- Telegram: video (<50 MB) + textos para copiar + botones
+  Publicar/Descartar; solo acepta botones y mensajes de tu chat_id.
+- YouTube: OAuth de app de escritorio (PKCE, 127.0.0.1), subida
+  reanudable en privado, casilla de promocion pagada (si la API la
+  rechaza, se sube igual y avisa), publicar = pasar a publico,
+  descartar = borrar.
+- Medicion: visualizaciones a 1 h, 24 h y 7 dias; resumen semanal con
+  % Tier 1 (YouTube Analytics) y lectura de las respuestas "IG ...".
+- Verificado: el ffmpeg normal de Homebrew no trae libass ni freetype
+  (sin subtitulos ni textos); hay que instalar ffmpeg-full (keg-only,
+  /opt/homebrew/opt/ffmpeg-full/bin/ffmpeg). whisper-cli: opciones
+  -l en -nf -oj -of -ml -sow -np (README oficial; fijar el idioma
+  reduce invenciones con musica).
+- 52 pruebas automaticas OK (con programas y APIs simulados). Falta la
+  prueba real en el portatil (GUIA_YOUTUBE.txt).
+
+[PENDIENTE]
+- En la proxima exportacion, subir tambien datos/registro_ejecuciones.csv
+  (no contiene secretos) para comprobar si hubo huecos por reposo.
+- Captura de como se ven los clips en el movil (tarea C; poco
+  relevante segun el usuario).
+- Medir con datos reales: clips por hora de Kai, tiempo real de un
+  repaso completo, coste real en puntos de la API.
+- PERFECCIONAR LA NOTA DE VIRALIDAD (detectado 01-11-2026): con datos
+  reales, el top del resumen sale casi siempre 10/10. Causa probable:
+  se compara con TODOS los clips del streamer (la mayoria con 1-5
+  visualizaciones). Revisar con los datos exportados del usuario.
+- Datos visibles para Devin: el usuario subira las exportaciones a
+  GitHub. NUNCA subir estado.json (contiene el token de Twitch) ni
+  credenciales.json. Recomendado: copiar solo export_fichas.csv y
+  export_historial.csv a una carpeta no ignorada (p. ej. exportaciones/).
+- Comando "resumen" (enviar el resumen al momento) y cambiar el texto
+  "Detector funcionando" por "Resumen de funcionamiento": pendiente de
+  confirmar por el usuario.
+
+[PENDIENTE]
+- Ejecutar T1-T7 en el portatil personal con credenciales reales.
+- Metricas del MVP (velocidad, densidad, agrupacion, antiguedad,
+  visualizaciones relativas, encaje con campana, puntuacion).
+
+Me parece importante primero diferenciar el enfoque de este proyecto entre: 
+- Lo que quiero conseguir en base unicamente a las paltaformas (Ej: Monetizacion de Youtube Shorts)
+- Lo que quiero ingresar a través de las campañas. 

@@ -13,8 +13,9 @@ from app.config import (ErrorConfiguracion, Franja, cargar_config, cargar_creden
 from app.ejecucion import ejecutar_una_vez, iso_utc, tramos
 from app.franjas import modo_actual
 from app.http import ErrorRed, Respuesta
+from app.momentos import agrupar, nota_por_cortes, percentil, prueba_hacia_atras
 from app.twitch import ClienteTwitch, ErrorLimiteTwitch
-from app.viralidad import nota_1_a_10, velocidad_por_hora
+from app.viralidad import velocidad_por_hora
 
 RUTA_CONFIG = Path(__file__).resolve().parent.parent / "config.json"
 AHORA = datetime(2026, 10, 30, 12, 0, tzinfo=timezone.utc)
@@ -144,12 +145,40 @@ class TestViralidad(unittest.TestCase):
         historial = [(0, 10), (3600, 100), (5400, 1000), (7200, 1900)]
         self.assertAlmostEqual(velocidad_por_hora(historial, 7200, 0, 60, 5), 1800)
 
-    def test_nota_relativa_y_sin_datos_suficientes(self):
-        referencias = sorted(range(100))
-        self.assertEqual(nota_1_a_10(1000, referencias, 20), 10)
-        self.assertEqual(nota_1_a_10(-1, referencias, 20), 1)
-        self.assertEqual(nota_1_a_10(49, referencias, 20), 5)
-        self.assertIsNone(nota_1_a_10(50, list(range(10)), 20))
+    def test_nota_estricta_por_cortes(self):
+        cortes = [1, 2, 4, 8, 10, 15, 15, 15, 15]
+        referencias = [float(x) for x in range(100)]
+        self.assertEqual(nota_por_cortes(1000, referencias, cortes, 20), 10)
+        self.assertEqual(nota_por_cortes(98.5, referencias, cortes, 20), 10)
+        self.assertEqual(nota_por_cortes(97.5, referencias, cortes, 20), 9)
+        self.assertEqual(nota_por_cortes(93.5, referencias, cortes, 20), 8)
+        self.assertEqual(nota_por_cortes(92.5, referencias, cortes, 20), 8)
+        self.assertEqual(nota_por_cortes(91.5, referencias, cortes, 20), 7)
+        self.assertEqual(nota_por_cortes(50, referencias, cortes, 20), 4)
+        self.assertEqual(nota_por_cortes(-1, referencias, cortes, 20), 1)
+        self.assertIsNone(nota_por_cortes(50, referencias[:10], cortes, 20))
+
+    def test_percentil(self):
+        self.assertEqual(percentil(5, [1, 2, 3, 4]), 100)
+        self.assertEqual(percentil(2, [1, 2, 3, 4]), 25)
+        self.assertIsNone(percentil(2, []))
+
+
+def ficha(id_, creado_s, vistas=10, offset=None, creador="fan", streamer="kaicenat", vod="v1"):
+    return {"clip_id": id_, "streamer": streamer, "creado_s": creado_s, "vod_id": vod, "vod_offset_s": offset,
+            "visualizaciones": vistas, "duracion_s": 30, "creador": creador, "creador_id": "", "primera_vez_s": creado_s}
+
+
+class TestMomentos(unittest.TestCase):
+    def test_agrupa_por_vod_y_por_hora_de_creacion_sin_encadenar(self):
+        clips = [ficha("a", 0, offset=1000), ficha("b", 10, offset=1050), ficha("c", 20, offset=1095),
+                 ficha("d", 30, offset=1150), ficha("e", 5000), ficha("f", 5100), ficha("g", 5300)]
+        grupos = sorted(sorted(c["clip_id"] for c in g) for g in agrupar(clips, 90, 120))
+        self.assertEqual(grupos, [["a", "b"], ["c", "d"], ["e", "f"], ["g"]])
+
+    def test_streamers_distintos_no_se_mezclan(self):
+        clips = [ficha("a", 0, offset=10), ficha("b", 0, offset=10, streamer="xqc")]
+        self.assertEqual(len(agrupar(clips, 90, 120)), 2)
 
 
 class TestTwitch(unittest.TestCase):
@@ -203,24 +232,96 @@ class TestEjecucion(unittest.TestCase):
         self.assertEqual(self._ejecutar(tw, AHORA + timedelta(minutes=5))[0]["repaso"], "reciente")
         self.assertEqual(self._ejecutar(tw, AHORA + timedelta(minutes=15))[0]["repaso"], "completo")
 
-    def test_aviso_solo_para_clips_jovenes_que_superan_el_minimo_y_una_sola_vez(self):
-        tw = TwitchFalso([clip("viejo", 5000, AHORA - timedelta(hours=20)),
-                          clip("joven_viral", 900, AHORA - timedelta(minutes=10)),
-                          clip("joven_flojo", 20, AHORA - timedelta(minutes=10))])
-        r, tg = self._ejecutar(tw, cfg=self._alertas())
-        avisos = [m for m in tg.mensajes if m.startswith("Clip con potencial")]
+    def _fondo(self):
+        return [clip(f"fondo{i}", 20, AHORA - timedelta(hours=3, minutes=10 * i)) for i in range(21)]
+
+    def _avisos(self, telegram):
+        return [m for m in telegram.mensajes if m.startswith("Clip con potencial")]
+
+    def test_aviso_por_momento_con_nota_alta_y_una_sola_vez(self):
+        tw = TwitchFalso(self._fondo())
+        _, tg = self._ejecutar(tw, cfg=self._alertas())
+        self.assertTrue(any(m.startswith("Base de datos iniciada") for m in tg.mensajes))
+        self.assertEqual(self._avisos(tg), [])
+        momento = AHORA + timedelta(minutes=5)
+        for c in (clip("viejo", 5000, AHORA - timedelta(hours=20)), clip("joven_viral", 900, momento),
+                  clip("copia_viral", 300, momento + timedelta(seconds=30)),
+                  clip("joven_flojo", 20, momento - timedelta(minutes=4))):
+            tw.datos[c["id"]] = c
+        _, tg = self._ejecutar(tw, AHORA + timedelta(minutes=15), cfg=self._alertas())
+        avisos = self._avisos(tg)
         self.assertEqual(len(avisos), 1)
         self.assertIn("joven_viral", avisos[0])
-        r, tg = self._ejecutar(tw, AHORA + timedelta(minutes=15), cfg=self._alertas())
-        self.assertEqual(tg.mensajes, [])
+        self.assertIn("2 clips", avisos[0])
+        _, tg = self._ejecutar(tw, AHORA + timedelta(minutes=30), cfg=self._alertas())
+        self.assertEqual(self._avisos(tg), [])
+        notas = dict(self.bd.con.execute("SELECT clip_id, nota_maxima FROM clips WHERE clip_id LIKE '%viral'"))
+        self.assertEqual(notas, {"joven_viral": 10, "copia_viral": 10})
+
+    def test_lo_que_pasa_en_silencio_llega_en_un_resumen_al_despertar(self):
+        tw = TwitchFalso(self._fondo())
+        self._ejecutar(tw)
+        momento = AHORA + timedelta(minutes=5)
+        tw.datos["noche"] = clip("noche", 900, momento)
+        _, tg = self._ejecutar(tw, AHORA + timedelta(minutes=15))
+        self.assertEqual(self._avisos(tg), [])
+        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=6), cfg=self._alertas())
+        resumenes = [m for m in tg.mensajes if m.startswith("Mientras estabas en silencio")]
+        self.assertEqual(len(resumenes), 1)
+        self.assertIn("noche", resumenes[0])
+        self.assertEqual(self._avisos(tg), [])
+        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=6, minutes=15), cfg=self._alertas())
+        self.assertEqual([m for m in tg.mensajes if not m.startswith("Detector funcionando")], [])
 
     def test_si_telegram_falla_el_aviso_se_reintenta(self):
-        self._ejecutar(TwitchFalso([]))
-        tw = TwitchFalso([clip("a", 900, AHORA)])
+        tw = TwitchFalso(self._fondo())
+        self._ejecutar(tw)
+        tw.datos["a"] = clip("a", 900, AHORA)
         r, _ = self._ejecutar(tw, AHORA + timedelta(minutes=5), TelegramFalso(fallar=True), self._alertas())
         self.assertEqual(r["resultado"], "error")
-        r, tg = self._ejecutar(tw, AHORA + timedelta(minutes=10), cfg=self._alertas())
-        self.assertEqual(len(tg.mensajes), 1)
+        _, tg = self._ejecutar(tw, AHORA + timedelta(minutes=10), cfg=self._alertas())
+        self.assertEqual(len(self._avisos(tg)), 1)
+
+    def test_migracion_borra_las_notas_antiguas_y_anade_columnas(self):
+        ruta = Path(self.tmp.name) / "antigua.db"
+        import sqlite3
+        con = sqlite3.connect(ruta)
+        con.executescript("CREATE TABLE clips (clip_id TEXT PRIMARY KEY, streamer TEXT NOT NULL, titulo TEXT, url TEXT,"
+                          " creador TEXT, creado_s INTEGER NOT NULL, duracion_s REAL, vod_id TEXT, vod_offset_s INTEGER,"
+                          " primera_vez_s INTEGER NOT NULL, ultima_vez_s INTEGER NOT NULL, visualizaciones INTEGER NOT NULL,"
+                          " velocidad_actual REAL, velocidad_maxima REAL, nota_actual INTEGER, nota_maxima INTEGER,"
+                          " hito_alcanzado_s INTEGER, avisado INTEGER NOT NULL DEFAULT 0,"
+                          " historial_resumido INTEGER NOT NULL DEFAULT 0);"
+                          "INSERT INTO clips (clip_id, streamer, creado_s, primera_vez_s, ultima_vez_s, visualizaciones,"
+                          " nota_maxima) VALUES ('x', 'kai', 1, 1, 1, 1, 10);")
+        con.commit()
+        con.close()
+        bd = BaseDatos(ruta)
+        fila = bd.con.execute("SELECT nota_maxima, juego_id, momento_id FROM clips").fetchone()
+        self.assertEqual(tuple(fila), (None, None, None))
+        bd.cerrar()
+
+    def test_guarda_juego_y_creador(self):
+        c = clip("a", 10, AHORA - timedelta(minutes=30))
+        c.update(game_id="1867279146", creator_id="99")
+        self._ejecutar(TwitchFalso([c]))
+        self.assertEqual(tuple(self.bd.con.execute("SELECT juego_id, creador_id FROM clips").fetchone()),
+                         ("1867279146", "99"))
+
+    def test_prueba_hacia_atras_detecta_el_momento_viral(self):
+        cfg = config_base(viralidad_clips_minimos_para_dar_nota=5, viralidad_visualizaciones_minimas_para_comparar=1)
+        base = 1_000_000
+        clips, historiales = [], {}
+        for i in range(30):
+            inicio = base + i * 3600
+            viral = i == 25
+            clips.append(ficha(f"m{i}", inicio, vistas=5000 if viral else 20 + i))
+            temprano = 900 if viral else 1 + (i * 37) % 11
+            historiales[f"m{i}"] = [(inicio + 600, temprano), (inicio + 7200, 5000 if viral else 20 + temprano)]
+        informe = prueba_hacia_atras(clips, historiales, {}, base + 40 * 86400, cfg)["kaicenat"]
+        self.assertEqual(informe["momentos_evaluados"], 30)
+        self.assertGreaterEqual(informe["aciertos"], 1)
+        self.assertLess(informe["avisados"], informe["con_nota"] / 2)
 
     def test_historial_solo_cuando_cambian_las_visualizaciones(self):
         datos = [clip("a", 10, AHORA - timedelta(minutes=30))]
@@ -292,7 +393,9 @@ class TestEjecucion(unittest.TestCase):
 
     def test_exportar_con_hora_espanola(self):
         self._ejecutar(TwitchFalso([clip("a", 10, AHORA - timedelta(minutes=30))]))
-        fichas, _ = self.bd.exportar(Path(self.tmp.name), "Europe/Madrid")
+        fichas, _, momentos = self.bd.exportar(Path(self.tmp.name), "Europe/Madrid")
+        with momentos.open(newline="", encoding="utf-8") as f:
+            self.assertEqual(len(list(csv.DictReader(f))), 1)
         with fichas.open(newline="", encoding="utf-8") as f:
             fila = next(csv.DictReader(f))
         self.assertEqual(fila["creado_espana"], "30/10/2026 12:30:00")

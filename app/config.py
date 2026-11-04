@@ -1,6 +1,8 @@
 import json
 import os
+import re
 from dataclasses import dataclass, fields
+from datetime import date
 from pathlib import Path
 
 MODOS_VALIDOS = {"silencio", "alertas"}
@@ -39,15 +41,27 @@ class Config:
     minutos_de_solape_entre_trozos: int
     clips_por_pagina: int
     max_paginas_de_100_clips_por_trozo: int
+    avisar_si_la_nota_es_al_menos: int
     avisar_si_tiene_al_menos_visualizaciones: int
     avisar_si_se_creo_hace_menos_de_minutos: int
     max_avisos_por_ejecucion: int
+    resumen_al_despertar_momentos_de_las_ultimas_horas: int
+    max_momentos_en_el_resumen_al_despertar: int
     resumen_de_funcionamiento_cada_horas: int
     clips_en_el_resumen: int
     viralidad_minutos_para_medir_crecimiento: int
     viralidad_minutos_minimos_de_calculo: int
     viralidad_dias_de_clips_para_comparar: int
     viralidad_clips_minimos_para_dar_nota: int
+    viralidad_visualizaciones_minimas_para_comparar: int
+    viralidad_minutos_de_vida_tempranos: int
+    momento_segundos_de_cercania_en_el_vod: int
+    momento_minutos_de_cercania_al_crearse: int
+    peso_consenso: int
+    peso_velocidad_temprana: int
+    peso_velocidad_actual: int
+    peso_tamano_relativo_al_directo: int
+    cortes_de_nota_en_porcentaje: list
     no_limpiar_clips_con_nota_igual_o_mayor_que: int
     apuntar_cuando_llega_a_visualizaciones: int
     guardar_historial_desde_visualizaciones: int
@@ -56,6 +70,20 @@ class Config:
     limpieza_rapida_si_tiene_menos_de_visualizaciones: int
     limpieza_no_virales_tras_dias: int
     compactar_base_datos_cada_horas: int
+    preparar_videos: bool
+    max_videos_por_ejecucion: int
+    borrar_videos_preparados_tras_dias: int
+    ruta_yt_dlp: str
+    ruta_ffmpeg: str
+    ruta_whisper: str
+    tema: dict
+    palabras_a_censurar: list
+    recordatorio_antes_de_publicar: str
+    fecha_lanzamiento_gta_vi: str
+    juegos: dict
+    cuentas: list
+    resumen_semanal_dia: int
+    resumen_semanal_hora: int
 
 
 CAMPOS_ENTEROS = [f.name for f in fields(Config) if f.type is int or f.type == "int"]
@@ -109,7 +137,8 @@ def _validar(c: Config):
     for nombre in ("ejecucion_automatica_cada_minutos", "repaso_reciente_cada_minutos", "horas_que_cubre_el_repaso_reciente",
                    "repaso_completo_cada_minutos", "horas_que_cubre_el_repaso_completo", "minutos_por_trozo_de_consulta",
                    "clips_por_pagina", "max_paginas_de_100_clips_por_trozo", "viralidad_minutos_para_medir_crecimiento",
-                   "viralidad_minutos_minimos_de_calculo", "limpieza_cada_minutos"):
+                   "viralidad_minutos_minimos_de_calculo", "limpieza_cada_minutos",
+                   "viralidad_minutos_de_vida_tempranos"):
         if getattr(c, nombre) < 1:
             errores.append(f"'{nombre}' debe ser 1 o mas")
     if c.clips_por_pagina > MAXIMO_CLIPS_POR_PAGINA_TWITCH:
@@ -123,10 +152,72 @@ def _validar(c: Config):
     if c.limpieza_rapida_tras_horas <= c.horas_que_cubre_el_repaso_completo:
         errores.append("'limpieza_rapida_tras_horas' debe ser mayor que 'horas_que_cubre_el_repaso_completo' "
                        "(si no, los clips borrados volverian a aparecer como nuevos)")
-    if not 1 <= c.no_limpiar_clips_con_nota_igual_o_mayor_que <= 10:
-        errores.append("'no_limpiar_clips_con_nota_igual_o_mayor_que' debe estar entre 1 y 10")
+    for nombre in ("no_limpiar_clips_con_nota_igual_o_mayor_que", "avisar_si_la_nota_es_al_menos"):
+        if not 1 <= getattr(c, nombre) <= 10:
+            errores.append(f"'{nombre}' debe estar entre 1 y 10")
+    suma_pesos = c.peso_consenso + c.peso_velocidad_temprana + c.peso_velocidad_actual + c.peso_tamano_relativo_al_directo
+    if suma_pesos != 100:
+        errores.append(f"los cuatro 'peso_...' deben sumar 100 (ahora suman {suma_pesos})")
+    cortes = c.cortes_de_nota_en_porcentaje
+    if (not isinstance(cortes, list) or len(cortes) != 9
+            or any(not isinstance(x, int) or isinstance(x, bool) or x < 0 for x in cortes) or sum(cortes) > 100):
+        errores.append("'cortes_de_nota_en_porcentaje' debe ser una lista de 9 enteros (porcentajes para las notas "
+                       "10, 9, ..., 2) que sumen 100 como maximo")
+    errores += _errores_de_videos(c)
     if errores:
         raise ErrorConfiguracion("config.json tiene errores:\n  - " + "\n  - ".join(errores))
+
+
+def _errores_de_videos(c: Config) -> list:
+    errores = []
+    if not isinstance(c.preparar_videos, bool):
+        errores.append("'preparar_videos' debe ser true o false")
+    for nombre in ("ruta_yt_dlp", "ruta_ffmpeg", "ruta_whisper", "recordatorio_antes_de_publicar", "fecha_lanzamiento_gta_vi"):
+        if not isinstance(getattr(c, nombre), str) or not getattr(c, nombre).strip():
+            errores.append(f"'{nombre}' debe ser un texto")
+    try:
+        date.fromisoformat(c.fecha_lanzamiento_gta_vi)
+    except (TypeError, ValueError):
+        errores.append("'fecha_lanzamiento_gta_vi' debe tener el formato AAAA-MM-DD")
+    tema = c.tema if isinstance(c.tema, dict) else {}
+    for clave in ("fuente", "color_texto", "color_resalte", "color_borde"):
+        if not isinstance(tema.get(clave), str):
+            errores.append(f"'tema' necesita '{clave}' (texto)")
+    for clave in ("tamano_subtitulos", "tamano_gancho", "segundos_gancho"):
+        if not isinstance(tema.get(clave), int) or tema.get(clave, 0) < 1:
+            errores.append(f"'tema' necesita '{clave}' (entero mayor que 0)")
+    for clave in ("color_texto", "color_resalte", "color_borde"):
+        if isinstance(tema.get(clave), str) and not re.fullmatch(r"#?[0-9A-Fa-f]{6}", tema[clave]):
+            errores.append(f"'tema.{clave}' debe ser un color como \"FFFFFF\"")
+    if not isinstance(c.palabras_a_censurar, list) or not all(isinstance(p, str) for p in c.palabras_a_censurar):
+        errores.append("'palabras_a_censurar' debe ser una lista de textos")
+    if not isinstance(c.juegos, dict):
+        errores.append("'juegos' debe ser un diccionario {id_de_twitch: {...}}")
+    if not 0 <= c.resumen_semanal_dia <= 6:
+        errores.append("'resumen_semanal_dia' va de 0 (lunes) a 6 (domingo)")
+    if not 0 <= c.resumen_semanal_hora <= 23:
+        errores.append("'resumen_semanal_hora' va de 0 a 23")
+    if not isinstance(c.cuentas, list):
+        return errores + ["'cuentas' debe ser una lista"]
+    ids = set()
+    for cuenta in c.cuentas:
+        if not isinstance(cuenta, dict) or not isinstance(cuenta.get("id"), str) or not cuenta["id"].strip():
+            errores.append("cada cuenta necesita un 'id' (texto)")
+            continue
+        if cuenta["id"] in ids:
+            errores.append(f"id de cuenta repetido: {cuenta['id']}")
+        ids.add(cuenta["id"])
+        if cuenta.get("tipo") not in ("streamer", "gta"):
+            errores.append(f"cuenta '{cuenta['id']}': 'tipo' debe ser \"streamer\" o \"gta\"")
+        if cuenta.get("tipo") == "streamer" and cuenta.get("streamer") not in c.streamers:
+            errores.append(f"cuenta '{cuenta['id']}': su 'streamer' debe estar en la lista 'streamers'")
+        if not isinstance(cuenta.get("youtube_automatico"), bool):
+            errores.append(f"cuenta '{cuenta['id']}': 'youtube_automatico' debe ser true o false")
+        if not isinstance(cuenta.get("hashtags", []), list):
+            errores.append(f"cuenta '{cuenta['id']}': 'hashtags' debe ser una lista")
+        if not isinstance(cuenta.get("campana"), dict):
+            errores.append(f"cuenta '{cuenta['id']}': falta 'campana' (aunque sea {{\"activa\": false}})")
+    return errores
 
 
 def guardar_credenciales_desde_entorno(ruta: Path, entorno=os.environ) -> list:

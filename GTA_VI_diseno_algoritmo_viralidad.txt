@@ -1,0 +1,295 @@
+=====================================================================
+  DISENO DEL ALGORITMO DE POTENCIAL DE VIRALIDAD (PENDIENTE DE IMPLEMENTAR)
+  Proyecto: clipping de streamers de EE. UU. - lanzamiento de GTA VI
+  Aprobado por el usuario: 01-11-2026
+  Estado: IMPLEMENTADO en la version 2026-11-04.1 (04-11-2026), con
+          estos cambios tras analizar 4 dias de datos reales:
+          - S5 (emocion del titulo) eliminada: no anticipaba nada.
+          - S6 (ventana de oportunidad) no puntua: se usa como filtro
+            del aviso (momento de menos de 180 min).
+          - Pesos: velocidad temprana 60, velocidad actual 20,
+            consenso 10, tamano relativo 10.
+          - Referencias: momentos con mejor clip >= 10 vis; nota con
+            15 referencias como minimo.
+          Lo que hace el script exactamente: GTA_VI_metricas.txt.
+=====================================================================
+
+INDICE
+  1. Objetivo
+  2. Que hace viral un clip (base del diseno)
+  3. Datos disponibles (verificados)
+  4. Cambio de enfoque: puntuar MOMENTOS, no clips
+  5. Las 6 senales
+  6. Puntuacion final y nota del 1 al 10
+  7. Regla de avisos
+  8. Parametros propuestos para config.json
+  9. Validacion con datos (prueba hacia atras)
+ 10. Plan de implementacion paso a paso
+ 11. Requisitos previos y precauciones
+ 12. Decisiones pendientes
+ 13. Relacion con lo ya implementado
+
+
+---------------------------------------------------------------------
+1. OBJETIVO
+---------------------------------------------------------------------
+Detectar, lo antes posible (idealmente en los primeros 15-30 minutos
+de vida de un clip), los momentos de los streamers con mayor
+POTENCIAL de convertirse en clips virales en redes sociales, usando
+solo los datos que da la API de Twitch.
+
+Sustituye a la nota actual de viralidad (ver GTA_VI_metricas.txt),
+que sale casi siempre 10/10 porque compara con TODOS los clips del
+streamer, la mayoria con 1-5 visualizaciones.
+
+
+---------------------------------------------------------------------
+2. QUE HACE VIRAL UN CLIP (BASE DEL DISENO)
+---------------------------------------------------------------------
+[Fuentes conocidas]
+- El contenido que provoca emociones de alta activacion (sorpresa,
+  risa, asombro, indignacion) se comparte mas. (Berger y Milkman,
+  "What Makes Online Content Viral?", Journal of Marketing Research,
+  2012)
+- En video corto manda la retencion: gancho en los primeros segundos y
+  contenido que se entienda sin contexto. (Recomendaciones de Instagram
+  / Mosseri y ayuda de YouTube Shorts)
+
+[Traduccion a clips de streamers - criterio de experto]
+Un clip con potencial:
+  a) es un momento que provoca REACCION (el streamer explota, se rie,
+     no se lo cree, o pasa algo absurdo en el juego);
+  b) se entiende solo, sin haber visto el directo;
+  c) la audiencia del directo lo ha "votado".
+
+[Idea clave para anticiparse - hipotesis a validar]
+Los espectadores de Twitch son el primer filtro. Cuando un momento es
+bueno:
+  - muchos espectadores DISTINTOS lo clipean a la vez;
+  - esos clips ganan visualizaciones muy rapido al principio;
+  - mas rapido de lo normal PARA ESE STREAMER.
+
+
+---------------------------------------------------------------------
+3. DATOS DISPONIBLES (VERIFICADOS, ver registro 6.1)
+---------------------------------------------------------------------
+Por clip ("Get Clips"):
+  id, url, broadcaster_id/name, creator_id/creator_name (quien lo
+  creo), video_id (VOD), vod_offset (segundo del VOD; null durante
+  unos minutos), game_id, language, title, view_count, created_at,
+  duration, thumbnail_url, is_featured.
+Por directo ("Get Streams"):
+  viewer_count (espectadores en ese momento), game_name, title,
+  started_at, language.
+NO disponible: likes, comentarios, compartidos de los clips de Twitch.
+
+Ya guardado en datos/clips.db (version 2026-10-31.2):
+  - fichas de clips (incluye creador, VOD, vod_offset, creacion);
+  - historial de visualizaciones (solo cuando cambian);
+  - directos (espectadores por streamer y hora).
+NOTA: "creator_name" se guarda; "creator_id" NO se guarda todavia
+(conviene anadirlo para contar creadores distintos con fiabilidad).
+
+
+---------------------------------------------------------------------
+4. CAMBIO DE ENFOQUE: PUNTUAR MOMENTOS, NO CLIPS
+---------------------------------------------------------------------
+Un momento fuerte genera varios clips casi iguales (5-10). Se agrupan
+en un MOMENTO y se puntua el momento.
+
+Regla de agrupacion (propuesta):
+  Dos clips pertenecen al mismo momento si son del mismo streamer y:
+  - tienen el mismo VOD (video_id) y sus vod_offset estan a menos de
+    "momento_segundos_de_cercania_en_el_vod" (propuesta: 90 s); o
+  - si aun no hay vod_offset: se crearon con menos de
+    "momento_minutos_de_cercania_al_crearse" (propuesta: 2 min) de
+    diferencia.
+  (El editor de clips de Twitch permite elegir hasta 60 s dentro de
+  los ultimos ~90 s emitidos; por eso 90 s.)
+
+Clip representante del momento (el que se propone al usuario):
+  - el de mas visualizaciones; en empate, el de mayor duracion
+    (mas contexto).
+
+
+---------------------------------------------------------------------
+5. LAS 6 SENALES (cada una se convierte en una nota de 0 a 100)
+---------------------------------------------------------------------
+Cada senal se normaliza como PERCENTIL frente a los momentos
+"relevantes" del mismo streamer en los ultimos
+"viralidad_dias_de_clips_para_comparar" (3) dias.
+"Relevante" = momento cuyo mejor clip supero
+"viralidad_visualizaciones_minimas_para_comparar" (propuesta: 50).
+(Esto evita comparar con clips basura y corrige el 10/10.)
+
+S1. CONSENSO (densidad)                         peso inicial 30%
+    = numero de CREADORES DISTINTOS que clipearon el momento.
+    Por que: es la senal mas temprana y dificil de falsear.
+
+S2. VELOCIDAD TEMPRANA                          peso inicial 25%
+    = visualizaciones por minuto del momento (suma de sus clips)
+      durante sus primeros "viralidad_minutos_de_vida_tempranos"
+      (propuesta: 30) minutos; si es mas joven, con lo que lleve.
+    Por que: el arranque suele predecir el total (hipotesis).
+
+S3. SORPRESA FRENTE A LO NORMAL DEL STREAMER    peso inicial 20%
+    = velocidad actual del momento comparada solo con momentos
+      relevantes del mismo streamer.
+    Por que: un 10 debe ser excepcional PARA ESE CANAL.
+
+S4. TAMANO RELATIVO AL DIRECTO                  peso inicial 15%
+    = visualizaciones del momento por cada 1.000 espectadores del
+      directo en ese momento (tabla "directos"), y clips del momento
+      por cada 1.000 espectadores.
+    Por que: compara bien streamers grandes y pequenos.
+    Si no hay dato de espectadores (fuera de directo): se omite y su
+    peso se reparte entre las demas.
+
+S5. EMOCION EN EL TITULO                        peso inicial 5%
+    = presencia de palabras de reaccion ("NO WAY", "LMAO", "W", "L",
+      "CRASHES", "INSANE", "BRO"...), MAYUSCULAS y emojis en los
+      titulos de los clips del momento. Lista de palabras configurable.
+    Por que: quien crea el clip describe lo que siente. Senal debil
+    (hipotesis).
+
+S6. VENTANA DE OPORTUNIDAD                      peso inicial 5%
+    = 100 al crearse y se reduce a la mitad cada
+      "oportunidad_horas_para_perder_la_mitad" (propuesta: 3) horas.
+    Por que: llegar tarde = mas copias de otros clippers.
+
+
+---------------------------------------------------------------------
+6. PUNTUACION FINAL Y NOTA DEL 1 AL 10
+---------------------------------------------------------------------
+Puntuacion de potencial (0-100) = suma ponderada de S1..S6.
+
+Conversion a nota con cortes ESTRICTOS (percentil de la puntuacion
+entre los momentos relevantes del streamer), configurables:
+  10 = top 1%     9 = siguiente 2%    8 = siguiente 4%
+   7 = siguiente 8%   6 = siguiente 10%   5 = siguiente 15%
+   4..1 = el resto, repartido.
+Si hay menos de "viralidad_clips_minimos_para_dar_nota" (20) momentos
+relevantes de referencia: "sin datos suficientes".
+
+Se guarda por momento: puntuacion actual y maxima, nota actual y
+maxima, y el desglose de las 6 senales (para explicar cada nota).
+
+
+---------------------------------------------------------------------
+7. REGLA DE AVISOS (sustituye a la provisional)
+---------------------------------------------------------------------
+Aviso por Telegram cuando un MOMENTO:
+  - alcanza nota >= "avisar_si_la_nota_es_al_menos" (propuesta: 8);
+  - no se ha avisado antes;
+  - sigue dentro de la ventana de oportunidad
+    (S6 >= "avisar_si_la_oportunidad_es_al_menos", propuesta: 50).
+El aviso incluye: nota, desglose breve (consenso, velocidad,
+sorpresa), clip representante con enlace, y cuantos clips tiene el
+momento.
+El resumen de funcionamiento mostrara los tops por MOMENTO.
+
+
+---------------------------------------------------------------------
+8. PARAMETROS PROPUESTOS PARA config.json (nombres legibles)
+---------------------------------------------------------------------
+  momento_segundos_de_cercania_en_el_vod             90
+  momento_minutos_de_cercania_al_crearse             2
+  viralidad_visualizaciones_minimas_para_comparar    50
+  viralidad_minutos_de_vida_tempranos                30
+  oportunidad_horas_para_perder_la_mitad             3
+  peso_consenso                                      30
+  peso_velocidad_temprana                            25
+  peso_sorpresa                                      20
+  peso_tamano_relativo_al_directo                    15
+  peso_emocion_en_el_titulo                          5
+  peso_ventana_de_oportunidad                        5
+  palabras_de_reaccion_en_titulos                    ["NO WAY", "LMAO", ...]
+  cortes_de_nota_en_porcentaje                       [1, 2, 4, 8, 10, 15, ...]
+  avisar_si_la_nota_es_al_menos                      8
+  avisar_si_la_oportunidad_es_al_menos               50
+(Se mantienen: viralidad_dias_de_clips_para_comparar,
+viralidad_clips_minimos_para_dar_nota, etc.)
+Los pesos son enteros que deben sumar 100 (se validara).
+
+
+---------------------------------------------------------------------
+9. VALIDACION CON DATOS (PRUEBA HACIA ATRAS)
+---------------------------------------------------------------------
+Los pesos del punto 5 son criterio de experto, NO una verdad.
+
+Prueba hacia atras con los datos recogidos:
+  - Para cada momento, reconstruir lo que sabiamos a los 30 minutos
+    de vida (con el historial de visualizaciones).
+  - Calcular la puntuacion con esa informacion.
+  - Comparar con el resultado real: si a las 24 h acabo en el 10% de
+    momentos con mas visualizaciones del streamer.
+  - Medir el acierto: de los que el algoritmo marco como 8+, que %
+    acabaron en ese 10% (precision), y que % de ese 10% detecto
+    (cobertura).
+  - Ajustar pesos y cortes para maximizar el acierto.
+Datos necesarios: al menos 2-3 dias con varios streamers en directo.
+
+Validacion definitiva (cuando el usuario publique): resultado real en
+YouTube / Instagram / TikTok (visualizaciones, dinero de campanas).
+Mas adelante, ajuste automatico de pesos con esos resultados
+(puntuacion personalizada, V3).
+
+Limite: el algoritmo mide la viralidad EN TWITCH. El exito en redes
+depende tambien del gancho y la edicion del usuario.
+
+
+---------------------------------------------------------------------
+10. PLAN DE IMPLEMENTACION PASO A PASO
+---------------------------------------------------------------------
+  1. Usuario: dejar recogiendo datos 2-3 dias con varios streamers
+     (ya en marcha con kaicenat, xqc, jynxzi).
+  2. Usuario: exportar (python3 clipper.py exportar) y subir SOLO
+     export_fichas.csv y export_historial.csv a una carpeta no
+     ignorada del repositorio (p. ej. exportaciones/).
+  3. Devin: leer los CSV desde GitHub (solo lectura) y analizar:
+     clips por hora, distribucion de visualizaciones, tamano de los
+     momentos, relacion velocidad temprana -> visualizaciones a 24 h.
+  4. Devin: ajustar el diseno con lo observado y proponer valores.
+  5. Devin: implementar (agrupacion en momentos, 6 senales,
+     puntuacion, nota, avisos, resumen, exportar e informe por
+     momento), con pruebas automaticas y la prueba hacia atras como
+     comando ("python3 clipper.py prueba-algoritmo" o similar).
+  6. Devin: documentarlo en GTA_VI_metricas.txt (solo lo implementado)
+     y actualizar el registro.
+  7. Usuario: copiar los archivos indicados y comprobar version.
+
+
+---------------------------------------------------------------------
+11. REQUISITOS PREVIOS Y PRECAUCIONES
+---------------------------------------------------------------------
+- Guardar creator_id (ademas de creator_name) en la ficha del clip.
+- La base de datos actual no tiene el concepto de "momento": habra
+  que anadir una tabla de momentos y la relacion clip -> momento.
+  Probablemente la migracion empiece la base de datos de cero o
+  recalcule los momentos con los clips guardados.
+- vod_offset llega con minutos de retraso: la agrupacion debe poder
+  "reagrupar" cuando aparezca.
+- NUNCA subir a GitHub datos/estado.json (contiene el token de
+  Twitch) ni credenciales.json. El repositorio es publico.
+
+
+---------------------------------------------------------------------
+12. DECISIONES PENDIENTES
+---------------------------------------------------------------------
+- Confirmar con datos: ventanas de agrupacion (90 s / 2 min), minimo
+  de "relevante" (50), minutos tempranos (30), vida media de la
+  oportunidad (3 h), pesos y cortes.
+- Si el momento se propone con un solo clip representante o con
+  varios.
+- Comando "resumen" (enviar el resumen al momento) y renombrar el
+  texto "Detector funcionando" -> "Resumen de funcionamiento".
+
+
+---------------------------------------------------------------------
+13. RELACION CON LO YA IMPLEMENTADO
+---------------------------------------------------------------------
+- Implementado hoy (ver GTA_VI_metricas.txt): velocidad por hora,
+  nota 1-10 por percentil frente a todos los clips del streamer,
+  avisos provisionales (>= 50 vis y < 180 min), limpiezas.
+- Este diseno sustituye la nota y los avisos; las limpiezas pasaran a
+  usar la nota maxima del momento.

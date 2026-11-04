@@ -1,0 +1,434 @@
+=====================================================================
+  HOJA DE RUTA COMPLETA
+  Proyecto: clipping de streamers de EE. UU. - lanzamiento de GTA VI
+  Creada: 03-11-2026            Lanzamiento de GTA VI: 19-11-2026
+=====================================================================
+
+COMO SE USA ESTE FICHERO
+  - Es el MAPA del proyecto: que piezas hay, en que estado esta cada
+    una, que falta y en que orden se hace.
+  - Los datos verificados, sus fuentes y las decisiones numeradas
+    estan en GTA_VI_registro_requisitos.txt (se citan como "R-x.y").
+  - Estados:
+      [HECHO]          funciona y esta probado.
+      [DECIDIDO]       definido y aprobado; falta construirlo.
+      [POR DEFINIR]    falta decidir como se hace.
+      [PREGUNTAR]      solo se resuelve preguntando a un tercero.
+      [PROBAR]         solo se resuelve probandolo.
+  - Regla de trabajo (R-1.40): toda norma o requisito se comprueba
+    ANTES de proponer una solucion.
+
+INDICE
+  1. Objetivo y restricciones
+  2. Flujo completo de cada clip (de Twitch al cobro)
+  3. Bloques del proyecto (B1-B10)
+  4. Orden de trabajo y calendario
+  5. Riesgos aceptados y riesgos abiertos
+  6. Preguntas a terceros
+  7. Decisiones pendientes del usuario
+  8. Plan de construccion del script (entregas)
+  9. Mejoras futuras (despues del MVP)
+
+
+=====================================================================
+1. OBJETIVO Y RESTRICCIONES
+=====================================================================
+Objetivo
+  Publicar clips de streamers de EE. UU. sobre GTA VI para publico de
+  EE. UU. y cobrar a traves de campanas de clipping (pago por
+  visualizaciones). A largo plazo: monetizacion propia de la cuenta GTA.
+
+Restricciones fijas
+  - Residencia en Espana; sin trucos de ubicacion (R-1.1, R-1.6).
+  - Sin voz ni cara del usuario (R-1.34).
+  - Maximo 25 EUR/mes en herramientas, pago mensual (R-1.37).
+    Opcion elegida: coste 0 EUR (R-1.43).
+  - Automatizar al maximo; lo manual, lo mas sencillo posible (R-1.36).
+  - Todo se ejecuta en el MacBook Air M5 personal; el Mac de empresa
+    solo para escribir y probar codigo con datos ficticios (R-1.14).
+  - El Mac personal debe estar encendido, despierto, enchufado y con
+    la tapa abierta para que el sistema funcione.
+
+
+=====================================================================
+2. FLUJO COMPLETO DE CADA CLIP
+=====================================================================
+Resumen:
+  Detectar -> Descargar -> Editar -> Textos -> Filtro -> Publicar
+  -> Enviar a la campana -> Registrar y medir -> Cobrar
+
+Quien hace cada paso: [AUTO] = el script, sin intervencion;
+[TU] = el usuario.
+
+---------------------------------------------------------------------
+2.1 DETECTAR                                      [AUTO]  [HECHO]
+---------------------------------------------------------------------
+- Detector actual (version 2026-10-31.2): consulta Twitch cada 5 min,
+  guarda clips e historial, nota de viralidad 1-10, avisos y resumen
+  por Telegram.
+- Pendiente:
+    [HECHO]     Nota calibrada con 4 dias de datos y algoritmo por
+                momentos implementado (version 2026-11-04.1,
+                GTA_VI_metricas.txt). Recalibrar con mas datos.
+    [POR DEFINIR] Regla final de "que clip se procesa": nota minima,
+                maximo de clips por hora y por cuenta, y que hacer con
+                varios clips del mismo momento (solo el mejor).
+
+---------------------------------------------------------------------
+2.2 DESCARGAR                                     [AUTO]  [DECIDIDO]
+---------------------------------------------------------------------
+- Herramienta: yt-dlp (gratuito). Riesgo aceptado (R-1.41).
+- El endpoint oficial de Twitch no sirve: exige ser el streamer o su
+  editor.
+- Por construir: descargar el clip elegido, comprobar que el archivo
+  es valido y reintentar si falla.
+- [HECHO 03-11-2026] Programas instalados en el portatil personal y
+  diseno 1 probado a mano con un clip real (6,6 MB, se ve bien).
+- Nota tecnica: launchd no carga ~/.zshrc ni ~/.zprofile, asi que el
+  script debe llamar a yt-dlp, ffmpeg y whisper-cli por su ruta
+  completa (Homebrew en Apple Silicon: /opt/homebrew/bin).
+- Instalacion y pruebas que el usuario hace por su cuenta:
+  GTA_VI_guia_portatil_personal.txt.
+
+---------------------------------------------------------------------
+2.3 EDITAR (nivel 2 + texto inicial + tema)       [AUTO]  [DECIDIDO]
+---------------------------------------------------------------------
+- Herramientas gratuitas en el Mac: ffmpeg + whisper.cpp (R-1.43).
+- Contenido de la edicion (R-1.38):
+    a) Formato vertical 9:16.             [DECIDIDO] MVP con el diseno 1;
+                                          diseno 2 despues del MVP, con
+                                          botones Valido / Diseno 1 /
+                                          Descartar (R-1.49, R-1.50).
+         1) juego centrado + mismo video desenfocado de fondo
+            (sirve para cualquier clip; nunca corta nada);
+         2) camara del streamer arriba + juego abajo. La posicion y el
+            tamano de la camara cambian de un clip a otro (R-1.48):
+            exigiria DETECTARLA en cada clip (Apple Vision + bordes
+            quietos del recuadro) y usar el diseno 1 cuando no haya
+            confianza.
+    b) Subtitulos automaticos en ingles (whisper.cpp), con el estilo
+       del tema.
+    c) Texto inicial breve (2-3 s) a partir del titulo del clip.
+                                          [POR DEFINIR] reglas de
+                                          limpieza (emojis, mayusculas,
+                                          titulos vacios o sin sentido).
+    d) Tema: 1 fuente + 2 colores fijos por cuenta, en la
+       configuracion.
+    e) Sin logos ni marcas de agua ajenas (TikTok lo penaliza).
+- Limites tecnicos a respetar:
+    * Archivo final de menos de 50 MB (limite de Telegram para bots).
+    * Shorts: 3 min o menos y 9:16 (los clips de Twitch duran hasta
+      60 s).
+    * Reels: MP4, H.264, 23-60 fps.
+- Fuera por ahora: zooms automaticos, subtitulos animados palabra a
+  palabra, voz, IA generativa.
+
+---------------------------------------------------------------------
+2.4 TEXTOS (titulo, descripcion, hashtags)        [AUTO]  [DECIDIDO]
+---------------------------------------------------------------------
+- [DECIDIDO 04-11-2026] (R-1.51)
+    * Texto inicial: titulo del clip si pasa un filtro de calidad; si
+      no, una frase corta de los subtitulos (lo que dice el streamer);
+      si no, solo el nombre del streamer. (48% de los titulos no
+      sirven: R-6.9.)
+    * Plantillas por red con los limites verificados (Instagram: 5
+      hashtags maximo; YouTube: titulo de 100 caracteres, sin
+      mayusculas gritadas).
+    * Hashtag del juego SOLO si el clip es de ese juego (dato game_id
+      de Twitch; hay que guardarlo en el detector).
+    * Cuentas de campana: aviso de publicidad obligatorio (R-7):
+      "#Ad" al principio del texto, rotulo "#Ad" en el video, casilla
+      de promocion pagada en YouTube (API) e interruptor de contenido
+      comercial en TikTok (a mano). La cuenta GTA no lleva aviso.
+    * Sin IA generativa en el MVP; evaluar despues una IA local
+      gratuita para ganchos.
+
+---------------------------------------------------------------------
+2.5 FILTRO DE CUMPLIMIENTO                        [AUTO]  [DECIDIDO]
+---------------------------------------------------------------------
+[DECIDIDO 04-11-2026] (R-1.52; la revision humana queda en UNA linea
+de recordatorio en el mensaje, no en 4 preguntas)
+- Bloqueos automaticos: GTA VI antes del 19-11 (filtraciones);
+  fuera de fechas o de streamer de la campana; momento ya publicado en
+  esa cuenta; cuenta GTA solo con clips de GTA.
+- Avisos automaticos en el mensaje: posible musica [PROBAR], idioma no
+  ingles, palabrotas en el texto (se censuran).
+- Revision humana (4 preguntas en el mensaje de Telegram): spoiler o
+  cinematica aislada; deja mal al streamer; contenido sexual/violento
+  o terceros; musica de fondo. Si alguna es "si" -> Descartar.
+Lista de comprobaciones antes de publicar. Lo automatizable lo hace el
+script; lo demas se marca para revision.
+- Rockstar / Take-Two (R-5): nada filtrado antes del lanzamiento, sin
+  spoilers, sin cinematicas aisladas, sin TV ni comedia del juego.
+- Campana: el streamer es protagonista, fechas de clips validas,
+  hashtags, sin logos, sin dejarle mal, sin "hate farming".
+- Plataformas: originalidad (nivel 2), sin marcas de agua.
+- Musica: Content Rewards obliga a garantizar que no hay musica ajena
+  (17.2). Por definir como detectarlo o como minimizar el riesgo.
+- Contenido de marca: si hay que marcar "contenido promocional" en
+  cada red (pendiente del bloque B2).
+
+---------------------------------------------------------------------
+2.6 PUBLICAR                                              [DECIDIDO]
+---------------------------------------------------------------------
+Orden: YouTube -> Instagram -> TikTok (R-1.39).
+[04-11-2026] TikTok APARCADO por ahora (R-1.57): solo YouTube e
+Instagram. Lo de TikTok de esta seccion queda para cuando se retome.
+- YouTube Shorts                                  [AUTO]
+    * API oficial de YouTube, gratis, 100 subidas/dia.
+    * Proyecto de Google en estado "In production" (si se queda en
+      "Testing", la autorizacion caduca cada 7 dias).
+    * Con APROBACION (R-1.47): se sube en privado y se publica al
+      pulsar "Publicar" en Telegram (el script lo detecta en su
+      siguiente ejecucion, hasta 5 min).
+    * Ajuste por cuenta "publicacion automatica: si/no" (R-1.44): en
+      cuentas de campana con el contrato antiguo de Content Rewards,
+      tambien a mano salvo confirmacion escrita.
+- Instagram Reels y TikTok                        [TU]
+    * El script envia por Telegram el video final y el texto listo
+      para copiar.
+    * Tu lo subes desde el movil: ~1 min por red y clip.
+    * Instagram: cuenta profesional de tipo CREADOR (no reduce el
+      alcance; las de empresa limitan la musica).
+    * [HECHO] Probado en el iPhone XR: desde Telegram, "Compartir"
+      pasa el video a Instagram y TikTok.
+
+---------------------------------------------------------------------
+2.7 ENVIAR A LA CAMPANA                           [TU]   [DECIDIDO]
+---------------------------------------------------------------------
+- Pegar el enlace de la publicacion en la campana (no hay API).
+- Reach: antes de 30 min desde la publicacion.
+- Solo se envia la copia de la cuenta del streamer, nunca la de la
+  cuenta GTA (R-1.8).
+- El script puede recordarlo por Telegram con el enlace ya preparado
+  (solo en YouTube, que publica el; en Instagram/TikTok el enlace lo
+  tienes tu al publicar).
+
+---------------------------------------------------------------------
+2.8 REGISTRAR Y MEDIR                             [AUTO]  [DECIDIDO]
+---------------------------------------------------------------------
+[DECIDIDO 04-11-2026] (R-1.53) Automatico todo lo de YouTube; cada
+domingo el bot pide 3 datos por cuenta de Instagram y TikTok, con las
+instrucciones de donde mirarlos.
+- Registro de cada clip procesado: origen, nota, edicion, cuentas,
+  enlaces publicados, fecha de envio a campana.
+- Por definir: que datos de rendimiento se recogen de cada red
+  (visualizaciones, % de publico Tier 1, avisos de "no recomendable")
+  y como (API o a mano). Es el bloque B8.
+
+---------------------------------------------------------------------
+2.9 COBRAR                                        [TU]   [POR DEFINIR]
+---------------------------------------------------------------------
+- Ver bloque B9.
+
+
+=====================================================================
+3. BLOQUES DEL PROYECTO (B1-B10)
+=====================================================================
+B1. Ubicacion y publico                                   [DECIDIDO]
+    - Prioridad de plataformas: YouTube -> Instagram -> TikTok.
+    - Prueba de publico definida (R-8): 1 cuenta de streamer en las
+      3 redes, 10-15 clips por red, medir % Tier 1; 40% o mas = la red
+      entra en campanas.
+    - Falta: hacer la prueba (requiere el flujo de la seccion 2).
+    - Aviso de calendario: la regla habla de periodos de 28-30 dias;
+      antes del 19-11 solo habra datos parciales.
+
+B2. Legal y fiscal                                     [POR DEFINIR]
+    - Fiscalidad en Espana y si hace falta alta de autonomo: consultar
+      con un gestor.
+    - W-8BEN y verificacion de identidad (KYC) en Whop/Stripe/PayPal.
+    - Etiquetado de contenido promocional (FTC y normativa espanola).
+    - Edad minima 18 anos: verificado.
+
+B3. Cuentas                                            [DECIDIDO]
+    - [04-11-2026] Aprobado (R-1.54); el usuario crea las 6 cuentas.
+      Un clip puede ir a la cuenta del streamer y a la GTA (R-1.56);
+      a la campana solo se envia la copia del streamer.
+    - Arquitectura decidida (R-1.8): 1 cuenta por streamer en cada red
+      + 1 cuenta GTA.
+    - Falta: nombres, fotos y biografias; correo y 2FA de cada cuenta;
+      cuenta de creador en Instagram; cuantas cuentas por movil;
+      conectar las cuentas en Whop/Content Rewards; proyecto de Google
+      para YouTube.
+
+B4. Herramientas                                          [DECIDIDO]
+    - Detector propio + yt-dlp + ffmpeg + whisper.cpp + API de YouTube
+      + Telegram. Coste: 0 EUR.
+    - OpusClip Starter: no se necesita en este flujo (cancelable).
+    - Instalacion aprobada: solo con Homebrew y comprobando la huella
+      del modelo de whisper (R-1.45).
+
+B5. Filtro de cumplimiento                             [POR DEFINIR]
+    - Ver 2.5.
+
+B6. Seleccion de campanas                              [POR DEFINIR]
+    - Aplazado a cuando abran campanas de GTA VI.
+    - En cada campana comprobar: contrato (antiguo o nuevo), requisitos
+      de publico y cuando se verifican, hashtags, cuenta dedicada,
+      minimos de visualizaciones, si dan material propio.
+
+B7. Rutina diaria                                      [POR DEFINIR]
+    - Cuantos clips al dia por cuenta; a que horas publicar para
+      EE. UU.; cuanto tiempo tuyo por dia (subidas manuales y envios).
+
+B8. Medicion                                           [POR DEFINIR]
+    - Ver 2.8. Revision semanal de resultados.
+
+B9. Cobro                                              [POR DEFINIR]
+    - Plazos, minimos, comisiones (Content Rewards: 10% en CPM y bote
+      con el contrato nuevo), metodo de retirada desde Espana y cambio
+      de divisa.
+
+B10. Escalado y largo plazo                            [POR DEFINIR]
+    - Mas streamers, mas cuentas, YPP para la cuenta GTA, subir el
+      nivel de edicion si TikTok/Instagram no recomiendan los videos.
+
+
+=====================================================================
+4. ORDEN DE TRABAJO Y CALENDARIO
+=====================================================================
+FASE 0 - Ahora, sin el portatil personal (definir)
+  1. Cerrar las piezas [POR DEFINIR] del flujo: 2.3 (diseno vertical y
+     texto inicial), 2.4 textos, 2.5 filtro, 2.8 registro.
+  2. B3 cuentas: nombres y lista de pasos de creacion.
+  3. B7 rutina y B8 medicion.
+  4. Enviar las preguntas a terceros (seccion 6).
+  5. B2: pedir cita con un gestor (no bloquea nada hasta cobrar).
+
+FASE 1 - Con el portatil personal (construir)
+  1. Exportar datos reales y calibrar la nota de viralidad.
+  2. Instalar los programas externos (si se aprueban).
+  3. Construir: descarga, edicion, textos, filtro, publicacion en
+     YouTube, envio por Telegram y registro.
+  4. Probar el flujo completo con clips reales en una cuenta de
+     prueba privada.
+
+FASE 2 - Cuentas y prueba de publico (B1)
+  1. Crear las cuentas (B3).
+  2. Publicar 10-15 clips por red y medir el % Tier 1.
+  3. Objetivo antes del 19-11: mas de 100 espectadores distintos con
+     datos de paises visibles por cuenta.
+  Calendario: cuanto antes; cada dia de retraso es un dia menos de
+  historial antes del lanzamiento.
+
+FASE 3 - Lanzamiento (desde el 19-11)
+  1. Elegir campanas (B6) y conectarse.
+  2. Operar con la rutina diaria (B7) y medir (B8).
+  3. Cobrar (B9).
+
+FASE 4 - Despues del primer mes
+  1. Escalado (B10).
+
+
+=====================================================================
+5. RIESGOS
+=====================================================================
+Aceptados por el usuario
+  - Descargar clips con yt-dlp sin permiso expreso de Twitch (R-1.41).
+  - Guardar datos de Twitch mas de 24 h (R-1.42).
+
+Abiertos (se vigilan)
+  - Originalidad: el nivel 2 puede no bastar para que TikTok e
+    Instagram recomienden los videos. Se mide desde el primer dia.
+  - Automatizar la publicacion en cuentas de campana con el contrato
+    antiguo de Content Rewards: baneo permanente. Mitigado con el
+    ajuste "publicacion automatica: si/no" (R-1.44).
+  - Musica ajena en los clips (reclamaciones y garantia 17.2 de
+    Content Rewards).
+  - Mac dormido o apagado: el sistema se para y no recupera lo
+    perdido.
+  - Publico fuera de EE. UU. por publicar desde Espana (prueba B1).
+  - Que no se abran campanas de GTA VI cerca del 19-11 (es una
+    deduccion, no un dato).
+
+
+=====================================================================
+6. PREGUNTAS A TERCEROS                                    [PREGUNTAR]
+=====================================================================
+1. Content Rewards (soporte) y Reach (Discord): si publicar con la API
+   oficial de YouTube o con un programador cuenta como "automating
+   posting"; y que contrato aplica a sus campanas.
+2. Reach: si editar con herramientas automaticas (subtitulos con IA)
+   cuenta como "AI-generated content".
+3. Gestor en Espana: fiscalidad y alta de autonomo.
+4. Content Rewards: si en YouTube Shorts hace falta aviso de publicidad
+   ORAL aunque no haya voz ni camara del creador (su guia FTC, 5.1a
+   frente a 5.4a). Y como cumplir la etiqueta "Paid partnership" de
+   Instagram si la marca no la aprueba.
+5. Reach: si "Logos of any kind are not allowed" incluye los logos que
+   ya aparecen en la pantalla del propio streamer (patrocinadores,
+   su marca) o solo los que anade el clipper.
+
+
+=====================================================================
+7. DECISIONES PENDIENTES DEL USUARIO
+=====================================================================
+1. [RESUELTO] Programas externos aprobados con condiciones de
+   seguridad (R-1.45).
+2. [RESUELTO] Diseno vertical: diseno 1 en el MVP (R-1.49).
+3. [RESUELTO] Movil: iPhone XR (R-1.46).
+
+
+=====================================================================
+8. PLAN DE CONSTRUCCION DEL SCRIPT (ENTREGAS)
+=====================================================================
+Todo lo decidido en la seccion 2 se traslada al codigo en estas
+entregas, en este orden. Cada entrega: Devin escribe el codigo y las
+pruebas automaticas en el Mac de empresa (datos ficticios); el usuario
+copia los ficheros indicados, comprueba la version y hace la prueba
+real en el portatil personal.
+
+E1. Detector                                            [HECHO 04-11-2026,
+                                                         version 2026-11-04.1]
+    - Guardar el juego de cada clip (game_id) para el filtro y los
+      hashtags.
+    - Calibrar la nota de viralidad con los datos de exportaciones/ e
+      implementar el algoritmo aprobado (agrupar clips del mismo
+      momento, etc.).
+[04-11-2026] E2, E3, E4 y E5 CONSTRUIDAS en la version 2026-11-04.2
+(pendiente de probar en el portatil personal: GUIA_YOUTUBE.txt).
+Requisito nuevo verificado: el ffmpeg normal de Homebrew no trae
+libass/freetype; hace falta "brew install ffmpeg-full".
+E2. Preparar el clip (sin publicar nada)                 [HECHO]
+    - Descarga con yt-dlp, diseno 1 con ffmpeg, subtitulos con
+      whisper.cpp (descarga del modelo comprobando su huella), texto
+      inicial, tema y rotulo "#Ad" en las versiones de campana.
+    - Filtro de cumplimiento (bloqueos y avisos).
+    - Textos de cada red.
+E3. Telegram                                             [HECHO]
+    - Enviar el video final + textos listos para copiar + linea de
+      recordatorio + botones "Publicar" / "Descartar".
+    - Leer los botones pulsados.
+E4. YouTube                                              [HECHO]
+    - Requiere: cuentas creadas (B3) y proyecto de Google en
+      "In production".
+    - Subir en privado, publicar al pulsar "Publicar", casilla de
+      promocion pagada en cuentas de campana.
+E5. Registro y medicion                                  [HECHO]
+    - Registro de cada clip, datos de YouTube (1 h, 24 h, 7 dias;
+      paises) y mensaje semanal del domingo.
+
+Dependencias: E1, E2 y E3 se pueden construir YA. E4 necesita el
+bloque B3 (cuentas). E5 necesita E4.
+
+
+=====================================================================
+9. MEJORAS FUTURAS (DESPUES DEL MVP)
+=====================================================================
+Ideas aprobadas o comentadas que NO entran en el MVP:
+M1. Diseno 2 (camara arriba + juego abajo) con deteccion automatica de
+    la camara y botones "Valido" / "Diseno 1" / "Descartar"
+    (R-1.49, R-1.50).
+M2. Publicar por horas: programar la publicacion para la hora de mas
+    audiencia en EE. UU. (YouTube por API; Instagram en su app).
+M3. Limite diario de clips por cuenta (parametro ya previsto, apagado).
+M4. Respuesta inmediata a los botones de Telegram (hoy, hasta 5 min).
+M5. IA local gratuita para escribir ganchos y textos.
+M6. Zooms automaticos y subtitulos animados palabra a palabra.
+M7. Guardar los enlaces de Instagram/TikTok pegandolos en el bot.
+M8. Estadisticas de Instagram por API (app de Meta).
+M9. Publicacion automatica en YouTube sin aprobacion, cuando los
+    resultados sean fiables (R-1.47).
+M10. Mas streamers y cuentas (bloque B10).
+M11. Retomar TikTok (aparcado, R-1.57).

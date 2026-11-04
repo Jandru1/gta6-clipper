@@ -14,11 +14,28 @@ from app.http import ErrorRed, Respuesta
 from app.telegram import ClienteTelegram
 from app.twitch import ClienteTwitch, ErrorLimiteTwitch
 
-VERSION = "2026-10-31.2"
+VERSION = "2026-11-04.2"
 PROYECTO = Path(__file__).resolve().parent
 RUTA_CONFIG = PROYECTO / "config.json"
 RUTA_CREDENCIALES = PROYECTO / "credenciales.json"
+RUTA_CLIENTE_GOOGLE = PROYECTO / "google_cliente.json"
+RUTA_TOKENS_YOUTUBE = PROYECTO / "youtube_tokens.json"
 CARPETA_DATOS = PROYECTO / "datos"
+CARPETA_VIDEOS = CARPETA_DATOS / "videos"
+CARPETA_MODELOS = CARPETA_DATOS / "modelos"
+
+
+def _servicios(config):
+    from app.herramientas import MODELO_WHISPER
+    from app.preparacion import Preparador
+    from app.videos import Servicios
+    from app.youtube import ClienteYouTube, leer_cliente, leer_tokens
+    youtube = {}
+    tokens = leer_tokens(RUTA_TOKENS_YOUTUBE)
+    if tokens and RUTA_CLIENTE_GOOGLE.exists():
+        cliente = leer_cliente(RUTA_CLIENTE_GOOGLE)
+        youtube = {cuenta: ClienteYouTube(cliente, datos["refresh_token"]) for cuenta, datos in tokens.items()}
+    return Servicios(Preparador(config, CARPETA_VIDEOS, CARPETA_MODELOS / MODELO_WHISPER), youtube)
 
 
 def _ok(texto):
@@ -140,7 +157,8 @@ def cmd_ejecutar(_args):
         twitch, telegram = _clientes(almacen)
         bd = BaseDatos(almacen.ruta_base_datos)
         try:
-            r = ejecutar_una_vez(config, almacen, bd, twitch, telegram)
+            r = ejecutar_una_vez(config, almacen, bd, twitch, telegram,
+                                 servicios=_servicios(config) if config.preparar_videos else None)
         finally:
             bd.cerrar()
     print(f"{r['hora_espana']} {r['resultado']} modo={r['modo']} repaso={r['repaso']} recibidos={r['clips_recibidos']} "
@@ -182,18 +200,113 @@ def cmd_informe(args):
             print(f"  {s['streamer']}: {s['clips']} clips | maximo {s['max_vis']} vis | {s['con_nota']} con nota | "
                   f"ultimo clip nuevo guardado: {texto_local(s['ultimo_guardado_s'], zona)}")
         desde_s = int((datetime.now(timezone.utc) - timedelta(hours=args.horas)).timestamp())
-        mejores = bd.mejores_clips(desde_s, args.top)
-        print(f"\nTop {len(mejores)} por viralidad (clips consultados en las ultimas {args.horas} h):")
-        for i, c in enumerate(mejores, 1):
-            nota = "sin nota" if c["nota_maxima"] is None else f"{c['nota_maxima']}/10"
-            velocidad = round(c["velocidad_maxima"] or 0)
-            print(f"{i:>3}. {nota:>8} | {c['visualizaciones']:>7} vis | {velocidad:>7} vis/h max | "
-                  f"creado {texto_local(c['creado_s'], zona)} | {c['streamer']} | {c['titulo']}\n"
-                  f"      {c['url']}")
+        mejores = bd.mejores_momentos(desde_s, args.top)
+        print(f"\nTop {len(mejores)} momentos por viralidad (actualizados en las ultimas {args.horas} h):")
+        for i, m in enumerate(mejores, 1):
+            nota = "sin nota" if m["nota_maxima"] is None else f"{m['nota_maxima']}/10"
+            print(f"{i:>3}. {nota:>8} | {m['vistas_representante']:>7} vis ({m['clips']} clips, {m['vistas']} vis en total) | "
+                  f"inicio {texto_local(m['inicio_s'], zona)} | {m['streamer']} | {m['titulo']}\n"
+                  f"      {m['url']}")
         if not mejores:
-            print("  (ninguno: no se ha consultado ningun clip en ese periodo)")
+            print("  (ninguno: todavia no hay momentos puntuados en ese periodo)")
     finally:
         bd.cerrar()
+    return 0
+
+
+def cmd_comprobar_herramientas(_args):
+    from app.herramientas import comprobar
+    config = cargar_config(RUTA_CONFIG)
+    resultados = comprobar(config, CARPETA_MODELOS)
+    for nombre, correcto, detalle in resultados:
+        (_ok if correcto else _fallo)(f"{nombre}: {detalle}")
+    print(f"  [{'OK' if RUTA_CLIENTE_GOOGLE.exists() else '--'}]    google_cliente.json "
+          f"{'encontrado' if RUTA_CLIENTE_GOOGLE.exists() else 'no esta (necesario para YouTube, ver GUIA_YOUTUBE.txt)'}")
+    from app.youtube import leer_tokens
+    tokens = leer_tokens(RUTA_TOKENS_YOUTUBE)
+    for cuenta in config.cuentas:
+        autorizada = cuenta["id"] in tokens
+        print(f"  [{'OK' if autorizada else '--'}]    YouTube cuenta '{cuenta['id']}': "
+              f"{'autorizada (' + tokens[cuenta['id']].get('canal_titulo', '') + ')' if autorizada else 'sin autorizar'}")
+    return 0 if all(r[1] for r in resultados[:4]) else 1
+
+
+def cmd_preparar_herramientas(_args):
+    from app.herramientas import asegurar_modelo
+    print("Descargando el modelo de whisper desde la fuente oficial (547 MB) y comprobando su huella...")
+    ruta = asegurar_modelo(CARPETA_MODELOS)
+    _ok(f"Modelo listo: {ruta}")
+    return 0
+
+
+def cmd_preparar_clip(args):
+    from app import videos
+    config = cargar_config(RUTA_CONFIG)
+    almacen = Almacen(CARPETA_DATOS)
+    _, telegram = _clientes(almacen)
+    bd = BaseDatos(almacen.ruta_base_datos)
+    try:
+        clip = bd.clip(args.clip_id)
+        if not clip:
+            print(f"No encuentro el clip '{args.clip_id}' en la base de datos (usa el id del final de su enlace).")
+            return 1
+        bd.con.execute("DELETE FROM cola_preparacion WHERE clip_id = ?", (args.clip_id,))
+        bd.encolar(args.clip_id, clip.get("momento_id"), clip.get("nota_maxima"), int(datetime.now(timezone.utc).timestamp()))
+        bd.guardar()
+        servicios = _servicios(config)
+        config.max_videos_por_ejecucion = 1
+        enviados = videos.procesar_cola(config, bd, telegram, servicios, int(datetime.now(timezone.utc).timestamp()))
+        fila = bd.con.execute("SELECT estado, detalle FROM cola_preparacion WHERE clip_id = ?", (args.clip_id,)).fetchone()
+        print(f"Resultado: {fila['estado']} {fila['detalle'] or ''} ({enviados} mensajes enviados a Telegram)")
+        return 0 if fila["estado"] == "preparado" else 1
+    finally:
+        bd.cerrar()
+
+
+def cmd_autorizar_youtube(args):
+    from app.youtube import ClienteYouTube, autorizar, guardar_tokens, leer_cliente, leer_tokens
+    config = cargar_config(RUTA_CONFIG)
+    if args.cuenta not in [c["id"] for c in config.cuentas]:
+        print(f"La cuenta '{args.cuenta}' no esta en config.json ('cuentas'). Opciones: "
+              f"{', '.join(c['id'] for c in config.cuentas)}")
+        return 1
+    cliente = leer_cliente(RUTA_CLIENTE_GOOGLE)
+    print(f"Autorizando la cuenta '{args.cuenta}'. En el navegador ELIGE EL CANAL de esa cuenta.")
+    refresh = autorizar(cliente)
+    canal = ClienteYouTube(cliente, refresh).canal()
+    tokens = leer_tokens(RUTA_TOKENS_YOUTUBE)
+    tokens[args.cuenta] = {"refresh_token": refresh, "canal_id": canal["id"], "canal_titulo": canal["titulo"]}
+    guardar_tokens(RUTA_TOKENS_YOUTUBE, tokens)
+    _ok(f"Cuenta '{args.cuenta}' conectada al canal de YouTube '{canal['titulo']}'.")
+    print("Si no es el canal correcto, repite el comando y elige otro canal.")
+    return 0
+
+
+def cmd_prueba_algoritmo(_args):
+    from app.momentos import prueba_hacia_atras
+    config = cargar_config(RUTA_CONFIG)
+    almacen = Almacen(CARPETA_DATOS)
+    if not almacen.ruta_base_datos.exists():
+        print("Todavia no hay base de datos (datos/clips.db).")
+        return 1
+    bd = BaseDatos(almacen.ruta_base_datos)
+    try:
+        informe = prueba_hacia_atras(bd.clips_desde(0), bd.historiales_desde(0), bd.directos_desde(0),
+                                     int(datetime.now(timezone.utc).timestamp()), config)
+    finally:
+        bd.cerrar()
+    minutos = config.viralidad_minutos_de_vida_tempranos
+    print(f"Prueba hacia atras: nota calculada con lo que se sabia a los {minutos} min de cada momento, comparada "
+          f"con el 10% de momentos con mas visualizaciones al final (solo momentos de hace mas de 24 h).")
+    if not informe:
+        print("  No hay momentos evaluables todavia (hacen falta momentos de hace mas de 24 h con historial temprano).")
+        return 1
+    for streamer, r in informe.items():
+        precision = f"{100 * r['aciertos'] / r['avisados']:.0f}%" if r["avisados"] else "-"
+        cobertura = f"{100 * r['aciertos'] / r['top_10_por_ciento']:.0f}%" if r["top_10_por_ciento"] else "-"
+        print(f"  {streamer}: {r['momentos_evaluados']} momentos evaluados ({r['con_nota']} con nota) | "
+              f"avisados (nota >= {config.avisar_si_la_nota_es_al_menos}): {r['avisados']} | "
+              f"de ellos en el top 10%: {r['aciertos']} ({precision}) | top 10% detectado: {cobertura}")
     return 0
 
 
@@ -361,6 +474,18 @@ def main():
     informe.add_argument("--horas", type=int, default=24)
     informe.add_argument("--top", type=int, default=10)
     informe.set_defaults(func=cmd_informe)
+    sub.add_parser("prueba-algoritmo", help="Mide con tus datos si la nota de viralidad acierta").set_defaults(
+        func=cmd_prueba_algoritmo)
+    sub.add_parser("comprobar-herramientas", help="Comprueba yt-dlp, ffmpeg-full, whisper y YouTube").set_defaults(
+        func=cmd_comprobar_herramientas)
+    sub.add_parser("preparar-herramientas", help="Descarga el modelo de whisper (una vez)").set_defaults(
+        func=cmd_preparar_herramientas)
+    preparar = sub.add_parser("preparar-clip", help="Prepara a mano el video de un clip guardado y lo envia a Telegram")
+    preparar.add_argument("clip_id")
+    preparar.set_defaults(func=cmd_preparar_clip)
+    autorizar = sub.add_parser("autorizar-youtube", help="Conecta una cuenta de config.json con su canal de YouTube")
+    autorizar.add_argument("--cuenta", required=True)
+    autorizar.set_defaults(func=cmd_autorizar_youtube)
     revisar = sub.add_parser("revisar-ejecuciones", help="T6: comprueba huecos y errores")
     revisar.add_argument("--horas", type=float, default=12)
     revisar.set_defaults(func=cmd_revisar)
@@ -380,6 +505,11 @@ def main():
     except ErrorLimiteTwitch as e:
         print(e)
         return 4
+    except Exception as e:
+        if type(e).__name__ in ("ErrorYouTube", "ErrorHerramienta", "ErrorTelegram"):
+            print(f"Error: {e}")
+            return 5
+        raise
 
 
 if __name__ == "__main__":

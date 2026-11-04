@@ -2,7 +2,8 @@
   "zona_horaria": "Europe/Madrid",
   "streamers": ["kaicenat", "xqc", "jynxzi"],
   "franjas": [
-    {"desde": "00:00", "hasta": "24:00", "modo": "alertas"}
+    {"desde": "09:00", "hasta": "01:00", "modo": "alertas"},
+    {"desde": "01:00", "hasta": "09:00", "modo": "silencio"}
   ],
 
   "ejecucion_automatica_cada_minutos": 5,
@@ -16,16 +17,28 @@
   "clips_por_pagina": 100,
   "max_paginas_de_100_clips_por_trozo": 10,
 
+  "avisar_si_la_nota_es_al_menos": 8,
   "avisar_si_tiene_al_menos_visualizaciones": 50,
   "avisar_si_se_creo_hace_menos_de_minutos": 180,
   "max_avisos_por_ejecucion": 3,
+  "resumen_al_despertar_momentos_de_las_ultimas_horas": 12,
+  "max_momentos_en_el_resumen_al_despertar": 5,
   "resumen_de_funcionamiento_cada_horas": 2,
   "clips_en_el_resumen": 3,
 
   "viralidad_minutos_para_medir_crecimiento": 60,
   "viralidad_minutos_minimos_de_calculo": 5,
   "viralidad_dias_de_clips_para_comparar": 3,
-  "viralidad_clips_minimos_para_dar_nota": 20,
+  "viralidad_clips_minimos_para_dar_nota": 15,
+  "viralidad_visualizaciones_minimas_para_comparar": 10,
+  "viralidad_minutos_de_vida_tempranos": 30,
+  "momento_segundos_de_cercania_en_el_vod": 90,
+  "momento_minutos_de_cercania_al_crearse": 2,
+  "peso_consenso": 10,
+  "peso_velocidad_temprana": 60,
+  "peso_velocidad_actual": 20,
+  "peso_tamano_relativo_al_directo": 10,
+  "cortes_de_nota_en_porcentaje": [1, 2, 4, 8, 10, 15, 15, 15, 15],
   "no_limpiar_clips_con_nota_igual_o_mayor_que": 7,
   "apuntar_cuando_llega_a_visualizaciones": 1000,
   "guardar_historial_desde_visualizaciones": 0,
@@ -34,5 +47,37 @@
   "limpieza_rapida_tras_horas": 48,
   "limpieza_rapida_si_tiene_menos_de_visualizaciones": 10,
   "limpieza_no_virales_tras_dias": 3,
-  "compactar_base_datos_cada_horas": 1
+  "compactar_base_datos_cada_horas": 1,
+
+  "preparar_videos": true,
+  "max_videos_por_ejecucion": 2,
+  "borrar_videos_preparados_tras_dias": 7,
+  "ruta_yt_dlp": "/opt/homebrew/bin/yt-dlp",
+  "ruta_ffmpeg": "/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg",
+  "ruta_whisper": "/opt/homebrew/bin/whisper-cli",
+  "tema": {
+    "fuente": "Arial",
+    "tamano_subtitulos": 64,
+    "tamano_gancho": 78,
+    "segundos_gancho": 3,
+    "color_texto": "FFFFFF",
+    "color_resalte": "FFD400",
+    "color_borde": "000000"
+  },
+  "palabras_a_censurar": ["fuck", "shit", "bitch", "nigga", "nigger", "cunt", "fag", "retard", "pussy", "dick"],
+  "recordatorio_antes_de_publicar": "Antes de publicar: sin spoilers, sin musica de fondo, sin dejar mal al streamer, sin contenido sexual o violento.",
+  "fecha_lanzamiento_gta_vi": "2026-11-19",
+  "juegos": {
+    "1867279146": {"nombre": "GTA VI", "hashtag": "#GTA6", "es_gta": true, "es_gta_vi": true},
+    "32982": {"nombre": "GTA V", "hashtag": "#GTA5", "es_gta": true, "es_gta_vi": false}
+  },
+  "cuentas": [
+    {"id": "kai", "tipo": "streamer", "streamer": "kaicenat", "nombre_streamer": "Kai Cenat",
+     "hashtags": ["#KaiCenat", "#Twitch"], "youtube_automatico": true,
+     "campana": {"activa": false, "hashtag_obligatorio": "#KaiCenat", "desde": "2026-11-19", "hasta": "2026-12-31"}},
+    {"id": "gta", "tipo": "gta", "hashtags": ["#GTA", "#Twitch"], "youtube_automatico": true,
+     "campana": {"activa": false}}
+  ],
+  "resumen_semanal_dia": 6,
+  "resumen_semanal_hora": 11
 }

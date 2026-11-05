@@ -11,8 +11,8 @@ from app.basedatos import BaseDatos
 from app.config import Franja, cargar_config
 from app.ejecucion import ejecutar_una_vez
 from app.http import Respuesta, multipart
-from app.preparacion import (Preparador, censurar, cuentas_destino, documento_ass, gancho, leer_transcripcion,
-                             textos, titulo_valido)
+from app.preparacion import (Preparador, agrupar_palabras, censurar, cuentas_destino, documento_ass, gancho,
+                             leer_palabras, leer_transcripcion, textos, titulo_valido)
 from app.youtube import ClienteYouTube
 from tests.test_detector import AHORA, TwitchFalso, clip
 
@@ -93,6 +93,20 @@ class TestTextos(unittest.TestCase):
         self.assertNotIn("Music", doc)
         self.assertIn("&H0000D4FF", doc)
 
+    def test_subtitulos_palabra_a_palabra(self):
+        with tempfile.TemporaryDirectory() as d:
+            ruta = Path(d) / "t.json"
+            tokens = [("[_BEG_]", 0, 0), (" bro", 2000, 2200), (" what", 2250, 2400), (" is", 2400, 2500),
+                      (" th", 2500, 2600), ("at", 2600, 2700), (" [Music]", 2800, 2900), (" no", 4000, 4200)]
+            ruta.write_text(json.dumps({"transcription": [{"offsets": {"from": 0, "to": 5000}, "text": "x", "tokens": [
+                {"text": t, "offsets": {"from": a, "to": b}} for t, a, b in tokens]}]}))
+            palabras = leer_palabras(ruta)
+        self.assertEqual([p["texto"] for p in palabras], ["bro", "what", "is", "that", "no"])
+        self.assertEqual(agrupar_palabras(palabras, 3), [
+            {"texto": "bro what is", "desde_ms": 2000, "hasta_ms": 2500},
+            {"texto": "that", "desde_ms": 2500, "hasta_ms": 2800},
+            {"texto": "no", "desde_ms": 4000, "hasta_ms": 4300}])
+
     def test_leer_transcripcion(self):
         with tempfile.TemporaryDirectory() as d:
             ruta = Path(d) / "t.json"
@@ -112,7 +126,9 @@ class EjecutorFalso:
             Path(comando[comando.index("-o") + 1]).write_bytes(b"video")
         elif "whisper" in comando[0]:
             (Path(carpeta) / "transcripcion.json").write_text(json.dumps({"result": {"language": "en"}, "transcription": [
-                {"offsets": {"from": 0, "to": 2000}, "text": " no way bro look at this"}]}))
+                {"offsets": {"from": 0, "to": 2000}, "text": " no way bro look at this",
+                 "tokens": [{"text": t, "offsets": {"from": 300 * i, "to": 300 * i + 250}}
+                            for i, t in enumerate([" no", " way", " bro", " look", " at", " this"])]}]}))
         elif comando[-1].startswith("vertical_"):
             (Path(carpeta) / comando[-1]).write_bytes(b"x" * self.tamano)
         return ""
@@ -210,6 +226,17 @@ class TestFlujoDeVideos(unittest.TestCase):
         self.assertIn("https://youtube.com/shorts/yt1", self.tg.mensajes[-1])
         self._pulsar("p:1")
         self.assertEqual(self.tg.respuestas[-1], "Ya estaba resuelto")
+
+    def test_si_telegram_ya_no_acepta_la_respuesta_igual_confirma(self):
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+
+        def caducada(*a):
+            raise RuntimeError("query is too old and response timeout expired")
+        self.tg.responder_boton = caducada
+        self._pulsar("p:1")
+        self.assertEqual(self.bd.version(1)["estado"], "publicado")
+        self.assertIn("https://youtube.com/shorts/yt1", self.tg.mensajes[-1])
+        self.assertEqual(self.tg.botones_quitados, [101])
 
     def test_boton_descartar_borra_de_youtube(self):
         videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))

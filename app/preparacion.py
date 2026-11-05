@@ -157,6 +157,43 @@ def leer_transcripcion(ruta_json: Path) -> tuple:
     return segmentos, idioma
 
 
+def leer_palabras(ruta_json: Path) -> list:
+    datos = json.loads(ruta_json.read_text(encoding="utf-8", errors="replace"))
+    palabras = []
+    for segmento in datos.get("transcription", []):
+        for token in segmento.get("tokens") or []:
+            texto = token.get("text", "")
+            if not texto.strip() or texto.strip().startswith("[_"):
+                continue
+            desde, hasta = int(token["offsets"]["from"]), int(token["offsets"]["to"])
+            if palabras and not texto.startswith(" "):
+                palabras[-1]["texto"] += texto
+                palabras[-1]["hasta_ms"] = max(palabras[-1]["hasta_ms"], hasta)
+            else:
+                palabras.append({"texto": texto.strip(), "desde_ms": desde, "hasta_ms": hasta})
+    return [p for p in palabras if not any(m in p["texto"] for m in ("[", "]", "(", ")", "♪"))]
+
+
+def agrupar_palabras(palabras, max_palabras, max_caracteres=26, pausa_ms=600) -> list:
+    grupos, actual = [], []
+    for p in palabras:
+        texto_nuevo = " ".join([w["texto"] for w in actual] + [p["texto"]])
+        if actual and (len(actual) >= max_palabras or len(texto_nuevo) > max_caracteres
+                       or p["desde_ms"] - actual[-1]["hasta_ms"] > pausa_ms):
+            grupos.append(actual)
+            actual = []
+        actual.append(p)
+    if actual:
+        grupos.append(actual)
+    resultado = []
+    for g in grupos:
+        desde, hasta = g[0]["desde_ms"], max(g[-1]["hasta_ms"], g[0]["desde_ms"] + 300)
+        resultado.append({"texto": " ".join(w["texto"] for w in g), "desde_ms": desde, "hasta_ms": hasta})
+    for anterior, siguiente in zip(resultado, resultado[1:]):
+        anterior["hasta_ms"] = min(anterior["hasta_ms"], siguiente["desde_ms"])
+    return resultado
+
+
 def avisos_de_contenido(segmentos, idioma) -> list:
     avisos = []
     if any(m in s["texto"].lower() for s in segmentos for m in MARCAS_DE_MUSICA):
@@ -193,9 +230,15 @@ class Preparador:
         self.ejecutar([self.config.ruta_ffmpeg, "-y", "-loglevel", "error", "-i", "original.mp4", "-ar", "16000",
                        "-ac", "1", "-c:a", "pcm_s16le", "audio.wav"], carpeta=carpeta, timeout=300)
         self.ejecutar([self.config.ruta_whisper, "-m", str(self.ruta_modelo), "-f", "audio.wav", "-l", "en", "-nf",
-                       "-oj", "-of", "transcripcion", "-ml", "42", "-sow", "-np"], carpeta=carpeta, timeout=600)
-        segmentos, idioma = leer_transcripcion(carpeta / "transcripcion.json")
-        return carpeta, segmentos, idioma
+                       "-oj", "-ojf", "-of", "transcripcion", "-np"], carpeta=carpeta, timeout=600)
+        ruta = carpeta / "transcripcion.json"
+        segmentos, idioma = leer_transcripcion(ruta)
+        palabras = leer_palabras(ruta)
+        if palabras:
+            segmentos_pantalla = agrupar_palabras(palabras, self.config.tema.get("palabras_por_subtitulo", 3))
+        else:
+            segmentos_pantalla = segmentos
+        return carpeta, segmentos, idioma, segmentos_pantalla
 
     def renderizar(self, carpeta: Path, documento: str, sufijo: str) -> Path:
         (carpeta / f"subtitulos_{sufijo}.ass").write_text(documento, encoding="utf-8")
@@ -211,7 +254,7 @@ class Preparador:
         raise ErrorHerramienta("el video final ocupa mas de 49 MB incluso comprimido")
 
     def preparar(self, clip, cuentas_y_aviso, juegos) -> dict:
-        carpeta, segmentos, idioma = self.descargar_y_transcribir(clip)
+        carpeta, segmentos, idioma, segmentos_pantalla = self.descargar_y_transcribir(clip)
         palabras = self.config.palabras_a_censurar
         nombre = cuentas_y_aviso[0][0].get("nombre_streamer") or clip["streamer"]
         texto_gancho, origen = gancho(clip.get("titulo") or "", segmentos, nombre, palabras)
@@ -222,7 +265,8 @@ class Preparador:
         for cuenta, con_aviso in cuentas_y_aviso:
             sufijo = "con_aviso" if con_aviso else "sin_aviso"
             if sufijo not in videos:
-                documento = documento_ass(segmentos, texto_gancho, con_aviso, self.config.tema, duracion_ms, palabras)
+                documento = documento_ass(segmentos_pantalla, texto_gancho, con_aviso, self.config.tema, duracion_ms,
+                                          palabras)
                 videos[sufijo] = self.renderizar(carpeta, documento, sufijo)
             versiones.append({"cuenta": cuenta["id"], "con_aviso": con_aviso, "video": str(videos[sufijo]),
                               "textos": textos(cuenta, clip, juego, texto_gancho, con_aviso)})

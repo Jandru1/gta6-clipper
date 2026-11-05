@@ -126,7 +126,10 @@ AJUSTES EN config.json
   borrar_videos_preparados_tras_dias   limpieza de datos/videos (7)
   ruta_yt_dlp / ruta_ffmpeg / ruta_whisper   rutas de los programas
   tema                         fuente, tamanos, segundos del texto
-                               inicial y colores (hexadecimal)
+                               inicial, colores (hexadecimal) y
+                               palabras_por_subtitulo (3): los
+                               subtitulos salen en grupos cortos,
+                               sincronizados palabra a palabra
   palabras_a_censurar          se cambian por asteriscos en
                                subtitulos y textos
   recordatorio_antes_de_publicar   linea al final de los textos

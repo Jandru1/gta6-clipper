@@ -60,6 +60,7 @@
     "tamano_subtitulos": 64,
     "tamano_gancho": 78,
     "segundos_gancho": 3,
+    "palabras_por_subtitulo": 3,
     "color_texto": "FFFFFF",
     "color_resalte": "FFD400",
     "color_borde": "000000"

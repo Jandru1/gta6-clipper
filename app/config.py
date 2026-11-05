@@ -183,7 +183,7 @@ def _errores_de_videos(c: Config) -> list:
     for clave in ("fuente", "color_texto", "color_resalte", "color_borde"):
         if not isinstance(tema.get(clave), str):
             errores.append(f"'tema' necesita '{clave}' (texto)")
-    for clave in ("tamano_subtitulos", "tamano_gancho", "segundos_gancho"):
+    for clave in ("tamano_subtitulos", "tamano_gancho", "segundos_gancho", "palabras_por_subtitulo"):
         if not isinstance(tema.get(clave), int) or tema.get(clave, 0) < 1:
             errores.append(f"'tema' necesita '{clave}' (entero mayor que 0)")
     for clave in ("color_texto", "color_resalte", "color_borde"):

@@ -124,29 +124,43 @@ def procesar_telegram(config, estado, bd, telegram, servicios, ahora_s) -> int:
     return procesados
 
 
+def _responder(telegram, callback_id, texto):
+    try:
+        telegram.responder_boton(callback_id, texto)
+    except Exception:
+        pass
+
+
 def _pulsar_boton(bd, telegram, servicios, boton, ahora_s):
     accion, _, identificador = (boton.get("data") or "").partition(":")
     version = bd.version(int(identificador)) if identificador.isdigit() else {}
     if not version or version["estado"] != "enviado":
-        telegram.responder_boton(boton["id"], "Ya estaba resuelto")
+        _responder(telegram, boton["id"], "Ya estaba resuelto")
         return
     youtube = servicios.youtube.get(version["cuenta"])
     try:
         if accion == "p":
             youtube.hacer_publico(version["youtube_id"])
             bd.actualizar_version(version["version_id"], estado="publicado", publicado_s=ahora_s)
-            telegram.responder_boton(boton["id"], "Publicado en YouTube")
+            bd.guardar()
+            _responder(telegram, boton["id"], "Publicado en YouTube")
             telegram.enviar(f"Publicado en YouTube ({version['cuenta']}): https://youtube.com/shorts/{version['youtube_id']}")
         else:
             if youtube and version["youtube_id"]:
                 youtube.borrar(version["youtube_id"])
             bd.actualizar_version(version["version_id"], estado="descartado")
-            telegram.responder_boton(boton["id"], "Descartado")
-        if version["mensaje_id"]:
-            telegram.quitar_botones(version["mensaje_id"])
+            bd.guardar()
+            _responder(telegram, boton["id"], "Descartado")
+            telegram.enviar(f"Descartado ({version['cuenta']}): el video se ha borrado de YouTube.")
     except Exception as e:
-        telegram.responder_boton(boton["id"], "Ha fallado; mira el mensaje")
+        _responder(telegram, boton["id"], "Ha fallado; mira el mensaje")
         telegram.enviar(f"No he podido completar la accion en YouTube ({version['cuenta']}): {e}")
+        return
+    if version["mensaje_id"]:
+        try:
+            telegram.quitar_botones(version["mensaje_id"])
+        except Exception:
+            pass
 
 
 def _leer_medicion(config, estado, bd, telegram, texto, ahora_s) -> int:

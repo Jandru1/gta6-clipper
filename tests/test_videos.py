@@ -107,6 +107,16 @@ class TestTextos(unittest.TestCase):
             {"texto": "that", "desde_ms": 2500, "hasta_ms": 2800},
             {"texto": "no", "desde_ms": 4000, "hasta_ms": 4300}])
 
+    def test_la_primera_palabra_no_arrastra_el_silencio_anterior(self):
+        with tempfile.TemporaryDirectory() as d:
+            ruta = Path(d) / "t.json"
+            ruta.write_text(json.dumps({"transcription": [{"offsets": {"from": 0, "to": 11000}, "text": "x", "tokens": [
+                {"text": " hello", "offsets": {"from": 0, "to": 10300}},
+                {"text": " guys", "offsets": {"from": 10300, "to": 10600}}]}]}))
+            palabras = leer_palabras(ruta)
+        self.assertEqual(palabras[0], {"texto": "hello", "desde_ms": 9900, "hasta_ms": 10300})
+        self.assertEqual(agrupar_palabras(palabras, 3)[0]["desde_ms"], 9900)
+
     def test_leer_transcripcion(self):
         with tempfile.TemporaryDirectory() as d:
             ruta = Path(d) / "t.json"

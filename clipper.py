@@ -14,7 +14,7 @@ from app.http import ErrorRed, Respuesta
 from app.telegram import ClienteTelegram
 from app.twitch import ClienteTwitch, ErrorLimiteTwitch
 
-VERSION = "2026-11-05.1"
+VERSION = "2026-11-05.2"
 PROYECTO = Path(__file__).resolve().parent
 RUTA_CONFIG = PROYECTO / "config.json"
 RUTA_CREDENCIALES = PROYECTO / "credenciales.json"

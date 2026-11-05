@@ -7,6 +7,8 @@ from pathlib import Path
 from app.herramientas import ErrorHerramienta, ejecutar
 
 TAMANO_MAXIMO_BYTES = 49 * 1024 * 1024
+DURACION_MAXIMA_PALABRA_MS = 800
+DURACION_TIPICA_PALABRA_MS = 400
 MARCAS_DE_MUSICA = ("[music", "(music", "♪", "[musica", "(musica")
 PATRONES_DE_TITULO_DE_DIRECTO = (re.compile(r"\[\d+/\d+\]"), re.compile(r"\bclick\b", re.I), re.compile(r"\blive\b", re.I))
 
@@ -171,7 +173,11 @@ def leer_palabras(ruta_json: Path) -> list:
                 palabras[-1]["hasta_ms"] = max(palabras[-1]["hasta_ms"], hasta)
             else:
                 palabras.append({"texto": texto.strip(), "desde_ms": desde, "hasta_ms": hasta})
-    return [p for p in palabras if not any(m in p["texto"] for m in ("[", "]", "(", ")", "♪"))]
+    palabras = [p for p in palabras if not any(m in p["texto"] for m in ("[", "]", "(", ")", "♪"))]
+    for p in palabras:
+        if p["hasta_ms"] - p["desde_ms"] > DURACION_MAXIMA_PALABRA_MS:
+            p["desde_ms"] = p["hasta_ms"] - DURACION_TIPICA_PALABRA_MS
+    return palabras
 
 
 def agrupar_palabras(palabras, max_palabras, max_caracteres=26, pausa_ms=600) -> list:

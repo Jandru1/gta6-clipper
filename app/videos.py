@@ -136,6 +136,14 @@ def _pulsar_boton(bd, telegram, servicios, boton, ahora_s):
     version = bd.version(int(identificador)) if identificador.isdigit() else {}
     if not version or version["estado"] != "enviado":
         _responder(telegram, boton["id"], "Ya estaba resuelto")
+        estado = version.get("estado", "desconocido") if version else "desconocido"
+        telegram.enviar(f"Ese video ya estaba resuelto (estado: {estado}). No he hecho nada.")
+        mensaje_id = (boton.get("message") or {}).get("message_id")
+        if mensaje_id:
+            try:
+                telegram.quitar_botones(mensaje_id)
+            except Exception:
+                pass
         return
     youtube = servicios.youtube.get(version["cuenta"])
     try:

@@ -2,6 +2,9 @@ credenciales.json
 google_cliente.json
 youtube_tokens.json
 *.tmp
-datos/
+datos/modelos/
+datos/videos/
+datos/estado.json
+datos/.ejecucion.lock
 __pycache__/
 .DS_Store

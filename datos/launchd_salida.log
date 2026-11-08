@@ -1,0 +1,566 @@
+30/10/2026 17:09:23 ok modo=silencio repaso=completo recibidos=109 nuevos=109 con_cambios=109 avisos=0 llamadas=26 truncados=0 en_base=109 
+30/10/2026 17:09:37 ok modo=silencio repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=1 truncados=0 en_base=109 
+30/10/2026 17:10:17 ok modo=silencio repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=1 truncados=0 en_base=109 
+30/10/2026 17:15:17 ok modo=alertas repaso=reciente recibidos=4 nuevos=2 con_cambios=2 avisos=0 llamadas=3 truncados=0 en_base=111 
+30/10/2026 18:29:21 error modo=alertas repaso=completo recibidos=0 nuevos=5 con_cambios=7 avisos=0 llamadas=9 truncados=0 en_base=116 ErrorRed: Sin conexion o error de red: The read operation timed out
+30/10/2026 19:04:26 ok modo=alertas repaso=completo recibidos=110 nuevos=7 con_cambios=11 avisos=0 llamadas=25 truncados=0 en_base=123 
+30/10/2026 19:35:49 ok modo=alertas repaso=completo recibidos=105 nuevos=2 con_cambios=10 avisos=0 llamadas=25 truncados=0 en_base=125 
+30/10/2026 19:48:43 ok modo=alertas repaso=reciente recibidos=8 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=125 
+30/10/2026 19:51:18 ok modo=alertas repaso=completo recibidos=104 nuevos=1 con_cambios=1 avisos=0 llamadas=25 truncados=0 en_base=126 
+30/10/2026 19:56:25 ok modo=alertas repaso=reciente recibidos=9 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=126 
+30/10/2026 20:01:26 ok modo=alertas repaso=reciente recibidos=7 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=126 
+30/10/2026 20:06:27 ok modo=alertas repaso=completo recibidos=105 nuevos=0 con_cambios=0 avisos=0 llamadas=25 truncados=0 en_base=126 
+30/10/2026 20:43:23 ok modo=alertas repaso=completo recibidos=103 nuevos=1 con_cambios=2 avisos=0 llamadas=25 truncados=0 en_base=127 
+30/10/2026 21:03:45 ok modo=alertas repaso=completo recibidos=105 nuevos=2 con_cambios=5 avisos=0 llamadas=25 truncados=0 en_base=129 
+30/10/2026 21:37:05 ok modo=alertas repaso=completo recibidos=106 nuevos=2 con_cambios=8 avisos=0 llamadas=25 truncados=0 en_base=131 
+30/10/2026 22:01:45 ok modo=alertas repaso=completo recibidos=107 nuevos=2 con_cambios=9 avisos=0 llamadas=25 truncados=0 en_base=133 
+30/10/2026 22:06:51 ok modo=alertas repaso=reciente recibidos=6 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=133 
+30/10/2026 22:11:57 ok modo=alertas repaso=reciente recibidos=6 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=133 
+30/10/2026 22:16:58 ok modo=alertas repaso=completo recibidos=107 nuevos=0 con_cambios=0 avisos=0 llamadas=25 truncados=0 en_base=133 
+30/10/2026 22:22:04 ok modo=alertas repaso=reciente recibidos=6 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=133 
+30/10/2026 22:27:05 ok modo=alertas repaso=reciente recibidos=6 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=133 
+30/10/2026 22:32:06 ok modo=alertas repaso=completo recibidos=104 nuevos=1 con_cambios=1 avisos=0 llamadas=25 truncados=0 en_base=134 
+30/10/2026 22:37:13 ok modo=alertas repaso=reciente recibidos=5 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=134 
+30/10/2026 22:42:14 ok modo=alertas repaso=reciente recibidos=6 nuevos=1 con_cambios=1 avisos=0 llamadas=3 truncados=0 en_base=135 
+30/10/2026 22:47:15 ok modo=alertas repaso=completo recibidos=103 nuevos=0 con_cambios=0 avisos=0 llamadas=25 truncados=0 en_base=135 
+30/10/2026 22:52:21 ok modo=alertas repaso=reciente recibidos=6 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=135 
+30/10/2026 22:57:22 ok modo=alertas repaso=reciente recibidos=6 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=135 
+30/10/2026 23:02:23 ok modo=alertas repaso=completo recibidos=103 nuevos=0 con_cambios=8 avisos=0 llamadas=25 truncados=0 en_base=135 
+30/10/2026 23:07:29 ok modo=alertas repaso=reciente recibidos=5 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=135 
+30/10/2026 23:12:30 ok modo=alertas repaso=reciente recibidos=5 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=135 
+30/10/2026 23:17:31 ok modo=alertas repaso=completo recibidos=104 nuevos=0 con_cambios=7 avisos=0 llamadas=25 truncados=0 en_base=135 
+30/10/2026 23:22:38 ok modo=alertas repaso=reciente recibidos=4 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=135 
+30/10/2026 23:27:39 ok modo=alertas repaso=reciente recibidos=4 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=135 
+30/10/2026 23:32:40 ok modo=alertas repaso=completo recibidos=106 nuevos=5 con_cambios=10 avisos=0 llamadas=25 truncados=0 en_base=140 
+30/10/2026 23:37:46 ok modo=alertas repaso=reciente recibidos=9 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=140 
+30/10/2026 23:42:47 ok modo=alertas repaso=reciente recibidos=9 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=140 
+30/10/2026 23:47:48 ok modo=alertas repaso=completo recibidos=103 nuevos=0 con_cambios=3 avisos=0 llamadas=25 truncados=0 en_base=140 
+30/10/2026 23:52:55 ok modo=alertas repaso=reciente recibidos=9 nuevos=1 con_cambios=1 avisos=0 llamadas=3 truncados=0 en_base=141 
+30/10/2026 23:57:56 ok modo=alertas repaso=reciente recibidos=9 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=141 
+31/10/2026 00:02:57 ok modo=alertas repaso=completo recibidos=105 nuevos=0 con_cambios=0 avisos=0 llamadas=25 truncados=0 en_base=141 
+31/10/2026 00:08:03 ok modo=alertas repaso=reciente recibidos=7 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=141 
+31/10/2026 00:13:04 ok modo=alertas repaso=reciente recibidos=7 nuevos=0 con_cambios=0 avisos=0 llamadas=3 truncados=0 en_base=141 
+31/10/2026 00:18:05 ok modo=alertas repaso=completo recibidos=106 nuevos=0 con_cambios=1 avisos=0 llamadas=25 truncados=0 en_base=141 
+31/10/2026 03:29:58 error modo=alertas repaso=completo recibidos=0 nuevos=110 con_cambios=111 avisos=0 llamadas=13 truncados=0 en_base=251 ErrorRed: Sin conexion o error de red: The read operation timed out
+31/10/2026 08:35:21 ok modo=alertas repaso=completo recibidos=569 nuevos=441 con_cambios=473 avisos=0 llamadas=42 truncados=0 en_base=692 
+31/10/2026 11:42:56 ok modo=alertas repaso=completo recibidos=612 nuevos=260 con_cambios=331 avisos=0 llamadas=42 truncados=0 en_base=952 
+31/10/2026 12:18:34 ok modo=alertas repaso=completo recibidos=574 nuevos=135 con_cambios=181 avisos=0 llamadas=42 truncados=0 en_base=1087 
+31/10/2026 12:28:26 ok modo=alertas repaso=reciente recibidos=42 nuevos=11 con_cambios=13 avisos=0 llamadas=3 truncados=0 en_base=1098 
+31/10/2026 12:29:17 ok modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=1 truncados=0 en_base=1098 
+31/10/2026 12:37:04 ok modo=alertas repaso=completo recibidos=623 nuevos=110 con_cambios=132 avisos=0 llamadas=42 truncados=0 en_base=1208 
+31/10/2026 12:52:15 ok modo=alertas repaso=completo recibidos=649 nuevos=87 con_cambios=112 avisos=0 llamadas=42 truncados=0 en_base=1295 
+31/10/2026 14:40:18 ok modo=alertas repaso=completo recibidos=706 nuevos=111 con_cambios=171 avisos=0 llamadas=45 truncados=0 en_base=1406 
+31/10/2026 15:50:15 ok modo=alertas repaso=completo recibidos=738 nuevos=93 con_cambios=157 avisos=0 llamadas=45 truncados=0 en_base=1499 
+31/10/2026 16:04:48 ok modo=alertas repaso=completo recibidos=693 nuevos=36 con_cambios=48 avisos=0 llamadas=42 truncados=0 en_base=1535 
+31/10/2026 17:00:07 ok modo=alertas repaso=completo recibidos=812 nuevos=86 con_cambios=136 avisos=0 llamadas=48 truncados=1 en_base=1621 
+31/10/2026 18:05:23 error modo=alertas repaso=completo recibidos=0 nuevos=24 con_cambios=27 avisos=0 llamadas=15 truncados=0 en_base=1645 ErrorRed: Sin conexion o error de red: The read operation timed out
+31/10/2026 18:33:50 ok modo=alertas repaso=completo recibidos=790 nuevos=55 con_cambios=143 avisos=0 llamadas=42 truncados=0 en_base=1692 
+31/10/2026 18:39:03 ok modo=alertas repaso=reciente recibidos=51 nuevos=3 con_cambios=3 avisos=0 llamadas=3 truncados=0 en_base=1695 
+31/10/2026 19:50:52 ok modo=alertas repaso=completo recibidos=872 nuevos=76 con_cambios=137 avisos=0 llamadas=45 truncados=0 en_base=1765 
+31/10/2026 20:22:47 ok modo=alertas repaso=completo recibidos=805 nuevos=41 con_cambios=87 avisos=0 llamadas=42 truncados=0 en_base=1806 
+31/10/2026 21:17:30 ok modo=alertas repaso=completo recibidos=756 nuevos=30 con_cambios=94 avisos=0 llamadas=42 truncados=0 en_base=1833 
+31/10/2026 21:22:42 ok modo=alertas repaso=reciente recibidos=17 nuevos=2 con_cambios=2 avisos=0 llamadas=3 truncados=0 en_base=1835 
+31/10/2026 21:32:43 ok modo=alertas repaso=completo recibidos=1523 nuevos=755 con_cambios=782 avisos=0 llamadas=93 truncados=0 en_base=2590 
+31/10/2026 21:35:57 ok modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=1 truncados=0 en_base=2590 
+31/10/2026 21:40:58 ok modo=alertas repaso=reciente recibidos=121 nuevos=23 con_cambios=24 avisos=0 llamadas=7 truncados=0 en_base=2613 
+31/10/2026 21:46:00 ok modo=alertas repaso=reciente recibidos=123 nuevos=9 con_cambios=9 avisos=0 llamadas=7 truncados=0 en_base=2622 
+31/10/2026 21:51:02 ok modo=alertas repaso=completo recibidos=1578 nuevos=109 con_cambios=165 avisos=0 llamadas=97 truncados=0 en_base=2731 
+31/10/2026 21:56:30 ok modo=alertas repaso=reciente recibidos=118 nuevos=6 con_cambios=8 avisos=0 llamadas=8 truncados=0 en_base=2737 
+31/10/2026 22:01:32 ok modo=alertas repaso=reciente recibidos=117 nuevos=13 con_cambios=14 avisos=0 llamadas=7 truncados=0 en_base=2750 
+31/10/2026 22:06:34 ok modo=alertas repaso=completo recibidos=1555 nuevos=62 con_cambios=97 avisos=0 llamadas=92 truncados=0 en_base=2812 
+31/10/2026 22:12:00 ok modo=alertas repaso=reciente recibidos=113 nuevos=7 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=2819 
+31/10/2026 22:17:02 ok modo=alertas repaso=reciente recibidos=112 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=2821 
+31/10/2026 22:22:05 ok modo=alertas repaso=completo recibidos=1492 nuevos=50 con_cambios=84 avisos=0 llamadas=93 truncados=0 en_base=2871 
+31/10/2026 22:27:30 ok modo=alertas repaso=reciente recibidos=113 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=2873 
+31/10/2026 22:32:32 ok modo=alertas repaso=reciente recibidos=115 nuevos=8 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=2881 
+31/10/2026 22:37:34 ok modo=alertas repaso=completo recibidos=1507 nuevos=31 con_cambios=65 avisos=0 llamadas=91 truncados=0 en_base=2912 
+31/10/2026 22:42:59 ok modo=alertas repaso=reciente recibidos=113 nuevos=6 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=2918 
+31/10/2026 22:48:01 ok modo=alertas repaso=reciente recibidos=112 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2918 
+31/10/2026 22:53:04 ok modo=alertas repaso=completo recibidos=1467 nuevos=26 con_cambios=56 avisos=1 llamadas=92 truncados=0 en_base=2944 
+31/10/2026 22:58:30 ok modo=alertas repaso=reciente recibidos=105 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=2947 
+31/10/2026 23:03:32 ok modo=alertas repaso=reciente recibidos=98 nuevos=7 con_cambios=9 avisos=0 llamadas=7 truncados=0 en_base=2954 
+31/10/2026 23:08:35 ok modo=alertas repaso=completo recibidos=1462 nuevos=24 con_cambios=57 avisos=0 llamadas=91 truncados=0 en_base=2978 
+31/10/2026 23:14:00 ok modo=alertas repaso=reciente recibidos=88 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=2982 
+31/10/2026 23:19:03 ok modo=alertas repaso=reciente recibidos=88 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2983 
+31/10/2026 23:24:04 ok modo=alertas repaso=completo recibidos=1427 nuevos=20 con_cambios=57 avisos=0 llamadas=92 truncados=0 en_base=3003 
+31/10/2026 23:29:30 ok modo=alertas repaso=reciente recibidos=83 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3004 
+31/10/2026 23:34:32 ok modo=alertas repaso=reciente recibidos=84 nuevos=10 con_cambios=10 avisos=0 llamadas=7 truncados=0 en_base=3014 
+31/10/2026 23:39:34 ok modo=alertas repaso=completo recibidos=1450 nuevos=16 con_cambios=39 avisos=0 llamadas=91 truncados=0 en_base=3030 
+31/10/2026 23:45:00 ok modo=alertas repaso=reciente recibidos=84 nuevos=13 con_cambios=13 avisos=0 llamadas=7 truncados=0 en_base=3043 
+31/10/2026 23:50:02 ok modo=alertas repaso=reciente recibidos=85 nuevos=9 con_cambios=9 avisos=0 llamadas=7 truncados=0 en_base=3052 
+31/10/2026 23:55:05 ok modo=alertas repaso=completo recibidos=1417 nuevos=19 con_cambios=46 avisos=0 llamadas=92 truncados=0 en_base=3071 
+01/11/2026 00:00:30 ok modo=alertas repaso=reciente recibidos=92 nuevos=11 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=3082 
+01/11/2026 00:05:32 ok modo=alertas repaso=reciente recibidos=92 nuevos=3 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3085 
+01/11/2026 00:10:34 ok modo=alertas repaso=completo recibidos=1511 nuevos=34 con_cambios=61 avisos=0 llamadas=93 truncados=0 en_base=3119 
+01/11/2026 00:16:00 ok modo=alertas repaso=reciente recibidos=103 nuevos=2 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3121 
+01/11/2026 00:21:02 ok modo=alertas repaso=reciente recibidos=112 nuevos=18 con_cambios=20 avisos=0 llamadas=7 truncados=0 en_base=3139 
+01/11/2026 00:26:05 ok modo=alertas repaso=completo recibidos=1449 nuevos=14 con_cambios=42 avisos=0 llamadas=91 truncados=0 en_base=3153 
+01/11/2026 00:31:30 ok modo=alertas repaso=reciente recibidos=116 nuevos=18 con_cambios=23 avisos=0 llamadas=7 truncados=0 en_base=3171 
+01/11/2026 00:36:32 ok modo=alertas repaso=reciente recibidos=116 nuevos=3 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3174 
+01/11/2026 00:41:34 ok modo=alertas repaso=completo recibidos=1478 nuevos=24 con_cambios=58 avisos=0 llamadas=94 truncados=0 en_base=3198 
+01/11/2026 00:47:00 ok modo=alertas repaso=reciente recibidos=121 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3198 
+01/11/2026 00:52:02 ok modo=alertas repaso=reciente recibidos=133 nuevos=17 con_cambios=17 avisos=0 llamadas=7 truncados=0 en_base=3215 
+01/11/2026 00:57:05 ok modo=alertas repaso=completo recibidos=1487 nuevos=11 con_cambios=30 avisos=0 llamadas=91 truncados=0 en_base=3226 
+01/11/2026 01:02:31 ok modo=alertas repaso=reciente recibidos=143 nuevos=18 con_cambios=22 avisos=1 llamadas=7 truncados=0 en_base=3244 
+01/11/2026 01:07:34 ok modo=alertas repaso=reciente recibidos=143 nuevos=3 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3247 
+01/11/2026 01:12:36 ok modo=alertas repaso=completo recibidos=1457 nuevos=18 con_cambios=78 avisos=0 llamadas=90 truncados=0 en_base=3265 
+01/11/2026 01:18:01 ok modo=alertas repaso=reciente recibidos=152 nuevos=2 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3267 
+01/11/2026 01:23:03 ok modo=alertas repaso=reciente recibidos=163 nuevos=19 con_cambios=22 avisos=1 llamadas=7 truncados=0 en_base=3279 
+01/11/2026 01:28:05 ok modo=alertas repaso=completo recibidos=1455 nuevos=8 con_cambios=41 avisos=0 llamadas=90 truncados=0 en_base=3287 
+01/11/2026 01:33:32 ok modo=alertas repaso=reciente recibidos=173 nuevos=19 con_cambios=25 avisos=0 llamadas=7 truncados=0 en_base=3306 
+01/11/2026 01:38:35 ok modo=alertas repaso=reciente recibidos=174 nuevos=1 con_cambios=9 avisos=0 llamadas=7 truncados=0 en_base=3307 
+01/11/2026 01:43:37 ok modo=alertas repaso=completo recibidos=1491 nuevos=17 con_cambios=52 avisos=0 llamadas=90 truncados=0 en_base=3324 
+01/11/2026 01:49:02 ok modo=alertas repaso=reciente recibidos=167 nuevos=4 con_cambios=11 avisos=0 llamadas=7 truncados=0 en_base=3328 
+01/11/2026 01:54:05 ok modo=alertas repaso=reciente recibidos=165 nuevos=9 con_cambios=13 avisos=0 llamadas=7 truncados=0 en_base=3337 
+01/11/2026 01:59:07 ok modo=alertas repaso=completo recibidos=1493 nuevos=2 con_cambios=71 avisos=0 llamadas=91 truncados=0 en_base=3339 
+01/11/2026 02:04:32 ok modo=alertas repaso=reciente recibidos=154 nuevos=3 con_cambios=11 avisos=0 llamadas=7 truncados=0 en_base=3342 
+01/11/2026 02:09:34 ok modo=alertas repaso=reciente recibidos=154 nuevos=0 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3342 
+01/11/2026 02:14:38 ok modo=alertas repaso=completo recibidos=1458 nuevos=14 con_cambios=76 avisos=0 llamadas=90 truncados=0 en_base=3356 
+01/11/2026 02:20:03 ok modo=alertas repaso=reciente recibidos=136 nuevos=10 con_cambios=14 avisos=0 llamadas=7 truncados=0 en_base=3366 
+01/11/2026 02:25:05 ok modo=alertas repaso=reciente recibidos=137 nuevos=2 con_cambios=10 avisos=0 llamadas=7 truncados=0 en_base=3363 
+01/11/2026 02:30:08 ok modo=alertas repaso=completo recibidos=1546 nuevos=23 con_cambios=85 avisos=2 llamadas=92 truncados=0 en_base=3386 
+01/11/2026 02:35:35 ok modo=alertas repaso=reciente recibidos=126 nuevos=1 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=3387 
+01/11/2026 02:40:38 ok modo=alertas repaso=reciente recibidos=120 nuevos=3 con_cambios=13 avisos=0 llamadas=7 truncados=0 en_base=3390 
+01/11/2026 02:45:40 ok modo=alertas repaso=completo recibidos=1508 nuevos=8 con_cambios=72 avisos=0 llamadas=90 truncados=0 en_base=3398 
+01/11/2026 02:51:06 ok modo=alertas repaso=reciente recibidos=112 nuevos=5 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3403 
+01/11/2026 02:56:08 ok modo=alertas repaso=reciente recibidos=112 nuevos=2 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3405 
+01/11/2026 03:01:10 ok modo=alertas repaso=completo recibidos=1484 nuevos=19 con_cambios=58 avisos=0 llamadas=92 truncados=0 en_base=3424 
+01/11/2026 03:06:37 ok modo=alertas repaso=reciente recibidos=99 nuevos=4 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3428 
+01/11/2026 03:11:40 ok modo=alertas repaso=reciente recibidos=90 nuevos=2 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3430 
+01/11/2026 03:16:42 ok modo=alertas repaso=completo recibidos=1398 nuevos=6 con_cambios=57 avisos=0 llamadas=86 truncados=0 en_base=3436 
+01/11/2026 03:22:05 ok modo=alertas repaso=reciente recibidos=73 nuevos=4 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3440 
+01/11/2026 03:27:07 ok modo=alertas repaso=reciente recibidos=73 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3439 
+01/11/2026 03:32:09 ok modo=alertas repaso=completo recibidos=1358 nuevos=12 con_cambios=52 avisos=0 llamadas=84 truncados=0 en_base=3451 
+01/11/2026 03:37:32 ok modo=alertas repaso=reciente recibidos=57 nuevos=2 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3453 
+01/11/2026 03:42:34 ok modo=alertas repaso=reciente recibidos=59 nuevos=10 con_cambios=13 avisos=0 llamadas=7 truncados=0 en_base=3463 
+01/11/2026 03:47:36 ok modo=alertas repaso=completo recibidos=1297 nuevos=6 con_cambios=113 avisos=0 llamadas=82 truncados=0 en_base=3469 
+01/11/2026 03:52:59 ok modo=alertas repaso=reciente recibidos=60 nuevos=7 con_cambios=9 avisos=0 llamadas=7 truncados=0 en_base=3476 
+01/11/2026 03:58:01 ok modo=alertas repaso=reciente recibidos=60 nuevos=0 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3476 
+01/11/2026 04:03:03 ok modo=alertas repaso=completo recibidos=1245 nuevos=9 con_cambios=64 avisos=0 llamadas=80 truncados=0 en_base=3485 
+01/11/2026 04:08:26 ok modo=alertas repaso=reciente recibidos=66 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3485 
+01/11/2026 04:13:28 ok modo=alertas repaso=reciente recibidos=73 nuevos=13 con_cambios=13 avisos=0 llamadas=7 truncados=0 en_base=3498 
+01/11/2026 04:18:30 ok modo=alertas repaso=completo recibidos=1232 nuevos=9 con_cambios=35 avisos=0 llamadas=79 truncados=0 en_base=3507 
+01/11/2026 04:23:52 ok modo=alertas repaso=reciente recibidos=63 nuevos=2 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=3509 
+01/11/2026 04:28:54 ok modo=alertas repaso=reciente recibidos=64 nuevos=1 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3507 
+01/11/2026 04:33:56 ok modo=alertas repaso=completo recibidos=1162 nuevos=6 con_cambios=35 avisos=0 llamadas=77 truncados=0 en_base=3513 
+01/11/2026 04:39:18 ok modo=alertas repaso=reciente recibidos=63 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3514 
+01/11/2026 04:44:20 ok modo=alertas repaso=reciente recibidos=63 nuevos=6 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=3520 
+01/11/2026 04:49:22 ok modo=alertas repaso=completo recibidos=1133 nuevos=2 con_cambios=35 avisos=0 llamadas=76 truncados=0 en_base=3522 
+01/11/2026 04:54:43 ok modo=alertas repaso=reciente recibidos=63 nuevos=6 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3528 
+01/11/2026 04:59:45 ok modo=alertas repaso=reciente recibidos=63 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3528 
+01/11/2026 05:04:47 ok modo=alertas repaso=completo recibidos=1084 nuevos=16 con_cambios=60 avisos=0 llamadas=73 truncados=0 en_base=3544 
+01/11/2026 05:10:06 ok modo=alertas repaso=reciente recibidos=72 nuevos=3 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3547 
+01/11/2026 05:15:08 ok modo=alertas repaso=reciente recibidos=72 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3547 
+01/11/2026 05:20:10 ok modo=alertas repaso=completo recibidos=1069 nuevos=3 con_cambios=21 avisos=0 llamadas=73 truncados=0 en_base=3550 
+01/11/2026 05:25:31 ok modo=alertas repaso=reciente recibidos=69 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3550 
+01/11/2026 05:30:34 ok modo=alertas repaso=reciente recibidos=76 nuevos=5 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3555 
+01/11/2026 05:35:36 ok modo=alertas repaso=completo recibidos=1077 nuevos=1 con_cambios=33 avisos=0 llamadas=73 truncados=0 en_base=3556 
+01/11/2026 05:40:56 ok modo=alertas repaso=reciente recibidos=69 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3560 
+01/11/2026 05:45:58 ok modo=alertas repaso=reciente recibidos=69 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3560 
+01/11/2026 05:51:00 ok modo=alertas repaso=completo recibidos=1089 nuevos=13 con_cambios=30 avisos=0 llamadas=74 truncados=0 en_base=3573 
+01/11/2026 05:56:20 ok modo=alertas repaso=reciente recibidos=71 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3575 
+01/11/2026 06:01:22 ok modo=alertas repaso=reciente recibidos=69 nuevos=4 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3579 
+01/11/2026 06:06:25 ok modo=alertas repaso=completo recibidos=1062 nuevos=1 con_cambios=27 avisos=0 llamadas=73 truncados=0 en_base=3580 
+01/11/2026 06:11:45 ok modo=alertas repaso=reciente recibidos=63 nuevos=7 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=3587 
+01/11/2026 06:16:47 ok modo=alertas repaso=reciente recibidos=63 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3588 
+01/11/2026 06:21:49 ok modo=alertas repaso=completo recibidos=1059 nuevos=11 con_cambios=41 avisos=0 llamadas=73 truncados=0 en_base=3599 
+01/11/2026 06:27:11 ok modo=alertas repaso=reciente recibidos=68 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3599 
+01/11/2026 06:32:13 ok modo=alertas repaso=reciente recibidos=71 nuevos=8 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=3607 
+01/11/2026 06:37:15 ok modo=alertas repaso=completo recibidos=1068 nuevos=1 con_cambios=30 avisos=0 llamadas=73 truncados=0 en_base=3608 
+01/11/2026 06:42:37 ok modo=alertas repaso=reciente recibidos=72 nuevos=5 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=3613 
+01/11/2026 06:47:39 ok modo=alertas repaso=reciente recibidos=72 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3613 
+01/11/2026 06:52:41 ok modo=alertas repaso=completo recibidos=1057 nuevos=7 con_cambios=47 avisos=0 llamadas=74 truncados=0 en_base=3620 
+01/11/2026 06:58:03 ok modo=alertas repaso=reciente recibidos=70 nuevos=0 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3620 
+01/11/2026 07:03:05 ok modo=alertas repaso=reciente recibidos=64 nuevos=9 con_cambios=10 avisos=0 llamadas=7 truncados=0 en_base=3629 
+01/11/2026 07:08:07 ok modo=alertas repaso=completo recibidos=1057 nuevos=0 con_cambios=27 avisos=0 llamadas=73 truncados=0 en_base=3629 
+01/11/2026 07:13:27 ok modo=alertas repaso=reciente recibidos=65 nuevos=4 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3633 
+01/11/2026 07:18:29 ok modo=alertas repaso=reciente recibidos=65 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3634 
+01/11/2026 07:23:31 ok modo=alertas repaso=completo recibidos=1040 nuevos=7 con_cambios=40 avisos=0 llamadas=73 truncados=0 en_base=3641 
+01/11/2026 07:28:50 ok modo=alertas repaso=reciente recibidos=69 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3643 
+01/11/2026 07:33:53 ok modo=alertas repaso=reciente recibidos=67 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3647 
+01/11/2026 07:38:54 ok modo=alertas repaso=completo recibidos=1050 nuevos=1 con_cambios=22 avisos=0 llamadas=73 truncados=0 en_base=3648 
+01/11/2026 07:44:15 ok modo=alertas repaso=reciente recibidos=71 nuevos=6 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=3654 
+01/11/2026 07:49:17 ok modo=alertas repaso=reciente recibidos=71 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3654 
+01/11/2026 07:54:19 ok modo=alertas repaso=completo recibidos=1044 nuevos=10 con_cambios=36 avisos=0 llamadas=74 truncados=0 en_base=3664 
+01/11/2026 07:59:38 ok modo=alertas repaso=reciente recibidos=72 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3664 
+01/11/2026 08:04:40 ok modo=alertas repaso=reciente recibidos=69 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3668 
+01/11/2026 08:09:42 ok modo=alertas repaso=completo recibidos=1040 nuevos=0 con_cambios=18 avisos=0 llamadas=73 truncados=0 en_base=3668 
+01/11/2026 08:15:01 ok modo=alertas repaso=reciente recibidos=72 nuevos=10 con_cambios=10 avisos=0 llamadas=7 truncados=0 en_base=3678 
+01/11/2026 08:20:03 ok modo=alertas repaso=reciente recibidos=75 nuevos=12 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=3690 
+01/11/2026 08:25:06 ok modo=alertas repaso=completo recibidos=1038 nuevos=1 con_cambios=19 avisos=0 llamadas=73 truncados=0 en_base=3691 
+01/11/2026 08:30:27 ok modo=alertas repaso=reciente recibidos=82 nuevos=14 con_cambios=14 avisos=0 llamadas=7 truncados=0 en_base=3705 
+01/11/2026 08:35:29 ok modo=alertas repaso=reciente recibidos=82 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3695 
+01/11/2026 08:40:31 ok modo=alertas repaso=completo recibidos=1055 nuevos=9 con_cambios=32 avisos=0 llamadas=74 truncados=0 en_base=3704 
+01/11/2026 08:45:52 ok modo=alertas repaso=reciente recibidos=87 nuevos=4 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3708 
+01/11/2026 08:50:54 ok modo=alertas repaso=reciente recibidos=90 nuevos=10 con_cambios=12 avisos=1 llamadas=7 truncados=0 en_base=3718 
+01/11/2026 08:55:57 ok modo=alertas repaso=completo recibidos=1054 nuevos=6 con_cambios=38 avisos=0 llamadas=74 truncados=0 en_base=3724 
+01/11/2026 09:01:17 ok modo=alertas repaso=reciente recibidos=86 nuevos=4 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3728 
+01/11/2026 09:06:19 ok modo=alertas repaso=reciente recibidos=85 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3729 
+01/11/2026 09:11:21 ok modo=alertas repaso=completo recibidos=1041 nuevos=3 con_cambios=46 avisos=0 llamadas=73 truncados=0 en_base=3732 
+01/11/2026 09:16:41 ok modo=alertas repaso=reciente recibidos=82 nuevos=6 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=3738 
+01/11/2026 09:21:44 ok modo=alertas repaso=reciente recibidos=77 nuevos=1 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3739 
+01/11/2026 09:26:46 ok modo=alertas repaso=completo recibidos=1018 nuevos=1 con_cambios=91 avisos=0 llamadas=73 truncados=0 en_base=3740 
+01/11/2026 09:32:06 ok modo=alertas repaso=reciente recibidos=76 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3742 
+01/11/2026 09:37:08 ok modo=alertas repaso=reciente recibidos=76 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3737 
+01/11/2026 09:42:11 ok modo=alertas repaso=completo recibidos=1026 nuevos=3 con_cambios=44 avisos=0 llamadas=73 truncados=0 en_base=3740 
+01/11/2026 09:47:31 ok modo=alertas repaso=reciente recibidos=74 nuevos=0 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3740 
+01/11/2026 09:52:33 ok modo=alertas repaso=reciente recibidos=64 nuevos=1 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3741 
+01/11/2026 09:57:35 ok modo=alertas repaso=completo recibidos=1028 nuevos=1 con_cambios=35 avisos=0 llamadas=74 truncados=0 en_base=3742 
+01/11/2026 10:02:56 ok modo=alertas repaso=reciente recibidos=64 nuevos=5 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3747 
+01/11/2026 10:07:58 ok modo=alertas repaso=reciente recibidos=66 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3747 
+01/11/2026 10:13:00 ok modo=alertas repaso=completo recibidos=998 nuevos=1 con_cambios=47 avisos=0 llamadas=73 truncados=0 en_base=3748 
+01/11/2026 10:18:19 ok modo=alertas repaso=reciente recibidos=57 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3750 
+01/11/2026 10:23:21 ok modo=alertas repaso=reciente recibidos=47 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3750 
+01/11/2026 10:28:23 ok modo=alertas repaso=completo recibidos=1001 nuevos=2 con_cambios=24 avisos=0 llamadas=73 truncados=0 en_base=3752 
+01/11/2026 10:33:43 ok modo=alertas repaso=reciente recibidos=35 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3754 
+01/11/2026 10:38:45 ok modo=alertas repaso=reciente recibidos=35 nuevos=0 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3751 
+01/11/2026 10:43:47 ok modo=alertas repaso=completo recibidos=1011 nuevos=2 con_cambios=67 avisos=0 llamadas=73 truncados=0 en_base=3753 
+01/11/2026 10:49:07 ok modo=alertas repaso=reciente recibidos=28 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3753 
+01/11/2026 10:54:09 ok modo=alertas repaso=reciente recibidos=23 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3755 
+01/11/2026 10:59:11 ok modo=alertas repaso=completo recibidos=1014 nuevos=1 con_cambios=54 avisos=0 llamadas=74 truncados=0 en_base=3756 
+01/11/2026 11:04:31 ok modo=alertas repaso=reciente recibidos=19 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3756 
+01/11/2026 11:09:33 ok modo=alertas repaso=reciente recibidos=19 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3756 
+01/11/2026 11:14:35 ok modo=alertas repaso=completo recibidos=983 nuevos=3 con_cambios=23 avisos=0 llamadas=73 truncados=0 en_base=3759 
+01/11/2026 11:19:54 ok modo=alertas repaso=reciente recibidos=20 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3760 
+01/11/2026 11:24:57 ok modo=alertas repaso=reciente recibidos=21 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3761 
+01/11/2026 11:29:59 ok modo=alertas repaso=completo recibidos=977 nuevos=1 con_cambios=22 avisos=0 llamadas=73 truncados=0 en_base=3762 
+01/11/2026 11:35:18 ok modo=alertas repaso=reciente recibidos=20 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3764 
+01/11/2026 11:40:20 ok modo=alertas repaso=reciente recibidos=19 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3762 
+01/11/2026 11:45:22 ok modo=alertas repaso=completo recibidos=986 nuevos=1 con_cambios=17 avisos=0 llamadas=73 truncados=0 en_base=3763 
+01/11/2026 11:50:41 ok modo=alertas repaso=reciente recibidos=22 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3767 
+01/11/2026 11:55:43 ok modo=alertas repaso=reciente recibidos=22 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3767 
+01/11/2026 12:00:45 ok modo=alertas repaso=completo recibidos=966 nuevos=0 con_cambios=38 avisos=0 llamadas=74 truncados=0 en_base=3767 
+01/11/2026 12:06:07 ok modo=alertas repaso=reciente recibidos=17 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3767 
+01/11/2026 12:11:09 ok modo=alertas repaso=reciente recibidos=19 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3770 
+01/11/2026 12:16:11 ok modo=alertas repaso=completo recibidos=947 nuevos=0 con_cambios=45 avisos=0 llamadas=73 truncados=0 en_base=3770 
+01/11/2026 12:21:29 ok modo=alertas repaso=reciente recibidos=21 nuevos=1 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3771 
+01/11/2026 12:26:31 ok modo=alertas repaso=reciente recibidos=20 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3771 
+01/11/2026 12:31:33 ok modo=alertas repaso=completo recibidos=942 nuevos=1 con_cambios=163 avisos=0 llamadas=73 truncados=0 en_base=3772 
+01/11/2026 12:36:53 ok modo=alertas repaso=reciente recibidos=19 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3772 
+01/11/2026 12:41:55 ok modo=alertas repaso=reciente recibidos=20 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3772 
+01/11/2026 12:46:57 ok modo=alertas repaso=completo recibidos=945 nuevos=0 con_cambios=24 avisos=0 llamadas=73 truncados=0 en_base=3772 
+01/11/2026 12:52:15 ok modo=alertas repaso=reciente recibidos=21 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3775 
+01/11/2026 12:57:17 ok modo=alertas repaso=reciente recibidos=21 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3775 
+01/11/2026 13:02:19 ok modo=alertas repaso=completo recibidos=929 nuevos=0 con_cambios=40 avisos=0 llamadas=73 truncados=0 en_base=3775 
+01/11/2026 13:07:40 ok modo=alertas repaso=reciente recibidos=21 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3776 
+01/11/2026 13:12:42 ok modo=alertas repaso=reciente recibidos=20 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3777 
+01/11/2026 13:17:44 ok modo=alertas repaso=completo recibidos=913 nuevos=0 con_cambios=23 avisos=0 llamadas=73 truncados=0 en_base=3777 
+01/11/2026 13:23:05 ok modo=alertas repaso=reciente recibidos=20 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3778 
+01/11/2026 13:28:07 ok modo=alertas repaso=reciente recibidos=20 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3778 
+01/11/2026 13:33:10 ok modo=alertas repaso=completo recibidos=913 nuevos=0 con_cambios=37 avisos=0 llamadas=73 truncados=0 en_base=3778 
+01/11/2026 13:38:29 ok modo=alertas repaso=reciente recibidos=19 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3778 
+01/11/2026 13:43:31 ok modo=alertas repaso=reciente recibidos=18 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3778 
+01/11/2026 13:48:33 ok modo=alertas repaso=completo recibidos=909 nuevos=0 con_cambios=30 avisos=0 llamadas=73 truncados=0 en_base=3778 
+01/11/2026 13:53:53 ok modo=alertas repaso=reciente recibidos=15 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3779 
+01/11/2026 13:58:55 ok modo=alertas repaso=reciente recibidos=15 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3779 
+01/11/2026 14:03:57 ok modo=alertas repaso=completo recibidos=903 nuevos=1 con_cambios=27 avisos=0 llamadas=73 truncados=0 en_base=3780 
+01/11/2026 14:09:18 ok modo=alertas repaso=reciente recibidos=15 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3780 
+01/11/2026 14:14:20 ok modo=alertas repaso=reciente recibidos=12 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3781 
+01/11/2026 14:19:22 ok modo=alertas repaso=completo recibidos=893 nuevos=1 con_cambios=51 avisos=0 llamadas=73 truncados=0 en_base=3782 
+01/11/2026 14:24:42 ok modo=alertas repaso=reciente recibidos=14 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3784 
+01/11/2026 14:29:43 ok modo=alertas repaso=reciente recibidos=14 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3784 
+01/11/2026 14:34:45 ok modo=alertas repaso=completo recibidos=897 nuevos=4 con_cambios=35 avisos=0 llamadas=73 truncados=0 en_base=3788 
+01/11/2026 14:40:05 ok modo=alertas repaso=reciente recibidos=18 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3792 
+01/11/2026 14:45:07 ok modo=alertas repaso=reciente recibidos=18 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3792 
+01/11/2026 14:50:09 ok modo=alertas repaso=completo recibidos=914 nuevos=5 con_cambios=44 avisos=0 llamadas=74 truncados=0 en_base=3797 
+01/11/2026 14:55:29 ok modo=alertas repaso=reciente recibidos=19 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3797 
+01/11/2026 15:00:31 ok modo=alertas repaso=reciente recibidos=19 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3798 
+01/11/2026 15:05:33 ok modo=alertas repaso=completo recibidos=896 nuevos=0 con_cambios=58 avisos=0 llamadas=73 truncados=0 en_base=3798 
+01/11/2026 15:23:52 ok modo=alertas repaso=completo recibidos=884 nuevos=0 con_cambios=28 avisos=0 llamadas=73 truncados=0 en_base=3798 
+01/11/2026 15:29:11 ok modo=alertas repaso=reciente recibidos=17 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3798 
+01/11/2026 15:34:13 ok modo=alertas repaso=reciente recibidos=17 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3798 
+01/11/2026 15:39:15 ok modo=alertas repaso=completo recibidos=880 nuevos=0 con_cambios=67 avisos=0 llamadas=73 truncados=0 en_base=3798 
+01/11/2026 15:44:35 ok modo=alertas repaso=reciente recibidos=17 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3798 
+01/11/2026 15:49:36 ok modo=alertas repaso=reciente recibidos=17 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3797 
+01/11/2026 15:54:38 ok modo=alertas repaso=completo recibidos=868 nuevos=2 con_cambios=41 avisos=0 llamadas=74 truncados=0 en_base=3799 
+01/11/2026 16:15:41 error modo=alertas repaso=completo recibidos=0 nuevos=1 con_cambios=1 avisos=0 llamadas=10 truncados=0 en_base=3800 ErrorRed: Sin conexion o error de red: The read operation timed out
+01/11/2026 17:59:04 ok modo=alertas repaso=completo recibidos=792 nuevos=10 con_cambios=87 avisos=0 llamadas=74 truncados=0 en_base=3807 
+01/11/2026 18:04:24 ok modo=alertas repaso=reciente recibidos=16 nuevos=7 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3814 
+01/11/2026 18:09:25 ok modo=alertas repaso=reciente recibidos=16 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3814 
+01/11/2026 18:14:27 ok modo=alertas repaso=completo recibidos=788 nuevos=3 con_cambios=32 avisos=0 llamadas=73 truncados=0 en_base=3817 
+01/11/2026 18:19:47 ok modo=alertas repaso=reciente recibidos=17 nuevos=1 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3818 
+01/11/2026 18:24:49 ok modo=alertas repaso=reciente recibidos=19 nuevos=3 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=3821 
+01/11/2026 18:29:51 ok modo=alertas repaso=completo recibidos=780 nuevos=1 con_cambios=39 avisos=0 llamadas=73 truncados=0 en_base=3822 
+01/11/2026 18:35:12 ok modo=alertas repaso=reciente recibidos=21 nuevos=5 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3827 
+01/11/2026 18:40:13 ok modo=alertas repaso=reciente recibidos=20 nuevos=0 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=3827 
+01/11/2026 18:45:15 ok modo=alertas repaso=completo recibidos=784 nuevos=0 con_cambios=40 avisos=0 llamadas=73 truncados=0 en_base=3827 
+01/11/2026 19:22:08 ok modo=alertas repaso=completo recibidos=746 nuevos=14 con_cambios=48 avisos=0 llamadas=73 truncados=0 en_base=3841 
+01/11/2026 20:04:17 error modo=alertas repaso=completo recibidos=0 nuevos=7 con_cambios=12 avisos=0 llamadas=23 truncados=0 en_base=3848 ErrorRed: Sin conexion o error de red: The read operation timed out
+01/11/2026 20:35:40 ok modo=alertas repaso=completo recibidos=711 nuevos=5 con_cambios=67 avisos=0 llamadas=73 truncados=0 en_base=3853 
+01/11/2026 20:40:58 ok modo=alertas repaso=reciente recibidos=26 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3854 
+01/11/2026 20:46:00 ok modo=alertas repaso=reciente recibidos=26 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3855 
+01/11/2026 20:51:02 ok modo=alertas repaso=completo recibidos=704 nuevos=6 con_cambios=65 avisos=0 llamadas=73 truncados=0 en_base=3861 
+01/11/2026 20:56:21 ok modo=alertas repaso=reciente recibidos=29 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3861 
+01/11/2026 21:01:23 ok modo=alertas repaso=reciente recibidos=27 nuevos=5 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3866 
+01/11/2026 21:06:25 ok modo=alertas repaso=completo recibidos=692 nuevos=1 con_cambios=28 avisos=0 llamadas=73 truncados=0 en_base=3867 
+01/11/2026 21:11:43 ok modo=alertas repaso=reciente recibidos=28 nuevos=5 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3872 
+01/11/2026 21:16:45 ok modo=alertas repaso=reciente recibidos=28 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3872 
+01/11/2026 21:21:47 ok modo=alertas repaso=completo recibidos=667 nuevos=3 con_cambios=25 avisos=0 llamadas=73 truncados=0 en_base=3875 
+01/11/2026 21:27:05 ok modo=alertas repaso=reciente recibidos=30 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=3875 
+01/11/2026 21:32:07 ok modo=alertas repaso=reciente recibidos=27 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3875 
+01/11/2026 21:37:09 ok modo=alertas repaso=completo recibidos=661 nuevos=0 con_cambios=30 avisos=0 llamadas=73 truncados=0 en_base=3869 
+01/11/2026 21:42:31 ok modo=alertas repaso=reciente recibidos=31 nuevos=5 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=3874 
+01/11/2026 21:47:32 ok modo=alertas repaso=reciente recibidos=31 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3874 
+01/11/2026 21:52:34 ok modo=alertas repaso=completo recibidos=652 nuevos=3 con_cambios=17 avisos=0 llamadas=73 truncados=0 en_base=3877 
+01/11/2026 21:57:53 ok modo=alertas repaso=reciente recibidos=31 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3877 
+01/11/2026 22:02:55 ok modo=alertas repaso=reciente recibidos=33 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3880 
+01/11/2026 22:07:57 ok modo=alertas repaso=completo recibidos=651 nuevos=0 con_cambios=12 avisos=0 llamadas=73 truncados=0 en_base=3880 
+01/11/2026 22:28:15 ok modo=alertas repaso=completo recibidos=635 nuevos=9 con_cambios=43 avisos=0 llamadas=73 truncados=0 en_base=3889 
+01/11/2026 22:33:35 ok modo=alertas repaso=reciente recibidos=52 nuevos=12 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=3901 
+01/11/2026 22:38:37 ok modo=alertas repaso=reciente recibidos=53 nuevos=6 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=3809 
+01/11/2026 22:43:39 ok modo=alertas repaso=completo recibidos=651 nuevos=12 con_cambios=54 avisos=0 llamadas=73 truncados=0 en_base=3821 
+01/11/2026 22:48:58 ok modo=alertas repaso=reciente recibidos=61 nuevos=2 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=3823 
+01/11/2026 22:54:00 ok modo=alertas repaso=reciente recibidos=67 nuevos=12 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=3835 
+01/11/2026 22:59:02 ok modo=alertas repaso=completo recibidos=659 nuevos=4 con_cambios=53 avisos=0 llamadas=73 truncados=0 en_base=3839 
+01/11/2026 23:04:21 ok modo=alertas repaso=reciente recibidos=83 nuevos=22 con_cambios=24 avisos=0 llamadas=8 truncados=0 en_base=3861 
+01/11/2026 23:09:23 ok modo=alertas repaso=reciente recibidos=76 nuevos=11 con_cambios=14 avisos=0 llamadas=8 truncados=0 en_base=3872 
+01/11/2026 23:14:25 ok modo=alertas repaso=completo recibidos=680 nuevos=25 con_cambios=61 avisos=0 llamadas=74 truncados=0 en_base=3897 
+01/11/2026 23:19:43 ok modo=alertas repaso=reciente recibidos=95 nuevos=8 con_cambios=9 avisos=0 llamadas=8 truncados=0 en_base=3905 
+02/11/2026 00:06:43 error modo=alertas repaso=completo recibidos=0 nuevos=6 con_cambios=35 avisos=0 llamadas=21 truncados=0 en_base=3911 ErrorRed: Sin conexion o error de red: The read operation timed out
+02/11/2026 07:29:18 error modo=alertas repaso=completo recibidos=0 nuevos=68 con_cambios=100 avisos=0 llamadas=21 truncados=0 en_base=3979 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+02/11/2026 09:27:58 ok modo=alertas repaso=completo recibidos=562 nuevos=280 con_cambios=319 avisos=0 llamadas=76 truncados=0 en_base=2293 
+02/11/2026 09:59:01 ok modo=alertas repaso=completo recibidos=567 nuevos=49 con_cambios=69 avisos=0 llamadas=74 truncados=0 en_base=2342 
+02/11/2026 10:35:12 error modo=alertas repaso=completo recibidos=0 nuevos=3 con_cambios=5 avisos=0 llamadas=10 truncados=0 en_base=2345 ErrorRed: Sin conexion o error de red: The read operation timed out
+02/11/2026 11:52:46 ok modo=alertas repaso=completo recibidos=552 nuevos=22 con_cambios=81 avisos=0 llamadas=74 truncados=0 en_base=2354 
+02/11/2026 13:09:32 ok modo=alertas repaso=completo recibidos=552 nuevos=27 con_cambios=92 avisos=0 llamadas=75 truncados=0 en_base=2379 
+02/11/2026 14:28:01 ok modo=alertas repaso=completo recibidos=559 nuevos=31 con_cambios=73 avisos=0 llamadas=76 truncados=0 en_base=2404 
+02/11/2026 15:15:14 ok modo=alertas repaso=completo recibidos=548 nuevos=16 con_cambios=88 avisos=0 llamadas=76 truncados=0 en_base=2420 
+02/11/2026 16:32:47 ok modo=alertas repaso=completo recibidos=570 nuevos=30 con_cambios=76 avisos=0 llamadas=76 truncados=0 en_base=2426 
+02/11/2026 16:49:17 ok modo=alertas repaso=completo recibidos=565 nuevos=11 con_cambios=17 avisos=0 llamadas=74 truncados=0 en_base=2437 
+02/11/2026 17:01:48 ok modo=alertas repaso=reciente recibidos=36 nuevos=6 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=2443 
+02/11/2026 17:15:35 error modo=alertas repaso=completo recibidos=0 nuevos=7 con_cambios=15 avisos=0 llamadas=29 truncados=0 en_base=2450 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+02/11/2026 18:18:06 ok modo=alertas repaso=completo recibidos=598 nuevos=20 con_cambios=61 avisos=0 llamadas=76 truncados=0 en_base=2444 
+02/11/2026 19:02:16 ok modo=alertas repaso=completo recibidos=577 nuevos=20 con_cambios=48 avisos=0 llamadas=75 truncados=0 en_base=2464 
+02/11/2026 19:27:09 ok modo=alertas repaso=completo recibidos=579 nuevos=10 con_cambios=14 avisos=0 llamadas=76 truncados=0 en_base=2464 
+02/11/2026 19:41:27 ok modo=alertas repaso=reciente recibidos=17 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2466 
+02/11/2026 19:59:50 ok modo=alertas repaso=completo recibidos=570 nuevos=2 con_cambios=43 avisos=0 llamadas=74 truncados=0 en_base=2468 
+02/11/2026 21:00:52 ok modo=alertas repaso=completo recibidos=568 nuevos=11 con_cambios=34 avisos=0 llamadas=76 truncados=0 en_base=2458 
+02/11/2026 21:17:19 error modo=alertas repaso=completo recibidos=0 nuevos=2 con_cambios=4 avisos=0 llamadas=38 truncados=0 en_base=2460 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+02/11/2026 21:26:42 ok modo=alertas repaso=completo recibidos=573 nuevos=17 con_cambios=30 avisos=0 llamadas=76 truncados=0 en_base=2477 
+02/11/2026 21:33:41 ok modo=alertas repaso=reciente recibidos=37 nuevos=11 con_cambios=11 avisos=0 llamadas=7 truncados=0 en_base=2488 
+02/11/2026 21:47:54 ok modo=alertas repaso=completo recibidos=590 nuevos=10 con_cambios=20 avisos=0 llamadas=74 truncados=0 en_base=2498 
+02/11/2026 22:36:49 error modo=alertas repaso=completo recibidos=0 nuevos=30 con_cambios=39 avisos=0 llamadas=69 truncados=0 en_base=2528 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+02/11/2026 22:44:05 ok modo=alertas repaso=completo recibidos=591 nuevos=15 con_cambios=20 avisos=0 llamadas=74 truncados=0 en_base=2540 
+02/11/2026 22:49:25 ok modo=alertas repaso=reciente recibidos=71 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2542 
+02/11/2026 22:54:28 ok modo=alertas repaso=reciente recibidos=81 nuevos=12 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=2554 
+02/11/2026 22:59:29 ok modo=alertas repaso=completo recibidos=581 nuevos=2 con_cambios=15 avisos=0 llamadas=74 truncados=0 en_base=2556 
+02/11/2026 23:04:48 ok modo=alertas repaso=reciente recibidos=88 nuevos=10 con_cambios=10 avisos=0 llamadas=7 truncados=0 en_base=2566 
+02/11/2026 23:09:50 ok modo=alertas repaso=reciente recibidos=87 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=2570 
+02/11/2026 23:14:53 ok modo=alertas repaso=completo recibidos=566 nuevos=12 con_cambios=41 avisos=0 llamadas=75 truncados=0 en_base=2582 
+03/11/2026 00:08:48 error modo=alertas repaso=completo recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=6 truncados=0 en_base=2582 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+03/11/2026 05:17:41 error modo=alertas repaso=completo recibidos=0 nuevos=636 con_cambios=676 avisos=0 llamadas=67 truncados=0 en_base=3218 ErrorRed: Sin conexion o error de red: The read operation timed out
+03/11/2026 07:55:42 error modo=alertas repaso=completo recibidos=0 nuevos=181 con_cambios=239 avisos=0 llamadas=18 truncados=0 en_base=3399 ErrorRed: Sin conexion o error de red: The read operation timed out
+03/11/2026 09:06:41 error modo=alertas repaso=completo recibidos=0 nuevos=253 con_cambios=345 avisos=0 llamadas=47 truncados=0 en_base=3652 ErrorRed: Sin conexion o error de red: The read operation timed out
+03/11/2026 09:15:20 error modo=alertas repaso=completo recibidos=0 nuevos=91 con_cambios=98 avisos=0 llamadas=33 truncados=0 en_base=3743 ErrorRed: Sin conexion o error de red: [Errno 54] Connection reset by peer
+03/11/2026 09:30:51 ok modo=alertas repaso=completo recibidos=1120 nuevos=175 con_cambios=252 avisos=2 llamadas=89 truncados=0 en_base=3875 
+03/11/2026 10:54:45 error modo=alertas repaso=completo recibidos=0 nuevos=17 con_cambios=18 avisos=0 llamadas=7 truncados=0 en_base=3892 ErrorRed: Sin conexion o error de red: [Errno 54] Connection reset by peer
+03/11/2026 12:23:56 ok modo=alertas repaso=completo recibidos=1135 nuevos=130 con_cambios=333 avisos=0 llamadas=86 truncados=0 en_base=4018 
+03/11/2026 16:03:40 error modo=alertas repaso=completo recibidos=0 nuevos=93 con_cambios=206 avisos=0 llamadas=52 truncados=0 en_base=4111 ErrorRed: Sin conexion o error de red: The read operation timed out
+03/11/2026 18:54:36 ok modo=alertas repaso=completo recibidos=1175 nuevos=135 con_cambios=284 avisos=0 llamadas=87 truncados=0 en_base=4242 
+03/11/2026 19:08:28 ok modo=alertas repaso=reciente recibidos=48 nuevos=7 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=4249 
+03/11/2026 19:13:30 ok modo=alertas repaso=completo recibidos=1181 nuevos=51 con_cambios=74 avisos=0 llamadas=86 truncados=0 en_base=4300 
+03/11/2026 20:08:14 ok modo=alertas repaso=completo recibidos=1179 nuevos=48 con_cambios=144 avisos=0 llamadas=86 truncados=0 en_base=4341 
+03/11/2026 20:59:48 ok modo=alertas repaso=completo recibidos=1217 nuevos=86 con_cambios=159 avisos=0 llamadas=88 truncados=0 en_base=4427 
+03/11/2026 21:05:12 ok modo=alertas repaso=reciente recibidos=83 nuevos=19 con_cambios=23 avisos=0 llamadas=8 truncados=0 en_base=4446 
+03/11/2026 21:10:14 ok modo=alertas repaso=reciente recibidos=89 nuevos=15 con_cambios=18 avisos=0 llamadas=8 truncados=0 en_base=4461 
+03/11/2026 21:15:16 ok modo=alertas repaso=completo recibidos=1233 nuevos=21 con_cambios=40 avisos=0 llamadas=87 truncados=0 en_base=4482 
+03/11/2026 21:20:40 ok modo=alertas repaso=reciente recibidos=96 nuevos=17 con_cambios=17 avisos=0 llamadas=8 truncados=0 en_base=4499 
+03/11/2026 21:25:42 ok modo=alertas repaso=reciente recibidos=91 nuevos=0 con_cambios=2 avisos=0 llamadas=8 truncados=0 en_base=4499 
+03/11/2026 21:30:44 ok modo=alertas repaso=completo recibidos=1251 nuevos=25 con_cambios=62 avisos=0 llamadas=90 truncados=0 en_base=4524 
+03/11/2026 21:36:08 ok modo=alertas repaso=reciente recibidos=99 nuevos=1 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=4525 
+03/11/2026 21:41:10 ok modo=alertas repaso=reciente recibidos=108 nuevos=11 con_cambios=11 avisos=0 llamadas=8 truncados=0 en_base=4536 
+03/11/2026 21:46:13 ok modo=alertas repaso=completo recibidos=1220 nuevos=18 con_cambios=46 avisos=0 llamadas=87 truncados=0 en_base=4554 
+03/11/2026 22:01:36 ok modo=alertas repaso=completo recibidos=1291 nuevos=46 con_cambios=87 avisos=1 llamadas=91 truncados=0 en_base=4600 
+03/11/2026 22:22:23 ok modo=alertas repaso=completo recibidos=1257 nuevos=36 con_cambios=81 avisos=0 llamadas=87 truncados=0 en_base=4634 
+03/11/2026 22:27:48 ok modo=alertas repaso=reciente recibidos=111 nuevos=2 con_cambios=4 avisos=0 llamadas=8 truncados=0 en_base=4636 
+03/11/2026 22:32:50 ok modo=alertas repaso=reciente recibidos=103 nuevos=11 con_cambios=14 avisos=0 llamadas=7 truncados=0 en_base=4647 
+03/11/2026 22:37:52 ok modo=alertas repaso=completo recibidos=1215 nuevos=16 con_cambios=54 avisos=0 llamadas=87 truncados=0 en_base=4663 
+03/11/2026 22:43:16 ok modo=alertas repaso=reciente recibidos=107 nuevos=15 con_cambios=17 avisos=0 llamadas=7 truncados=0 en_base=4678 
+03/11/2026 22:48:18 ok modo=alertas repaso=reciente recibidos=108 nuevos=4 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=4682 
+03/11/2026 22:53:20 ok modo=alertas repaso=completo recibidos=1255 nuevos=20 con_cambios=45 avisos=0 llamadas=88 truncados=0 en_base=4702 
+03/11/2026 23:02:12 ok modo=alertas repaso=reciente recibidos=110 nuevos=12 con_cambios=14 avisos=0 llamadas=7 truncados=0 en_base=4714 
+03/11/2026 23:07:15 ok modo=alertas repaso=reciente recibidos=110 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4715 
+04/11/2026 01:11:04 ok modo=alertas repaso=completo recibidos=1286 nuevos=128 con_cambios=255 avisos=0 llamadas=89 truncados=0 en_base=4653 
+04/11/2026 08:09:43 ok modo=alertas repaso=completo recibidos=948 nuevos=411 con_cambios=507 avisos=3 llamadas=75 truncados=0 en_base=4784 
+04/11/2026 10:54:37 ok modo=alertas repaso=completo recibidos=949 nuevos=148 con_cambios=225 avisos=0 llamadas=75 truncados=0 en_base=4926 
+04/11/2026 15:06:37 error modo=alertas repaso=completo recibidos=0 nuevos=28 con_cambios=28 avisos=0 llamadas=6 truncados=0 en_base=4954 ErrorRed: Sin conexion o error de red: The read operation timed out
+04/11/2026 16:39:13 ok modo=alertas repaso=completo recibidos=899 nuevos=46 con_cambios=148 avisos=0 llamadas=75 truncados=0 en_base=4956 
+04/11/2026 16:44:33 ok modo=alertas repaso=reciente recibidos=15 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=4958 
+04/11/2026 16:49:36 ok modo=alertas repaso=reciente recibidos=15 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4959 
+04/11/2026 16:54:38 ok modo=alertas repaso=completo recibidos=892 nuevos=13 con_cambios=70 avisos=0 llamadas=75 truncados=0 en_base=4972 
+04/11/2026 16:59:57 ok modo=alertas repaso=reciente recibidos=16 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=4972 
+04/11/2026 17:04:59 ok modo=alertas repaso=reciente recibidos=16 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4972 
+04/11/2026 17:10:01 ok modo=alertas repaso=completo recibidos=900 nuevos=20 con_cambios=46 avisos=0 llamadas=76 truncados=0 en_base=4992 
+04/11/2026 17:15:22 ok modo=alertas repaso=reciente recibidos=16 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=4992 
+04/11/2026 17:28:18 error modo=alertas repaso=completo recibidos=0 nuevos=1 con_cambios=4 avisos=0 llamadas=16 truncados=0 en_base=4993 ErrorRed: Sin conexion o error de red: The read operation timed out
+04/11/2026 17:34:15 ok modo=alertas repaso=completo recibidos=868 nuevos=7 con_cambios=36 avisos=0 llamadas=75 truncados=0 en_base=5000 
+04/11/2026 17:39:34 ok modo=alertas repaso=reciente recibidos=15 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=4979 
+04/11/2026 17:44:36 ok modo=alertas repaso=reciente recibidos=14 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=4979 
+04/11/2026 17:49:38 ok modo=alertas repaso=completo recibidos=868 nuevos=7 con_cambios=60 avisos=0 llamadas=75 truncados=0 en_base=4986 
+04/11/2026 17:54:59 ok modo=alertas repaso=reciente recibidos=14 nuevos=6 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=4992 
+04/11/2026 18:01:59 ok modo=alertas repaso=reciente recibidos=12 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4993 
+04/11/2026 18:07:01 ok modo=alertas repaso=completo recibidos=885 nuevos=5 con_cambios=48 avisos=0 llamadas=75 truncados=0 en_base=4998 
+04/11/2026 18:12:23 ok modo=alertas repaso=reciente recibidos=16 nuevos=5 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=5003 
+04/11/2026 18:17:25 ok modo=alertas repaso=reciente recibidos=16 nuevos=0 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=5003 
+04/11/2026 18:22:27 ok modo=alertas repaso=completo recibidos=869 nuevos=9 con_cambios=35 avisos=0 llamadas=76 truncados=0 en_base=5012 
+04/11/2026 18:27:47 ok modo=alertas repaso=reciente recibidos=17 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=5012 
+04/11/2026 18:32:49 ok modo=alertas repaso=reciente recibidos=20 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=5015 
+04/11/2026 18:38:54 ok modo=alertas repaso=completo recibidos=871 nuevos=3 con_cambios=29 avisos=0 llamadas=75 truncados=0 en_base=5018 
+04/11/2026 18:44:14 ok modo=alertas repaso=reciente recibidos=20 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=3478 
+04/11/2026 18:49:16 ok modo=alertas repaso=reciente recibidos=20 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=3478 
+04/11/2026 18:57:25 ok modo=alertas repaso=completo recibidos=872 nuevos=8 con_cambios=31 avisos=0 llamadas=75 truncados=0 en_base=3486 
+04/11/2026 19:24:19 ok modo=alertas repaso=completo recibidos=866 nuevos=11 con_cambios=72 avisos=0 llamadas=76 truncados=0 en_base=3497 
+04/11/2026 20:21:57 ok modo=alertas repaso=completo recibidos=849 nuevos=22 con_cambios=87 avisos=0 llamadas=77 truncados=0 en_base=3508 
+04/11/2026 21:03:46 ok modo=alertas repaso=completo recibidos=808 nuevos=8 con_cambios=55 avisos=0 llamadas=74 truncados=0 en_base=3516 
+04/11/2026 22:31:12 ok modo=alertas repaso=completo recibidos=783 nuevos=49 con_cambios=106 avisos=0 llamadas=76 truncados=0 en_base=3486 
+04/11/2026 22:55:35 ok modo=alertas repaso=completo recibidos=777 nuevos=33 con_cambios=69 avisos=0 llamadas=75 truncados=0 en_base=3519 
+04/11/2026 23:31:19 error modo=alertas repaso=completo recibidos=0 nuevos=4 con_cambios=11 avisos=0 llamadas=42 truncados=0 en_base=3523 ErrorRed: Sin conexion o error de red: The read operation timed out
+04/11/2026 23:52:10 ok modo=alertas repaso=completo recibidos=795 nuevos=87 con_cambios=122 avisos=0 llamadas=76 truncados=0 en_base=3533 
+04/11/2026 23:57:32 ok modo=alertas repaso=reciente recibidos=142 nuevos=19 con_cambios=22 avisos=0 llamadas=9 truncados=0 en_base=3552 
+05/11/2026 00:02:35 ok modo=alertas repaso=reciente recibidos=141 nuevos=16 con_cambios=22 avisos=0 llamadas=9 truncados=0 en_base=3568 
+05/11/2026 00:07:38 ok modo=alertas repaso=completo recibidos=807 nuevos=15 con_cambios=43 avisos=0 llamadas=76 truncados=0 en_base=3583 
+05/11/2026 00:13:00 ok modo=alertas repaso=reciente recibidos=146 nuevos=15 con_cambios=18 avisos=0 llamadas=9 truncados=0 en_base=3598 
+05/11/2026 04:51:28 error modo=silencio repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3598 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+05/11/2026 05:35:14 error modo=silencio repaso=completo recibidos=0 nuevos=137 con_cambios=160 avisos=0 llamadas=29 truncados=0 en_base=3735 ErrorRed: Sin conexion o error de red: The read operation timed out
+05/11/2026 09:14:00 error modo=alertas repaso=completo recibidos=0 nuevos=366 con_cambios=429 avisos=0 llamadas=61 truncados=0 en_base=4101 ErrorRed: Sin conexion o error de red: The read operation timed out
+05/11/2026 09:29:00 ok modo=alertas repaso=completo recibidos=814 nuevos=50 con_cambios=108 avisos=0 llamadas=76 truncados=0 en_base=2579 
+05/11/2026 09:34:21 ok modo=alertas repaso=reciente recibidos=66 nuevos=9 con_cambios=10 avisos=0 llamadas=7 truncados=0 en_base=2588 
+05/11/2026 09:39:23 ok modo=alertas repaso=reciente recibidos=65 nuevos=2 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=2590 
+05/11/2026 09:44:25 ok modo=alertas repaso=completo recibidos=802 nuevos=25 con_cambios=47 avisos=0 llamadas=75 truncados=0 en_base=2615 
+05/11/2026 09:49:45 ok modo=alertas repaso=reciente recibidos=62 nuevos=0 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2615 
+05/11/2026 09:54:47 ok modo=alertas repaso=reciente recibidos=61 nuevos=5 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=2620 
+05/11/2026 09:59:49 ok modo=alertas repaso=completo recibidos=795 nuevos=15 con_cambios=34 avisos=0 llamadas=76 truncados=0 en_base=2635 
+05/11/2026 10:05:10 ok modo=alertas repaso=reciente recibidos=64 nuevos=8 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=2643 
+05/11/2026 10:10:13 ok modo=alertas repaso=reciente recibidos=64 nuevos=3 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=2646 
+05/11/2026 10:15:16 ok modo=alertas repaso=completo recibidos=798 nuevos=17 con_cambios=48 avisos=0 llamadas=76 truncados=0 en_base=2663 
+05/11/2026 10:20:37 ok modo=alertas repaso=reciente recibidos=59 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2664 
+05/11/2026 10:25:39 ok modo=alertas repaso=reciente recibidos=58 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2664 
+05/11/2026 10:30:41 ok modo=alertas repaso=completo recibidos=818 nuevos=23 con_cambios=66 avisos=0 llamadas=76 truncados=0 en_base=2654 
+05/11/2026 10:36:03 ok modo=alertas repaso=reciente recibidos=56 nuevos=0 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=2654 
+05/11/2026 10:41:05 ok modo=alertas repaso=reciente recibidos=50 nuevos=1 con_cambios=9 avisos=0 llamadas=7 truncados=0 en_base=2655 
+05/11/2026 10:46:07 ok modo=alertas repaso=completo recibidos=794 nuevos=11 con_cambios=70 avisos=0 llamadas=75 truncados=0 en_base=2666 
+05/11/2026 10:51:28 ok modo=alertas repaso=reciente recibidos=50 nuevos=5 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=2671 
+05/11/2026 10:56:30 ok modo=alertas repaso=reciente recibidos=50 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2671 
+05/11/2026 11:01:32 ok modo=alertas repaso=completo recibidos=810 nuevos=11 con_cambios=61 avisos=0 llamadas=76 truncados=0 en_base=2682 
+05/11/2026 11:06:54 ok modo=alertas repaso=reciente recibidos=44 nuevos=0 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=2682 
+05/11/2026 11:11:56 ok modo=alertas repaso=reciente recibidos=40 nuevos=1 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=2683 
+05/11/2026 11:16:58 ok modo=alertas repaso=completo recibidos=789 nuevos=2 con_cambios=53 avisos=0 llamadas=76 truncados=0 en_base=2685 
+05/11/2026 11:22:21 ok modo=alertas repaso=reciente recibidos=37 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2686 
+05/11/2026 11:27:23 ok modo=alertas repaso=reciente recibidos=37 nuevos=0 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2686 
+05/11/2026 11:32:25 ok modo=alertas repaso=completo recibidos=803 nuevos=13 con_cambios=34 avisos=0 llamadas=76 truncados=0 en_base=2675 
+05/11/2026 11:37:46 ok modo=alertas repaso=reciente recibidos=33 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2675 
+05/11/2026 11:42:48 ok modo=alertas repaso=reciente recibidos=30 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2676 
+05/11/2026 11:47:50 ok modo=alertas repaso=completo recibidos=790 nuevos=2 con_cambios=37 avisos=0 llamadas=75 truncados=0 en_base=2678 
+05/11/2026 11:53:11 ok modo=alertas repaso=reciente recibidos=27 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2679 
+05/11/2026 11:58:13 ok modo=alertas repaso=reciente recibidos=27 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2679 
+05/11/2026 12:03:15 ok modo=alertas repaso=completo recibidos=788 nuevos=1 con_cambios=33 avisos=0 llamadas=75 truncados=0 en_base=2680 
+05/11/2026 12:08:35 ok modo=alertas repaso=reciente recibidos=20 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2680 
+05/11/2026 12:13:37 ok modo=alertas repaso=reciente recibidos=18 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2681 
+05/11/2026 12:18:40 ok modo=alertas repaso=completo recibidos=784 nuevos=1 con_cambios=21 avisos=0 llamadas=76 truncados=0 en_base=2682 
+05/11/2026 12:24:00 ok modo=alertas repaso=reciente recibidos=18 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2684 
+05/11/2026 12:29:03 ok modo=alertas repaso=reciente recibidos=18 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2684 
+05/11/2026 12:34:05 ok modo=alertas repaso=completo recibidos=798 nuevos=2 con_cambios=32 avisos=0 llamadas=76 truncados=0 en_base=2668 
+05/11/2026 12:39:25 ok modo=alertas repaso=reciente recibidos=12 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2668 
+05/11/2026 12:44:27 ok modo=alertas repaso=reciente recibidos=12 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2668 
+05/11/2026 12:49:29 ok modo=alertas repaso=completo recibidos=787 nuevos=1 con_cambios=16 avisos=0 llamadas=75 truncados=0 en_base=2669 
+05/11/2026 12:54:50 ok modo=alertas repaso=reciente recibidos=11 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=2673 
+05/11/2026 12:59:52 ok modo=alertas repaso=reciente recibidos=11 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2673 
+05/11/2026 13:04:54 ok modo=alertas repaso=completo recibidos=790 nuevos=5 con_cambios=21 avisos=0 llamadas=75 truncados=0 en_base=2678 
+05/11/2026 13:10:14 ok modo=alertas repaso=reciente recibidos=14 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2679 
+05/11/2026 13:15:16 ok modo=alertas repaso=reciente recibidos=14 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2679 
+05/11/2026 13:20:18 ok modo=alertas repaso=completo recibidos=794 nuevos=2 con_cambios=102 avisos=0 llamadas=76 truncados=0 en_base=2681 
+05/11/2026 13:25:39 ok modo=alertas repaso=reciente recibidos=12 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2681 
+05/11/2026 13:30:42 ok modo=alertas repaso=reciente recibidos=12 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2681 
+05/11/2026 13:35:45 ok modo=alertas repaso=completo recibidos=795 nuevos=3 con_cambios=19 avisos=0 llamadas=76 truncados=0 en_base=2670 
+05/11/2026 13:41:04 ok modo=alertas repaso=reciente recibidos=11 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2670 
+05/11/2026 13:46:06 ok modo=alertas repaso=reciente recibidos=11 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2670 
+05/11/2026 13:51:09 ok modo=alertas repaso=completo recibidos=808 nuevos=7 con_cambios=64 avisos=0 llamadas=76 truncados=0 en_base=2677 
+05/11/2026 13:56:30 ok modo=alertas repaso=reciente recibidos=13 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2677 
+05/11/2026 14:01:33 ok modo=alertas repaso=reciente recibidos=12 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2677 
+05/11/2026 14:06:35 ok modo=alertas repaso=completo recibidos=779 nuevos=3 con_cambios=34 avisos=0 llamadas=75 truncados=0 en_base=2680 
+05/11/2026 14:11:56 ok modo=alertas repaso=reciente recibidos=13 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2681 
+05/11/2026 14:16:58 ok modo=alertas repaso=reciente recibidos=13 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2681 
+05/11/2026 14:22:00 ok modo=alertas repaso=completo recibidos=764 nuevos=0 con_cambios=34 avisos=0 llamadas=76 truncados=0 en_base=2681 
+05/11/2026 14:27:21 ok modo=alertas repaso=reciente recibidos=11 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2681 
+05/11/2026 14:32:23 ok modo=alertas repaso=reciente recibidos=13 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2683 
+05/11/2026 14:37:25 ok modo=alertas repaso=completo recibidos=787 nuevos=2 con_cambios=24 avisos=0 llamadas=76 truncados=0 en_base=2674 
+05/11/2026 14:42:45 ok modo=alertas repaso=reciente recibidos=13 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2674 
+05/11/2026 14:47:47 ok modo=alertas repaso=reciente recibidos=13 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2674 
+05/11/2026 14:52:49 ok modo=alertas repaso=completo recibidos=758 nuevos=3 con_cambios=39 avisos=0 llamadas=76 truncados=0 en_base=2677 
+05/11/2026 14:58:11 ok modo=alertas repaso=reciente recibidos=10 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2677 
+05/11/2026 15:03:13 ok modo=alertas repaso=reciente recibidos=8 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2677 
+05/11/2026 15:08:16 ok modo=alertas repaso=completo recibidos=767 nuevos=2 con_cambios=21 avisos=0 llamadas=75 truncados=0 en_base=2679 
+05/11/2026 15:13:37 ok modo=alertas repaso=reciente recibidos=12 nuevos=5 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=2684 
+05/11/2026 15:18:39 ok modo=alertas repaso=reciente recibidos=12 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2684 
+05/11/2026 15:25:34 ok modo=alertas repaso=completo recibidos=788 nuevos=5 con_cambios=40 avisos=0 llamadas=76 truncados=0 en_base=2689 
+05/11/2026 15:48:35 error modo=alertas repaso=completo recibidos=0 nuevos=5 con_cambios=36 avisos=0 llamadas=62 truncados=0 en_base=2694 ErrorRed: Sin conexion o error de red: The read operation timed out
+05/11/2026 16:32:37 error modo=alertas repaso=completo recibidos=0 nuevos=5 con_cambios=24 avisos=0 llamadas=38 truncados=0 en_base=2699 ErrorRed: Sin conexion o error de red: The read operation timed out
+05/11/2026 16:55:10 error modo=alertas repaso=completo recibidos=0 nuevos=3 con_cambios=26 avisos=0 llamadas=39 truncados=0 en_base=2702 ErrorRed: Sin conexion o error de red: The read operation timed out
+05/11/2026 18:31:55 ok modo=alertas repaso=completo recibidos=786 nuevos=18 con_cambios=84 avisos=0 llamadas=76 truncados=0 en_base=2615 
+05/11/2026 18:41:11 ok modo=alertas repaso=reciente recibidos=16 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2617 
+05/11/2026 18:49:04 ok modo=alertas repaso=completo recibidos=779 nuevos=0 con_cambios=38 avisos=0 llamadas=75 truncados=0 en_base=2617 
+05/11/2026 18:54:25 ok modo=alertas repaso=reciente recibidos=15 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2619 
+05/11/2026 19:00:24 error modo=alertas repaso=reciente recibidos=13 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2620 ErrorTelegram: Telegram respondio HTTP 400: Bad Request: query is too old and response timeout expired or query ID is invalid
+05/11/2026 19:27:24 ok modo=alertas repaso=completo recibidos=778 nuevos=8 con_cambios=66 avisos=0 llamadas=76 truncados=0 en_base=2628 
+05/11/2026 19:39:37 ok modo=alertas repaso=reciente recibidos=17 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=2605 
+05/11/2026 19:46:15 ok modo=alertas repaso=completo recibidos=792 nuevos=4 con_cambios=30 avisos=0 llamadas=75 truncados=0 en_base=2609 
+05/11/2026 19:53:21 ok modo=alertas repaso=reciente recibidos=18 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2610 
+05/11/2026 20:02:22 ok modo=alertas repaso=completo recibidos=769 nuevos=0 con_cambios=18 avisos=0 llamadas=75 truncados=0 en_base=2610 
+05/11/2026 20:05:27 ok modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=1 truncados=0 en_base=2610 
+05/11/2026 20:11:58 ok modo=alertas repaso=reciente recibidos=18 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=2613 
+05/11/2026 20:18:08 ok modo=alertas repaso=completo recibidos=773 nuevos=0 con_cambios=40 avisos=0 llamadas=76 truncados=0 en_base=2613 
+05/11/2026 20:23:32 ok modo=alertas repaso=reciente recibidos=19 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=2614 
+05/11/2026 20:28:34 ok modo=alertas repaso=reciente recibidos=19 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2614 
+Hay otra ejecucion en curso; esta se omite.
+05/11/2026 20:38:45 ok modo=alertas repaso=reciente recibidos=17 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=2615 
+05/11/2026 20:43:47 ok modo=alertas repaso=reciente recibidos=19 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=2550 
+05/11/2026 20:48:50 ok modo=alertas repaso=completo recibidos=763 nuevos=1 con_cambios=26 avisos=0 llamadas=75 truncados=0 en_base=2551 
+05/11/2026 20:54:10 ok modo=alertas repaso=reciente recibidos=26 nuevos=8 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=2559 
+05/11/2026 20:59:12 ok modo=alertas repaso=reciente recibidos=26 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=2563 
+05/11/2026 22:13:21 error modo=alertas repaso=completo recibidos=0 nuevos=102 con_cambios=109 avisos=0 llamadas=38 truncados=0 en_base=2665 ErrorRed: Sin conexion o error de red: The read operation timed out
+05/11/2026 23:18:28 error modo=alertas repaso=completo recibidos=0 nuevos=238 con_cambios=296 avisos=0 llamadas=55 truncados=0 en_base=2903 ErrorRed: Sin conexion o error de red: The read operation timed out
+06/11/2026 01:52:56 error modo=silencio repaso=completo recibidos=0 nuevos=144 con_cambios=150 avisos=0 llamadas=7 truncados=0 en_base=3047 ErrorRed: Sin conexion o error de red: The read operation timed out
+06/11/2026 07:59:27 error modo=silencio repaso=completo recibidos=0 nuevos=698 con_cambios=794 avisos=0 llamadas=78 truncados=0 en_base=3745 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+06/11/2026 09:19:22 ok modo=alertas repaso=completo recibidos=1229 nuevos=242 con_cambios=350 avisos=0 llamadas=83 truncados=0 en_base=3208 
+06/11/2026 09:52:24 error modo=alertas repaso=completo recibidos=0 nuevos=57 con_cambios=58 avisos=0 llamadas=4 truncados=0 en_base=3265 ErrorRed: Sin conexion o error de red: The read operation timed out
+06/11/2026 10:34:49 error modo=alertas repaso=completo recibidos=0 nuevos=120 con_cambios=197 avisos=0 llamadas=52 truncados=0 en_base=3385 ErrorRed: Sin conexion o error de red: The read operation timed out
+06/11/2026 11:34:13 error modo=alertas repaso=completo recibidos=0 nuevos=124 con_cambios=290 avisos=0 llamadas=82 truncados=0 en_base=3509 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+06/11/2026 12:48:14 ok modo=alertas repaso=completo recibidos=1269 nuevos=74 con_cambios=189 avisos=0 llamadas=83 truncados=0 en_base=3518 
+06/11/2026 13:26:22 error modo=alertas repaso=completo recibidos=0 nuevos=14 con_cambios=16 avisos=0 llamadas=6 truncados=0 en_base=3532 ErrorRed: Sin conexion o error de red: The read operation timed out
+06/11/2026 14:03:40 ok modo=alertas repaso=completo recibidos=1289 nuevos=62 con_cambios=174 avisos=0 llamadas=84 truncados=0 en_base=3584 
+06/11/2026 15:06:53 error modo=alertas repaso=completo recibidos=0 nuevos=34 con_cambios=81 avisos=0 llamadas=25 truncados=0 en_base=3618 ErrorRed: Sin conexion o error de red: The read operation timed out
+06/11/2026 16:13:14 error modo=alertas repaso=completo recibidos=0 nuevos=57 con_cambios=111 avisos=0 llamadas=34 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+06/11/2026 16:22:03 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 16:32:46 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 16:41:14 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 16:50:00 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 16:56:38 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 17:04:04 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 17:12:22 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 18:55:19 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 21:25:03 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+06/11/2026 21:55:12 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+07/11/2026 07:40:20 error modo=silencio repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+07/11/2026 12:40:10 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+07/11/2026 13:38:13 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=3675 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+07/11/2026 13:46:31 ok modo=alertas repaso=completo recibidos=1528 nuevos=221 con_cambios=225 avisos=0 llamadas=85 truncados=0 en_base=4479 
+07/11/2026 14:56:22 ok modo=alertas repaso=completo recibidos=1561 nuevos=190 con_cambios=273 avisos=0 llamadas=83 truncados=0 en_base=4664 
+07/11/2026 16:14:02 error modo=alertas repaso=completo recibidos=0 nuevos=98 con_cambios=138 avisos=0 llamadas=37 truncados=0 en_base=4762 ErrorRed: Sin conexion o error de red: The read operation timed out
+07/11/2026 16:52:08 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=4762 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+07/11/2026 19:13:47 error modo=alertas repaso=completo recibidos=0 nuevos=154 con_cambios=190 avisos=0 llamadas=18 truncados=0 en_base=4916 ErrorRed: Sin conexion o error de red: The read operation timed out
+07/11/2026 20:28:44 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=4916 ErrorRed: Sin conexion o error de red: The read operation timed out
+07/11/2026 21:31:34 error modo=alertas repaso=completo recibidos=0 nuevos=134 con_cambios=146 avisos=0 llamadas=11 truncados=0 en_base=5050 ErrorRed: Sin conexion o error de red: The read operation timed out
+07/11/2026 23:27:04 error modo=alertas repaso=completo recibidos=0 nuevos=117 con_cambios=128 avisos=0 llamadas=18 truncados=0 en_base=5167 ErrorRed: Sin conexion o error de red: The read operation timed out
+08/11/2026 00:48:25 error modo=alertas repaso=completo recibidos=0 nuevos=90 con_cambios=97 avisos=0 llamadas=13 truncados=0 en_base=5257 ErrorRed: Sin conexion o error de red: The read operation timed out
+08/11/2026 05:06:13 error modo=silencio repaso=completo recibidos=0 nuevos=169 con_cambios=196 avisos=0 llamadas=11 truncados=0 en_base=5426 ErrorRed: Sin conexion o error de red: The read operation timed out
+08/11/2026 09:53:31 error modo=alertas repaso=completo recibidos=0 nuevos=187 con_cambios=213 avisos=0 llamadas=13 truncados=0 en_base=5613 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+08/11/2026 11:23:03 error modo=alertas repaso=completo recibidos=0 nuevos=118 con_cambios=168 avisos=0 llamadas=22 truncados=0 en_base=5731 ErrorRed: Sin conexion o error de red: The read operation timed out
+08/11/2026 11:41:20 error modo=alertas repaso=completo recibidos=0 nuevos=60 con_cambios=71 avisos=0 llamadas=16 truncados=0 en_base=5791 ErrorRed: Sin conexion o error de red: The read operation timed out
+08/11/2026 11:46:51 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=5791 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+08/11/2026 11:52:18 error modo=alertas repaso=completo recibidos=0 nuevos=616 con_cambios=658 avisos=0 llamadas=78 truncados=0 en_base=6407 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+08/11/2026 15:57:06 ok modo=alertas repaso=completo recibidos=1452 nuevos=179 con_cambios=343 avisos=1 llamadas=79 truncados=0 en_base=4738 
+08/11/2026 16:02:36 ok modo=alertas repaso=reciente recibidos=41 nuevos=7 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=4745 
+08/11/2026 16:07:38 ok modo=alertas repaso=reciente recibidos=41 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4746 
+08/11/2026 16:12:41 ok modo=alertas repaso=completo recibidos=1440 nuevos=45 con_cambios=104 avisos=0 llamadas=79 truncados=0 en_base=4791 
+08/11/2026 16:18:07 ok modo=alertas repaso=reciente recibidos=43 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4792 
+08/11/2026 16:29:28 ok modo=alertas repaso=completo recibidos=1441 nuevos=53 con_cambios=163 avisos=0 llamadas=79 truncados=0 en_base=4845 

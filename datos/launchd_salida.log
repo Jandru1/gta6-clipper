@@ -564,3 +564,313 @@ Hay otra ejecucion en curso; esta se omite.
 08/11/2026 16:12:41 ok modo=alertas repaso=completo recibidos=1440 nuevos=45 con_cambios=104 avisos=0 llamadas=79 truncados=0 en_base=4791 
 08/11/2026 16:18:07 ok modo=alertas repaso=reciente recibidos=43 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4792 
 08/11/2026 16:29:28 ok modo=alertas repaso=completo recibidos=1441 nuevos=53 con_cambios=163 avisos=0 llamadas=79 truncados=0 en_base=4845 
+08/11/2026 16:34:58 ok modo=alertas repaso=reciente recibidos=38 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=4848 
+08/11/2026 16:40:02 ok modo=alertas repaso=reciente recibidos=39 nuevos=6 con_cambios=6 avisos=0 llamadas=7 truncados=0 en_base=4854 
+08/11/2026 16:45:05 ok modo=alertas repaso=completo recibidos=1428 nuevos=23 con_cambios=73 avisos=0 llamadas=80 truncados=0 en_base=4877 
+08/11/2026 16:50:33 ok modo=alertas repaso=reciente recibidos=46 nuevos=10 con_cambios=13 avisos=0 llamadas=7 truncados=0 en_base=4887 
+08/11/2026 16:55:35 ok modo=alertas repaso=reciente recibidos=45 nuevos=0 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=4887 
+08/11/2026 17:00:38 ok modo=alertas repaso=completo recibidos=1442 nuevos=33 con_cambios=112 avisos=0 llamadas=82 truncados=0 en_base=4861 
+08/11/2026 17:06:07 ok modo=alertas repaso=reciente recibidos=46 nuevos=0 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=4861 
+08/11/2026 17:11:11 ok modo=alertas repaso=reciente recibidos=45 nuevos=4 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=4865 
+08/11/2026 17:16:13 ok modo=alertas repaso=completo recibidos=1425 nuevos=19 con_cambios=85 avisos=0 llamadas=79 truncados=0 en_base=4884 
+08/11/2026 17:21:40 ok modo=alertas repaso=reciente recibidos=61 nuevos=19 con_cambios=20 avisos=0 llamadas=7 truncados=0 en_base=4903 
+08/11/2026 17:26:42 ok modo=alertas repaso=reciente recibidos=61 nuevos=2 con_cambios=5 avisos=0 llamadas=7 truncados=0 en_base=4905 
+08/11/2026 17:31:46 ok modo=alertas repaso=completo recibidos=1445 nuevos=29 con_cambios=89 avisos=0 llamadas=83 truncados=0 en_base=4934 
+08/11/2026 17:37:15 ok modo=alertas repaso=reciente recibidos=64 nuevos=1 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=4935 
+08/11/2026 17:42:18 ok modo=alertas repaso=reciente recibidos=70 nuevos=10 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=4945 
+08/11/2026 17:47:20 ok modo=alertas repaso=completo recibidos=1419 nuevos=17 con_cambios=75 avisos=0 llamadas=80 truncados=0 en_base=4962 
+08/11/2026 17:52:50 ok modo=alertas repaso=reciente recibidos=86 nuevos=19 con_cambios=19 avisos=0 llamadas=7 truncados=0 en_base=4981 
+08/11/2026 17:57:53 ok modo=alertas repaso=reciente recibidos=86 nuevos=1 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=4982 
+08/11/2026 18:02:57 ok modo=alertas repaso=completo recibidos=1408 nuevos=24 con_cambios=57 avisos=0 llamadas=79 truncados=0 en_base=4956 
+08/11/2026 18:08:27 ok modo=alertas repaso=reciente recibidos=88 nuevos=4 con_cambios=5 avisos=0 llamadas=8 truncados=0 en_base=4960 
+08/11/2026 18:13:30 ok modo=alertas repaso=reciente recibidos=85 nuevos=11 con_cambios=11 avisos=0 llamadas=8 truncados=0 en_base=4971 
+08/11/2026 18:18:33 ok modo=alertas repaso=completo recibidos=1422 nuevos=9 con_cambios=61 avisos=0 llamadas=80 truncados=0 en_base=4980 
+08/11/2026 18:24:05 ok modo=alertas repaso=reciente recibidos=105 nuevos=17 con_cambios=17 avisos=0 llamadas=7 truncados=0 en_base=4997 
+08/11/2026 18:29:07 ok modo=alertas repaso=reciente recibidos=105 nuevos=8 con_cambios=11 avisos=0 llamadas=7 truncados=0 en_base=5005 
+08/11/2026 18:34:10 ok modo=alertas repaso=completo recibidos=1409 nuevos=22 con_cambios=57 avisos=0 llamadas=80 truncados=0 en_base=5027 
+08/11/2026 18:39:39 ok modo=alertas repaso=reciente recibidos=110 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=5029 
+08/11/2026 18:44:41 ok modo=alertas repaso=reciente recibidos=112 nuevos=8 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=5037 
+08/11/2026 18:49:44 ok modo=alertas repaso=completo recibidos=1405 nuevos=13 con_cambios=41 avisos=0 llamadas=79 truncados=0 en_base=5050 
+08/11/2026 18:55:25 ok modo=alertas repaso=reciente recibidos=116 nuevos=14 con_cambios=16 avisos=0 llamadas=7 truncados=0 en_base=5064 
+08/11/2026 19:00:28 ok modo=alertas repaso=reciente recibidos=123 nuevos=13 con_cambios=17 avisos=0 llamadas=8 truncados=0 en_base=5077 
+08/11/2026 19:05:31 ok modo=alertas repaso=completo recibidos=1398 nuevos=14 con_cambios=57 avisos=0 llamadas=78 truncados=0 en_base=5010 
+08/11/2026 19:10:58 ok modo=alertas repaso=reciente recibidos=126 nuevos=10 con_cambios=12 avisos=0 llamadas=8 truncados=0 en_base=5020 
+08/11/2026 19:16:01 ok modo=alertas repaso=reciente recibidos=128 nuevos=5 con_cambios=7 avisos=0 llamadas=8 truncados=0 en_base=5025 
+08/11/2026 19:21:04 ok modo=alertas repaso=completo recibidos=1453 nuevos=20 con_cambios=53 avisos=0 llamadas=81 truncados=0 en_base=5045 
+08/11/2026 19:26:35 ok modo=alertas repaso=reciente recibidos=123 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=5046 
+08/11/2026 19:31:38 ok modo=alertas repaso=reciente recibidos=125 nuevos=11 con_cambios=11 avisos=0 llamadas=7 truncados=0 en_base=5057 
+08/11/2026 19:36:41 ok modo=alertas repaso=completo recibidos=1419 nuevos=12 con_cambios=47 avisos=0 llamadas=80 truncados=0 en_base=5069 
+08/11/2026 19:42:08 ok modo=alertas repaso=reciente recibidos=130 nuevos=13 con_cambios=14 avisos=0 llamadas=7 truncados=0 en_base=5082 
+08/11/2026 19:47:10 ok modo=alertas repaso=reciente recibidos=128 nuevos=3 con_cambios=7 avisos=0 llamadas=7 truncados=0 en_base=5085 
+08/11/2026 19:52:13 ok modo=alertas repaso=completo recibidos=1400 nuevos=14 con_cambios=90 avisos=0 llamadas=78 truncados=0 en_base=5099 
+08/11/2026 19:57:42 ok modo=alertas repaso=reciente recibidos=120 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=5101 
+08/11/2026 20:02:45 ok modo=alertas repaso=reciente recibidos=125 nuevos=12 con_cambios=13 avisos=0 llamadas=8 truncados=0 en_base=5113 
+08/11/2026 20:07:48 ok modo=alertas repaso=completo recibidos=1399 nuevos=11 con_cambios=77 avisos=0 llamadas=79 truncados=0 en_base=5028 
+08/11/2026 20:13:18 ok modo=alertas repaso=reciente recibidos=128 nuevos=13 con_cambios=14 avisos=0 llamadas=8 truncados=0 en_base=5041 
+08/11/2026 20:18:22 ok modo=alertas repaso=reciente recibidos=131 nuevos=0 con_cambios=1 avisos=0 llamadas=8 truncados=0 en_base=5041 
+08/11/2026 20:23:25 ok modo=alertas repaso=completo recibidos=1410 nuevos=15 con_cambios=49 avisos=0 llamadas=79 truncados=0 en_base=5056 
+08/11/2026 20:28:51 ok modo=alertas repaso=reciente recibidos=122 nuevos=6 con_cambios=6 avisos=0 llamadas=8 truncados=0 en_base=5062 
+08/11/2026 20:33:54 ok modo=alertas repaso=reciente recibidos=123 nuevos=9 con_cambios=11 avisos=0 llamadas=8 truncados=0 en_base=5071 
+08/11/2026 20:38:57 ok modo=alertas repaso=completo recibidos=1389 nuevos=9 con_cambios=39 avisos=0 llamadas=81 truncados=0 en_base=5080 
+08/11/2026 20:44:24 ok modo=alertas repaso=reciente recibidos=124 nuevos=10 con_cambios=11 avisos=0 llamadas=7 truncados=0 en_base=5090 
+08/11/2026 20:49:26 ok modo=alertas repaso=reciente recibidos=122 nuevos=3 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=5093 
+08/11/2026 20:54:30 ok modo=alertas repaso=completo recibidos=1392 nuevos=21 con_cambios=72 avisos=0 llamadas=78 truncados=0 en_base=5114 
+08/11/2026 20:59:58 ok modo=alertas repaso=reciente recibidos=123 nuevos=1 con_cambios=4 avisos=0 llamadas=7 truncados=0 en_base=5115 
+08/11/2026 21:05:00 ok modo=alertas repaso=reciente recibidos=128 nuevos=14 con_cambios=15 avisos=0 llamadas=8 truncados=0 en_base=5129 
+08/11/2026 21:10:03 ok modo=alertas repaso=completo recibidos=1413 nuevos=12 con_cambios=72 avisos=0 llamadas=82 truncados=0 en_base=5109 
+08/11/2026 21:15:32 ok modo=alertas repaso=reciente recibidos=128 nuevos=6 con_cambios=6 avisos=0 llamadas=8 truncados=0 en_base=5115 
+08/11/2026 21:20:35 ok modo=alertas repaso=reciente recibidos=128 nuevos=11 con_cambios=13 avisos=0 llamadas=9 truncados=0 en_base=5126 
+08/11/2026 21:25:38 ok modo=alertas repaso=completo recibidos=1351 nuevos=6 con_cambios=51 avisos=0 llamadas=78 truncados=0 en_base=5132 
+08/11/2026 21:31:06 ok modo=alertas repaso=reciente recibidos=130 nuevos=16 con_cambios=18 avisos=0 llamadas=9 truncados=0 en_base=5148 
+08/11/2026 21:36:09 ok modo=alertas repaso=reciente recibidos=130 nuevos=5 con_cambios=6 avisos=0 llamadas=8 truncados=0 en_base=5153 
+08/11/2026 21:41:12 ok modo=alertas repaso=completo recibidos=1367 nuevos=30 con_cambios=81 avisos=0 llamadas=82 truncados=0 en_base=5183 
+08/11/2026 21:46:39 ok modo=alertas repaso=reciente recibidos=127 nuevos=7 con_cambios=8 avisos=0 llamadas=8 truncados=0 en_base=5190 
+08/11/2026 21:51:42 ok modo=alertas repaso=reciente recibidos=129 nuevos=14 con_cambios=22 avisos=0 llamadas=8 truncados=0 en_base=5204 
+08/11/2026 21:56:45 ok modo=alertas repaso=completo recibidos=1340 nuevos=8 con_cambios=62 avisos=0 llamadas=78 truncados=0 en_base=5212 
+08/11/2026 22:02:12 ok modo=alertas repaso=reciente recibidos=143 nuevos=27 con_cambios=29 avisos=0 llamadas=8 truncados=0 en_base=5239 
+08/11/2026 22:07:16 ok modo=alertas repaso=reciente recibidos=136 nuevos=10 con_cambios=11 avisos=0 llamadas=8 truncados=0 en_base=5249 
+08/11/2026 22:12:20 ok modo=alertas repaso=completo recibidos=1347 nuevos=29 con_cambios=56 avisos=0 llamadas=78 truncados=0 en_base=5230 
+08/11/2026 22:17:46 error modo=alertas repaso=reciente recibidos=161 nuevos=8 con_cambios=11 avisos=0 llamadas=8 truncados=0 en_base=5238 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+08/11/2026 22:23:10 error modo=alertas repaso=reciente recibidos=153 nuevos=27 con_cambios=31 avisos=0 llamadas=8 truncados=0 en_base=5265 ErrorRed: Sin conexion o error de red: timed out
+08/11/2026 22:28:33 error modo=alertas repaso=completo recibidos=1367 nuevos=20 con_cambios=64 avisos=0 llamadas=77 truncados=0 en_base=5285 ErrorRed: Sin conexion o error de red: timed out
+08/11/2026 22:34:22 ok modo=alertas repaso=reciente recibidos=175 nuevos=35 con_cambios=36 avisos=0 llamadas=10 truncados=0 en_base=5320 
+08/11/2026 22:39:26 ok modo=alertas repaso=reciente recibidos=180 nuevos=13 con_cambios=15 avisos=0 llamadas=10 truncados=0 en_base=5333 
+08/11/2026 22:44:30 ok modo=alertas repaso=completo recibidos=1362 nuevos=26 con_cambios=57 avisos=0 llamadas=81 truncados=0 en_base=5359 
+08/11/2026 22:49:59 ok modo=alertas repaso=reciente recibidos=189 nuevos=17 con_cambios=20 avisos=0 llamadas=11 truncados=0 en_base=5376 
+08/11/2026 22:55:04 ok modo=alertas repaso=reciente recibidos=172 nuevos=29 con_cambios=33 avisos=0 llamadas=10 truncados=0 en_base=5405 
+08/11/2026 23:00:08 ok modo=alertas repaso=completo recibidos=1369 nuevos=24 con_cambios=76 avisos=0 llamadas=81 truncados=0 en_base=5429 
+08/11/2026 23:05:36 ok modo=alertas repaso=reciente recibidos=179 nuevos=9 con_cambios=11 avisos=0 llamadas=10 truncados=0 en_base=5438 
+08/11/2026 23:10:41 error modo=alertas repaso=reciente recibidos=202 nuevos=30 con_cambios=32 avisos=0 llamadas=10 truncados=0 en_base=5468 ErrorRed: Sin conexion o error de red: timed out
+08/11/2026 23:16:05 ok modo=alertas repaso=completo recibidos=1366 nuevos=10 con_cambios=50 avisos=0 llamadas=79 truncados=0 en_base=5315 
+08/11/2026 23:21:33 ok modo=alertas repaso=reciente recibidos=218 nuevos=26 con_cambios=31 avisos=0 llamadas=11 truncados=0 en_base=5341 
+08/11/2026 23:26:37 ok modo=alertas repaso=reciente recibidos=200 nuevos=15 con_cambios=20 avisos=0 llamadas=9 truncados=0 en_base=5356 
+08/11/2026 23:31:41 ok modo=alertas repaso=completo recibidos=1409 nuevos=37 con_cambios=77 avisos=0 llamadas=85 truncados=0 en_base=5393 
+08/11/2026 23:37:10 ok modo=alertas repaso=reciente recibidos=219 nuevos=13 con_cambios=20 avisos=0 llamadas=11 truncados=0 en_base=5406 
+08/11/2026 23:42:15 ok modo=alertas repaso=reciente recibidos=263 nuevos=73 con_cambios=79 avisos=0 llamadas=13 truncados=0 en_base=5479 
+08/11/2026 23:47:21 ok modo=alertas repaso=completo recibidos=1386 nuevos=38 con_cambios=89 avisos=0 llamadas=83 truncados=0 en_base=5517 
+08/11/2026 23:52:49 ok modo=alertas repaso=reciente recibidos=280 nuevos=65 con_cambios=68 avisos=0 llamadas=14 truncados=0 en_base=5582 
+08/11/2026 23:57:54 ok modo=alertas repaso=reciente recibidos=309 nuevos=46 con_cambios=54 avisos=3 llamadas=14 truncados=0 en_base=5628 
+09/11/2026 00:03:48 ok modo=alertas repaso=completo recibidos=1463 nuevos=83 con_cambios=151 avisos=3 llamadas=86 truncados=0 en_base=5711 
+09/11/2026 00:10:09 ok modo=alertas repaso=reciente recibidos=338 nuevos=76 con_cambios=93 avisos=0 llamadas=16 truncados=0 en_base=5787 
+09/11/2026 00:15:16 ok modo=alertas repaso=reciente recibidos=308 nuevos=46 con_cambios=66 avisos=3 llamadas=16 truncados=0 en_base=5833 
+09/11/2026 00:20:42 ok modo=alertas repaso=completo recibidos=1556 nuevos=97 con_cambios=157 avisos=5 llamadas=91 truncados=0 en_base=5796 
+09/11/2026 00:26:47 ok modo=alertas repaso=reciente recibidos=342 nuevos=48 con_cambios=71 avisos=0 llamadas=16 truncados=0 en_base=5844 
+09/11/2026 00:31:53 ok modo=alertas repaso=reciente recibidos=384 nuevos=89 con_cambios=114 avisos=0 llamadas=17 truncados=0 en_base=5933 
+09/11/2026 00:37:00 ok modo=alertas repaso=completo recibidos=1534 nuevos=48 con_cambios=121 avisos=3 llamadas=88 truncados=0 en_base=5981 
+09/11/2026 00:43:02 ok modo=alertas repaso=reciente recibidos=367 nuevos=47 con_cambios=74 avisos=0 llamadas=16 truncados=0 en_base=6028 
+09/11/2026 00:48:09 ok modo=alertas repaso=reciente recibidos=349 nuevos=40 con_cambios=55 avisos=0 llamadas=16 truncados=0 en_base=6068 
+09/11/2026 00:53:15 ok modo=alertas repaso=completo recibidos=1501 nuevos=41 con_cambios=109 avisos=3 llamadas=87 truncados=0 en_base=6109 
+09/11/2026 00:59:11 ok modo=alertas repaso=reciente recibidos=351 nuevos=14 con_cambios=20 avisos=0 llamadas=16 truncados=0 en_base=6123 
+09/11/2026 01:04:17 ok modo=silencio repaso=reciente recibidos=362 nuevos=27 con_cambios=36 avisos=0 llamadas=18 truncados=0 en_base=6150 
+09/11/2026 01:09:24 ok modo=silencio repaso=completo recibidos=1526 nuevos=29 con_cambios=57 avisos=0 llamadas=90 truncados=0 en_base=6179 
+09/11/2026 01:14:52 ok modo=silencio repaso=reciente recibidos=362 nuevos=23 con_cambios=31 avisos=0 llamadas=17 truncados=0 en_base=6202 
+09/11/2026 01:19:59 ok modo=silencio repaso=reciente recibidos=335 nuevos=23 con_cambios=32 avisos=0 llamadas=17 truncados=0 en_base=6225 
+09/11/2026 01:25:05 ok modo=silencio repaso=completo recibidos=1508 nuevos=36 con_cambios=87 avisos=0 llamadas=87 truncados=0 en_base=6145 
+09/11/2026 01:30:37 ok modo=silencio repaso=reciente recibidos=354 nuevos=32 con_cambios=41 avisos=0 llamadas=17 truncados=0 en_base=6177 
+09/11/2026 01:35:44 ok modo=silencio repaso=reciente recibidos=346 nuevos=18 con_cambios=25 avisos=0 llamadas=16 truncados=0 en_base=6195 
+09/11/2026 01:40:51 ok modo=silencio repaso=completo recibidos=1560 nuevos=28 con_cambios=73 avisos=0 llamadas=95 truncados=0 en_base=6223 
+09/11/2026 01:46:24 ok modo=silencio repaso=reciente recibidos=320 nuevos=7 con_cambios=16 avisos=0 llamadas=14 truncados=0 en_base=6230 
+09/11/2026 01:51:29 ok modo=silencio repaso=reciente recibidos=277 nuevos=25 con_cambios=34 avisos=0 llamadas=14 truncados=0 en_base=6255 
+09/11/2026 01:56:34 ok modo=silencio repaso=completo recibidos=1521 nuevos=14 con_cambios=61 avisos=0 llamadas=89 truncados=0 en_base=6269 
+09/11/2026 02:02:03 ok modo=silencio repaso=reciente recibidos=253 nuevos=29 con_cambios=34 avisos=0 llamadas=13 truncados=0 en_base=6298 
+09/11/2026 02:07:07 ok modo=silencio repaso=reciente recibidos=272 nuevos=7 con_cambios=15 avisos=0 llamadas=13 truncados=0 en_base=6305 
+09/11/2026 02:12:12 ok modo=silencio repaso=completo recibidos=1547 nuevos=39 con_cambios=120 avisos=0 llamadas=91 truncados=0 en_base=6344 
+09/11/2026 02:17:42 ok modo=silencio repaso=reciente recibidos=267 nuevos=9 con_cambios=17 avisos=0 llamadas=12 truncados=0 en_base=6353 
+09/11/2026 02:22:47 ok modo=silencio repaso=reciente recibidos=219 nuevos=24 con_cambios=31 avisos=0 llamadas=10 truncados=0 en_base=6377 
+09/11/2026 02:27:51 ok modo=silencio repaso=completo recibidos=1536 nuevos=13 con_cambios=93 avisos=0 llamadas=88 truncados=0 en_base=6199 
+09/11/2026 02:33:21 ok modo=silencio repaso=reciente recibidos=204 nuevos=16 con_cambios=20 avisos=0 llamadas=9 truncados=0 en_base=6215 
+09/11/2026 02:38:25 ok modo=silencio repaso=reciente recibidos=199 nuevos=10 con_cambios=11 avisos=0 llamadas=9 truncados=0 en_base=6225 
+09/11/2026 02:43:28 ok modo=silencio repaso=completo recibidos=1549 nuevos=19 con_cambios=74 avisos=0 llamadas=89 truncados=0 en_base=6244 
+09/11/2026 02:48:59 ok modo=silencio repaso=reciente recibidos=195 nuevos=11 con_cambios=16 avisos=0 llamadas=9 truncados=0 en_base=6255 
+09/11/2026 02:54:02 ok modo=silencio repaso=reciente recibidos=192 nuevos=8 con_cambios=12 avisos=0 llamadas=10 truncados=0 en_base=6263 
+09/11/2026 02:59:06 ok modo=silencio repaso=completo recibidos=1468 nuevos=11 con_cambios=77 avisos=0 llamadas=90 truncados=0 en_base=6274 
+09/11/2026 03:04:34 ok modo=silencio repaso=reciente recibidos=190 nuevos=14 con_cambios=15 avisos=0 llamadas=10 truncados=0 en_base=6288 
+09/11/2026 03:09:38 ok modo=silencio repaso=reciente recibidos=179 nuevos=10 con_cambios=12 avisos=0 llamadas=10 truncados=0 en_base=6298 
+09/11/2026 03:14:41 ok modo=silencio repaso=completo recibidos=1545 nuevos=19 con_cambios=67 avisos=0 llamadas=92 truncados=0 en_base=6317 
+09/11/2026 03:20:14 ok modo=silencio repaso=reciente recibidos=175 nuevos=14 con_cambios=16 avisos=0 llamadas=9 truncados=0 en_base=6331 
+09/11/2026 03:25:20 ok modo=silencio repaso=reciente recibidos=174 nuevos=8 con_cambios=9 avisos=0 llamadas=9 truncados=0 en_base=6339 
+09/11/2026 03:30:24 ok modo=silencio repaso=completo recibidos=1617 nuevos=19 con_cambios=54 avisos=0 llamadas=98 truncados=0 en_base=6259 
+09/11/2026 03:35:58 ok modo=silencio repaso=reciente recibidos=161 nuevos=5 con_cambios=6 avisos=0 llamadas=9 truncados=0 en_base=6264 
+09/11/2026 03:41:01 ok modo=silencio repaso=reciente recibidos=159 nuevos=16 con_cambios=18 avisos=0 llamadas=9 truncados=0 en_base=6280 
+09/11/2026 03:46:04 ok modo=silencio repaso=completo recibidos=1553 nuevos=8 con_cambios=55 avisos=0 llamadas=90 truncados=0 en_base=6288 
+09/11/2026 03:51:35 ok modo=silencio repaso=reciente recibidos=146 nuevos=9 con_cambios=10 avisos=0 llamadas=9 truncados=0 en_base=6297 
+09/11/2026 03:56:38 ok modo=silencio repaso=reciente recibidos=149 nuevos=3 con_cambios=4 avisos=0 llamadas=9 truncados=0 en_base=6300 
+09/11/2026 04:01:41 ok modo=silencio repaso=completo recibidos=1607 nuevos=18 con_cambios=73 avisos=0 llamadas=96 truncados=0 en_base=6318 
+09/11/2026 04:07:13 ok modo=silencio repaso=reciente recibidos=136 nuevos=4 con_cambios=5 avisos=0 llamadas=9 truncados=0 en_base=6322 
+09/11/2026 04:12:17 ok modo=silencio repaso=reciente recibidos=124 nuevos=11 con_cambios=14 avisos=0 llamadas=9 truncados=0 en_base=6333 
+09/11/2026 04:17:20 ok modo=silencio repaso=completo recibidos=1554 nuevos=7 con_cambios=60 avisos=0 llamadas=93 truncados=0 en_base=6340 
+09/11/2026 04:22:54 ok modo=silencio repaso=reciente recibidos=117 nuevos=12 con_cambios=12 avisos=0 llamadas=8 truncados=0 en_base=6352 
+09/11/2026 04:27:56 ok modo=silencio repaso=reciente recibidos=111 nuevos=1 con_cambios=2 avisos=0 llamadas=8 truncados=0 en_base=6353 
+09/11/2026 04:32:59 ok modo=silencio repaso=completo recibidos=1594 nuevos=19 con_cambios=55 avisos=0 llamadas=92 truncados=0 en_base=6239 
+09/11/2026 04:38:31 ok modo=silencio repaso=reciente recibidos=112 nuevos=2 con_cambios=2 avisos=0 llamadas=9 truncados=0 en_base=6241 
+09/11/2026 04:43:34 ok modo=silencio repaso=reciente recibidos=107 nuevos=10 con_cambios=11 avisos=0 llamadas=9 truncados=0 en_base=6251 
+09/11/2026 04:48:38 ok modo=silencio repaso=completo recibidos=1593 nuevos=11 con_cambios=54 avisos=0 llamadas=91 truncados=0 en_base=6262 
+09/11/2026 04:54:07 ok modo=silencio repaso=reciente recibidos=105 nuevos=4 con_cambios=5 avisos=0 llamadas=9 truncados=0 en_base=6266 
+09/11/2026 04:59:10 ok modo=silencio repaso=reciente recibidos=108 nuevos=5 con_cambios=7 avisos=0 llamadas=9 truncados=0 en_base=6271 
+09/11/2026 05:04:14 ok modo=silencio repaso=completo recibidos=1563 nuevos=25 con_cambios=63 avisos=0 llamadas=95 truncados=0 en_base=6296 
+09/11/2026 05:09:45 ok modo=silencio repaso=reciente recibidos=109 nuevos=7 con_cambios=7 avisos=0 llamadas=9 truncados=0 en_base=6303 
+09/11/2026 05:14:48 ok modo=silencio repaso=reciente recibidos=108 nuevos=9 con_cambios=9 avisos=0 llamadas=8 truncados=0 en_base=6312 
+09/11/2026 05:19:52 ok modo=silencio repaso=completo recibidos=1552 nuevos=4 con_cambios=44 avisos=0 llamadas=93 truncados=0 en_base=6316 
+09/11/2026 05:25:23 ok modo=silencio repaso=reciente recibidos=105 nuevos=9 con_cambios=9 avisos=0 llamadas=8 truncados=0 en_base=6325 
+09/11/2026 05:30:26 ok modo=silencio repaso=reciente recibidos=111 nuevos=15 con_cambios=18 avisos=0 llamadas=9 truncados=0 en_base=6340 
+09/11/2026 05:35:33 ok modo=silencio repaso=completo recibidos=1598 nuevos=9 con_cambios=62 avisos=0 llamadas=93 truncados=0 en_base=6252 
+09/11/2026 05:41:02 ok modo=silencio repaso=reciente recibidos=111 nuevos=13 con_cambios=13 avisos=0 llamadas=9 truncados=0 en_base=6265 
+09/11/2026 05:46:06 ok modo=silencio repaso=reciente recibidos=97 nuevos=12 con_cambios=14 avisos=0 llamadas=9 truncados=0 en_base=6277 
+09/11/2026 05:51:09 ok modo=silencio repaso=completo recibidos=1609 nuevos=14 con_cambios=82 avisos=0 llamadas=100 truncados=0 en_base=6291 
+09/11/2026 05:56:42 ok modo=silencio repaso=reciente recibidos=93 nuevos=5 con_cambios=6 avisos=0 llamadas=9 truncados=0 en_base=6296 
+09/11/2026 06:01:47 ok modo=silencio repaso=reciente recibidos=112 nuevos=19 con_cambios=20 avisos=0 llamadas=9 truncados=0 en_base=6315 
+09/11/2026 06:06:50 ok modo=silencio repaso=completo recibidos=1546 nuevos=10 con_cambios=66 avisos=0 llamadas=96 truncados=0 en_base=6325 
+09/11/2026 06:12:23 ok modo=silencio repaso=reciente recibidos=103 nuevos=9 con_cambios=11 avisos=0 llamadas=8 truncados=0 en_base=6334 
+09/11/2026 06:17:26 ok modo=silencio repaso=reciente recibidos=109 nuevos=4 con_cambios=5 avisos=0 llamadas=8 truncados=0 en_base=6338 
+09/11/2026 06:22:30 ok modo=silencio repaso=completo recibidos=1618 nuevos=28 con_cambios=71 avisos=0 llamadas=91 truncados=0 en_base=6366 
+09/11/2026 06:28:03 ok modo=silencio repaso=reciente recibidos=116 nuevos=4 con_cambios=4 avisos=0 llamadas=9 truncados=0 en_base=6370 
+09/11/2026 06:33:06 ok modo=silencio repaso=reciente recibidos=116 nuevos=11 con_cambios=11 avisos=0 llamadas=9 truncados=0 en_base=6381 
+09/11/2026 06:38:09 ok modo=silencio repaso=completo recibidos=1597 nuevos=7 con_cambios=46 avisos=0 llamadas=94 truncados=0 en_base=6276 
+09/11/2026 06:43:42 ok modo=silencio repaso=reciente recibidos=100 nuevos=6 con_cambios=6 avisos=0 llamadas=8 truncados=0 en_base=6282 
+09/11/2026 06:48:45 ok modo=silencio repaso=reciente recibidos=107 nuevos=1 con_cambios=1 avisos=0 llamadas=8 truncados=0 en_base=6283 
+09/11/2026 06:53:49 ok modo=silencio repaso=completo recibidos=1577 nuevos=15 con_cambios=47 avisos=0 llamadas=93 truncados=0 en_base=6298 
+09/11/2026 06:59:20 ok modo=silencio repaso=reciente recibidos=115 nuevos=1 con_cambios=2 avisos=0 llamadas=8 truncados=0 en_base=6299 
+09/11/2026 07:04:23 ok modo=silencio repaso=reciente recibidos=106 nuevos=11 con_cambios=12 avisos=0 llamadas=8 truncados=0 en_base=6310 
+09/11/2026 07:09:26 ok modo=silencio repaso=completo recibidos=1608 nuevos=5 con_cambios=51 avisos=0 llamadas=96 truncados=0 en_base=6315 
+09/11/2026 07:15:05 ok modo=silencio repaso=reciente recibidos=102 nuevos=13 con_cambios=15 avisos=0 llamadas=8 truncados=0 en_base=6328 
+09/11/2026 07:20:08 ok modo=silencio repaso=reciente recibidos=110 nuevos=7 con_cambios=8 avisos=0 llamadas=8 truncados=0 en_base=6335 
+09/11/2026 07:25:12 ok modo=silencio repaso=completo recibidos=1578 nuevos=6 con_cambios=35 avisos=0 llamadas=91 truncados=0 en_base=6341 
+09/11/2026 07:30:44 ok modo=silencio repaso=reciente recibidos=105 nuevos=10 con_cambios=10 avisos=0 llamadas=8 truncados=0 en_base=6351 
+09/11/2026 07:35:48 ok modo=silencio repaso=reciente recibidos=101 nuevos=3 con_cambios=3 avisos=0 llamadas=8 truncados=0 en_base=6354 
+09/11/2026 07:40:51 ok modo=silencio repaso=completo recibidos=1608 nuevos=20 con_cambios=38 avisos=0 llamadas=99 truncados=0 en_base=6253 
+09/11/2026 07:46:28 ok modo=silencio repaso=reciente recibidos=101 nuevos=2 con_cambios=3 avisos=0 llamadas=7 truncados=0 en_base=6255 
+09/11/2026 07:51:30 ok modo=silencio repaso=reciente recibidos=111 nuevos=11 con_cambios=11 avisos=0 llamadas=8 truncados=0 en_base=6266 
+09/11/2026 07:56:33 ok modo=silencio repaso=completo recibidos=1539 nuevos=8 con_cambios=61 avisos=0 llamadas=93 truncados=0 en_base=6274 
+09/11/2026 08:02:06 ok modo=silencio repaso=reciente recibidos=100 nuevos=12 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=6286 
+09/11/2026 08:07:09 ok modo=silencio repaso=reciente recibidos=103 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=6288 
+09/11/2026 08:12:12 ok modo=silencio repaso=completo recibidos=1587 nuevos=15 con_cambios=57 avisos=0 llamadas=94 truncados=0 en_base=6303 
+09/11/2026 08:17:46 ok modo=silencio repaso=reciente recibidos=103 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=6305 
+09/11/2026 08:22:49 ok modo=silencio repaso=reciente recibidos=98 nuevos=13 con_cambios=13 avisos=0 llamadas=7 truncados=0 en_base=6318 
+09/11/2026 08:27:52 ok modo=silencio repaso=completo recibidos=1565 nuevos=5 con_cambios=41 avisos=0 llamadas=91 truncados=0 en_base=6323 
+09/11/2026 08:33:26 ok modo=silencio repaso=reciente recibidos=98 nuevos=11 con_cambios=12 avisos=0 llamadas=7 truncados=0 en_base=6334 
+09/11/2026 08:38:29 ok modo=silencio repaso=reciente recibidos=95 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=6336 
+09/11/2026 08:43:33 ok modo=silencio repaso=completo recibidos=1556 nuevos=18 con_cambios=63 avisos=0 llamadas=93 truncados=0 en_base=6265 
+09/11/2026 08:49:12 ok modo=silencio repaso=reciente recibidos=108 nuevos=4 con_cambios=6 avisos=0 llamadas=8 truncados=0 en_base=6269 
+09/11/2026 08:54:16 ok modo=silencio repaso=reciente recibidos=106 nuevos=8 con_cambios=8 avisos=0 llamadas=7 truncados=0 en_base=6277 
+09/11/2026 08:59:27 ok modo=silencio repaso=completo recibidos=1570 nuevos=5 con_cambios=50 avisos=0 llamadas=93 truncados=0 en_base=6282 
+09/11/2026 09:05:00 ok modo=alertas repaso=reciente recibidos=100 nuevos=5 con_cambios=5 avisos=4 llamadas=7 truncados=0 en_base=6287 
+09/11/2026 09:11:05 ok modo=alertas repaso=reciente recibidos=97 nuevos=9 con_cambios=10 avisos=4 llamadas=7 truncados=0 en_base=6296 
+09/11/2026 09:54:39 error modo=alertas repaso=completo recibidos=0 nuevos=23 con_cambios=87 avisos=0 llamadas=31 truncados=0 en_base=6319 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 10:20:43 ok modo=alertas repaso=completo recibidos=1636 nuevos=29 con_cambios=135 avisos=2 llamadas=101 truncados=0 en_base=6232 
+09/11/2026 10:44:06 error modo=alertas repaso=completo recibidos=0 nuevos=13 con_cambios=41 avisos=0 llamadas=52 truncados=0 en_base=6245 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 11:43:44 error modo=alertas repaso=completo recibidos=0 nuevos=34 con_cambios=38 avisos=0 llamadas=15 truncados=0 en_base=6279 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 12:01:32 ok modo=alertas repaso=completo recibidos=1577 nuevos=32 con_cambios=101 avisos=0 llamadas=98 truncados=0 en_base=6279 
+09/11/2026 12:31:43 error modo=alertas repaso=completo recibidos=0 nuevos=27 con_cambios=51 avisos=0 llamadas=37 truncados=0 en_base=6306 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 13:24:54 error modo=alertas repaso=completo recibidos=0 nuevos=39 con_cambios=257 avisos=0 llamadas=68 truncados=0 en_base=6345 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+09/11/2026 13:59:22 error modo=alertas repaso=completo recibidos=1547 nuevos=18 con_cambios=100 avisos=0 llamadas=92 truncados=0 en_base=6363 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 14:35:20 error modo=alertas repaso=completo recibidos=0 nuevos=22 con_cambios=50 avisos=0 llamadas=13 truncados=0 en_base=6385 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 15:59:45 error modo=alertas repaso=completo recibidos=0 nuevos=65 con_cambios=191 avisos=0 llamadas=80 truncados=0 en_base=6450 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 17:00:47 error modo=alertas repaso=completo recibidos=0 nuevos=81 con_cambios=161 avisos=0 llamadas=78 truncados=0 en_base=6531 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 17:44:15 ok modo=alertas repaso=completo recibidos=1613 nuevos=67 con_cambios=113 avisos=0 llamadas=93 truncados=0 en_base=6399 
+09/11/2026 18:36:51 ok modo=alertas repaso=completo recibidos=1631 nuevos=84 con_cambios=145 avisos=0 llamadas=93 truncados=0 en_base=6483 
+09/11/2026 19:04:19 error modo=alertas repaso=completo recibidos=0 nuevos=42 con_cambios=47 avisos=0 llamadas=34 truncados=0 en_base=6525 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 19:30:34 error modo=alertas repaso=completo recibidos=0 nuevos=47 con_cambios=47 avisos=0 llamadas=14 truncados=0 en_base=6572 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+09/11/2026 20:16:00 error modo=alertas repaso=completo recibidos=0 nuevos=70 con_cambios=74 avisos=0 llamadas=21 truncados=0 en_base=6642 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 20:29:22 ok modo=alertas repaso=completo recibidos=1688 nuevos=57 con_cambios=131 avisos=3 llamadas=91 truncados=0 en_base=6463 
+09/11/2026 20:42:53 ok modo=alertas repaso=reciente recibidos=131 nuevos=36 con_cambios=38 avisos=0 llamadas=9 truncados=0 en_base=6499 
+09/11/2026 21:25:10 ok modo=alertas repaso=completo recibidos=1638 nuevos=57 con_cambios=118 avisos=3 llamadas=92 truncados=0 en_base=6556 
+09/11/2026 22:03:03 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=6556 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+09/11/2026 23:01:13 error modo=alertas repaso=completo recibidos=0 nuevos=268 con_cambios=323 avisos=0 llamadas=82 truncados=0 en_base=6824 ErrorRed: Sin conexion o error de red: The read operation timed out
+09/11/2026 23:41:20 ok modo=alertas repaso=completo recibidos=1701 nuevos=174 con_cambios=237 avisos=0 llamadas=98 truncados=0 en_base=6529 
+10/11/2026 01:01:52 error modo=silencio repaso=completo recibidos=0 nuevos=102 con_cambios=112 avisos=0 llamadas=13 truncados=0 en_base=6631 ErrorRed: Sin conexion o error de red: The read operation timed out
+10/11/2026 02:31:18 error modo=silencio repaso=completo recibidos=0 nuevos=236 con_cambios=273 avisos=0 llamadas=38 truncados=0 en_base=6867 ErrorRed: Sin conexion o error de red: The read operation timed out
+10/11/2026 04:30:39 error modo=silencio repaso=completo recibidos=0 nuevos=232 con_cambios=294 avisos=0 llamadas=23 truncados=0 en_base=7099 ErrorRed: Sin conexion o error de red: The read operation timed out
+10/11/2026 05:55:24 ok modo=silencio repaso=completo recibidos=1870 nuevos=582 con_cambios=726 avisos=0 llamadas=92 truncados=0 en_base=7157 
+10/11/2026 07:09:24 error modo=silencio repaso=completo recibidos=0 nuevos=189 con_cambios=262 avisos=0 llamadas=66 truncados=0 en_base=7346 ErrorRed: Sin conexion o error de red: The read operation timed out
+10/11/2026 08:19:33 error modo=silencio repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=7346 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+10/11/2026 09:08:04 error modo=alertas repaso=completo recibidos=0 nuevos=180 con_cambios=183 avisos=0 llamadas=11 truncados=0 en_base=7526 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+10/11/2026 10:02:06 error modo=alertas repaso=completo recibidos=0 nuevos=203 con_cambios=307 avisos=0 llamadas=54 truncados=0 en_base=7729 ErrorRed: Sin conexion o error de red: The read operation timed out
+10/11/2026 11:29:17 error modo=alertas repaso=completo recibidos=0 nuevos=141 con_cambios=224 avisos=0 llamadas=44 truncados=0 en_base=7870 ErrorRed: Sin conexion o error de red: _ssl.c:1129: The handshake operation timed out
+10/11/2026 14:07:40 error modo=alertas repaso=completo recibidos=2053 nuevos=277 con_cambios=463 avisos=1 llamadas=98 truncados=0 en_base=8147 ErrorRed: Sin conexion o error de red: [Errno 32] Broken pipe
+10/11/2026 17:17:19 error modo=alertas repaso=completo recibidos=0 nuevos=55 con_cambios=55 avisos=0 llamadas=3 truncados=0 en_base=8202 ErrorRed: Sin conexion o error de red: The read operation timed out
+10/11/2026 22:06:21 error modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=0 truncados=0 en_base=8202 ErrorRed: Sin conexion o error de red: [Errno 8] nodename nor servname provided, or not known
+10/11/2026 23:09:20 ok modo=alertas repaso=completo recibidos=2018 nuevos=727 con_cambios=962 avisos=0 llamadas=101 truncados=0 en_base=7957 
+10/11/2026 23:24:44 ok modo=alertas repaso=completo recibidos=2060 nuevos=323 con_cambios=356 avisos=0 llamadas=101 truncados=0 en_base=8280 
+10/11/2026 23:30:14 ok modo=alertas repaso=reciente recibidos=356 nuevos=120 con_cambios=123 avisos=0 llamadas=15 truncados=0 en_base=8400 
+10/11/2026 23:35:20 ok modo=alertas repaso=reciente recibidos=322 nuevos=70 con_cambios=78 avisos=0 llamadas=13 truncados=0 en_base=8470 
+10/11/2026 23:40:24 ok modo=alertas repaso=completo recibidos=2250 nuevos=189 con_cambios=231 avisos=0 llamadas=109 truncados=0 en_base=8659 
+11/11/2026 05:39:26 ok modo=silencio repaso=completo recibidos=2027 nuevos=761 con_cambios=920 avisos=0 llamadas=102 truncados=0 en_base=8793 
+11/11/2026 08:20:44 ok modo=silencio repaso=completo recibidos=2131 nuevos=551 con_cambios=696 avisos=0 llamadas=107 truncados=0 en_base=9187 
+11/11/2026 09:56:19 ok modo=alertas repaso=completo recibidos=1898 nuevos=251 con_cambios=370 avisos=3 llamadas=101 truncados=0 en_base=9368 
+11/11/2026 11:29:48 ok modo=alertas repaso=completo recibidos=1924 nuevos=192 con_cambios=271 avisos=0 llamadas=100 truncados=0 en_base=9512 
+11/11/2026 12:20:37 error modo=alertas repaso=completo recibidos=0 nuevos=87 con_cambios=100 avisos=0 llamadas=39 truncados=0 en_base=9599 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+11/11/2026 12:54:21 error modo=alertas repaso=completo recibidos=0 nuevos=39 con_cambios=54 avisos=0 llamadas=33 truncados=0 en_base=9638 ErrorRed: Sin conexion o error de red: The read operation timed out
+11/11/2026 13:33:32 error modo=alertas repaso=completo recibidos=0 nuevos=68 con_cambios=131 avisos=0 llamadas=53 truncados=0 en_base=9706 ErrorRed: Sin conexion o error de red: The read operation timed out
+11/11/2026 15:04:24 error modo=alertas repaso=completo recibidos=0 nuevos=105 con_cambios=161 avisos=0 llamadas=86 truncados=0 en_base=9811 ErrorRed: Sin conexion o error de red: The read operation timed out
+11/11/2026 15:26:57 error modo=alertas repaso=completo recibidos=0 nuevos=24 con_cambios=32 avisos=0 llamadas=33 truncados=0 en_base=9835 ErrorRed: Sin conexion o error de red: The read operation timed out
+11/11/2026 16:59:31 ok modo=alertas repaso=completo recibidos=1715 nuevos=86 con_cambios=181 avisos=0 llamadas=100 truncados=0 en_base=9662 
+11/11/2026 17:49:59 ok modo=alertas repaso=completo recibidos=1715 nuevos=81 con_cambios=149 avisos=0 llamadas=100 truncados=0 en_base=9743 
+11/11/2026 18:05:02 ok modo=alertas repaso=completo recibidos=1699 nuevos=52 con_cambios=144 avisos=0 llamadas=98 truncados=0 en_base=9687 
+11/11/2026 18:49:49 ok modo=alertas repaso=completo recibidos=1687 nuevos=51 con_cambios=125 avisos=0 llamadas=99 truncados=0 en_base=9738 
+11/11/2026 20:38:02 ok modo=alertas repaso=completo recibidos=1619 nuevos=80 con_cambios=157 avisos=0 llamadas=96 truncados=0 en_base=9585 
+11/11/2026 20:55:46 ok modo=alertas repaso=completo recibidos=1574 nuevos=38 con_cambios=70 avisos=0 llamadas=96 truncados=0 en_base=9623 
+11/11/2026 21:53:07 error modo=alertas repaso=completo recibidos=0 nuevos=124 con_cambios=162 avisos=0 llamadas=90 truncados=0 en_base=9747 ErrorRed: Sin conexion o error de red: The read operation timed out
+11/11/2026 22:35:57 ok modo=alertas repaso=completo recibidos=1521 nuevos=133 con_cambios=162 avisos=0 llamadas=96 truncados=0 en_base=9566 
+11/11/2026 23:08:52 ok modo=alertas repaso=completo recibidos=1507 nuevos=96 con_cambios=142 avisos=0 llamadas=94 truncados=0 en_base=9662 
+11/11/2026 23:14:21 ok modo=alertas repaso=reciente recibidos=172 nuevos=25 con_cambios=31 avisos=0 llamadas=10 truncados=0 en_base=9687 
+11/11/2026 23:19:24 ok modo=alertas repaso=reciente recibidos=175 nuevos=25 con_cambios=29 avisos=0 llamadas=10 truncados=0 en_base=9712 
+11/11/2026 23:24:27 ok modo=alertas repaso=completo recibidos=1476 nuevos=70 con_cambios=90 avisos=0 llamadas=92 truncados=0 en_base=9782 
+11/11/2026 23:29:52 ok modo=alertas repaso=reciente recibidos=164 nuevos=14 con_cambios=15 avisos=0 llamadas=10 truncados=0 en_base=9796 
+11/11/2026 23:40:01 error modo=alertas repaso=completo recibidos=0 nuevos=6 con_cambios=8 avisos=0 llamadas=15 truncados=0 en_base=9802 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+12/11/2026 05:38:48 error modo=silencio repaso=completo recibidos=0 nuevos=457 con_cambios=506 avisos=0 llamadas=67 truncados=0 en_base=10259 ErrorRed: Sin conexion o error de red: The read operation timed out
+12/11/2026 08:22:17 error modo=silencio repaso=completo recibidos=0 nuevos=19 con_cambios=35 avisos=0 llamadas=19 truncados=0 en_base=10278 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+12/11/2026 10:18:37 ok modo=alertas repaso=completo recibidos=1066 nuevos=252 con_cambios=388 avisos=6 llamadas=82 truncados=0 en_base=8420 
+12/11/2026 12:17:01 ok modo=alertas repaso=completo recibidos=1065 nuevos=101 con_cambios=227 avisos=0 llamadas=82 truncados=0 en_base=8424 
+12/11/2026 12:49:42 ok modo=alertas repaso=completo recibidos=1103 nuevos=86 con_cambios=137 avisos=0 llamadas=84 truncados=0 en_base=8510 
+12/11/2026 14:41:05 error modo=alertas repaso=completo recibidos=0 nuevos=36 con_cambios=60 avisos=0 llamadas=35 truncados=0 en_base=8546 ErrorRed: Sin conexion o error de red: [Errno 60] Operation timed out
+12/11/2026 16:02:37 ok modo=alertas repaso=completo recibidos=1074 nuevos=67 con_cambios=169 avisos=0 llamadas=84 truncados=0 en_base=8441 
+12/11/2026 16:43:12 error modo=alertas repaso=completo recibidos=0 nuevos=2 con_cambios=3 avisos=0 llamadas=10 truncados=0 en_base=8443 ErrorRed: Sin conexion o error de red: The read operation timed out
+12/11/2026 19:07:23 error modo=alertas repaso=completo recibidos=1018 nuevos=100 con_cambios=227 avisos=0 llamadas=84 truncados=0 en_base=8543 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+12/11/2026 20:46:04 error modo=alertas repaso=completo recibidos=0 nuevos=18 con_cambios=40 avisos=0 llamadas=39 truncados=0 en_base=8561 ErrorRed: Sin conexion o error de red: The read operation timed out
+12/11/2026 22:12:32 error modo=alertas repaso=completo recibidos=970 nuevos=146 con_cambios=260 avisos=0 llamadas=82 truncados=0 en_base=8707 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+12/11/2026 23:41:38 error modo=alertas repaso=completo recibidos=0 nuevos=9 con_cambios=23 avisos=0 llamadas=24 truncados=0 en_base=8716 ErrorRed: Sin conexion o error de red: [Errno 54] Connection reset by peer
+13/11/2026 03:01:59 error modo=silencio repaso=completo recibidos=1197 nuevos=683 con_cambios=753 avisos=0 llamadas=92 truncados=0 en_base=9399 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 07:38:09 error modo=silencio repaso=completo recibidos=0 nuevos=589 con_cambios=625 avisos=0 llamadas=77 truncados=0 en_base=9988 ErrorRed: Sin conexion o error de red: The read operation timed out
+13/11/2026 09:32:51 error modo=alertas repaso=completo recibidos=1568 nuevos=551 con_cambios=691 avisos=5 llamadas=108 truncados=0 en_base=10539 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 09:57:23 error modo=alertas repaso=completo recibidos=1526 nuevos=277 con_cambios=321 avisos=3 llamadas=106 truncados=0 en_base=10816 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 10:40:22 error modo=alertas repaso=completo recibidos=0 nuevos=100 con_cambios=119 avisos=0 llamadas=70 truncados=0 en_base=10916 ErrorRed: Sin conexion o error de red: The read operation timed out
+13/11/2026 10:55:17 error modo=alertas repaso=completo recibidos=1534 nuevos=176 con_cambios=235 avisos=0 llamadas=106 truncados=0 en_base=11092 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 11:10:11 error modo=alertas repaso=completo recibidos=1603 nuevos=168 con_cambios=211 avisos=0 llamadas=113 truncados=0 en_base=11260 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 11:29:47 error modo=alertas repaso=completo recibidos=1545 nuevos=87 con_cambios=122 avisos=0 llamadas=105 truncados=0 en_base=11347 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 12:12:06 error modo=alertas repaso=completo recibidos=1551 nuevos=113 con_cambios=179 avisos=2 llamadas=108 truncados=0 en_base=11460 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 12:32:28 error modo=alertas repaso=completo recibidos=1499 nuevos=74 con_cambios=108 avisos=0 llamadas=108 truncados=0 en_base=11534 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 13:15:24 error modo=alertas repaso=completo recibidos=0 nuevos=78 con_cambios=140 avisos=0 llamadas=83 truncados=0 en_base=11612 ErrorRed: Sin conexion o error de red: The read operation timed out
+13/11/2026 13:46:58 error modo=alertas repaso=completo recibidos=0 nuevos=58 con_cambios=120 avisos=0 llamadas=83 truncados=0 en_base=11670 ErrorRed: Sin conexion o error de red: The read operation timed out
+13/11/2026 14:08:44 error modo=alertas repaso=completo recibidos=1567 nuevos=61 con_cambios=131 avisos=0 llamadas=107 truncados=0 en_base=11731 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 15:00:00 error modo=alertas repaso=completo recibidos=1646 nuevos=80 con_cambios=135 avisos=0 llamadas=113 truncados=0 en_base=11811 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 15:05:35 error modo=alertas repaso=reciente recibidos=54 nuevos=1 con_cambios=1 avisos=0 llamadas=7 truncados=0 en_base=11812 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 15:10:37 error modo=alertas repaso=reciente recibidos=44 nuevos=1 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=11813 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 15:15:39 error modo=alertas repaso=completo recibidos=1558 nuevos=30 con_cambios=92 avisos=0 llamadas=108 truncados=0 en_base=11843 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 15:21:11 error modo=alertas repaso=reciente recibidos=40 nuevos=2 con_cambios=2 avisos=0 llamadas=7 truncados=0 en_base=11845 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 15:26:13 error modo=alertas repaso=reciente recibidos=40 nuevos=0 con_cambios=0 avisos=0 llamadas=7 truncados=0 en_base=11845 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 17:34:27 error modo=alertas repaso=completo recibidos=0 nuevos=61 con_cambios=200 avisos=0 llamadas=106 truncados=0 en_base=11906 ErrorRed: Sin conexion o error de red: The read operation timed out
+13/11/2026 18:14:32 error modo=alertas repaso=completo recibidos=1573 nuevos=52 con_cambios=115 avisos=0 llamadas=108 truncados=0 en_base=11958 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 18:48:44 error modo=alertas repaso=completo recibidos=1561 nuevos=38 con_cambios=101 avisos=0 llamadas=107 truncados=0 en_base=11996 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 19:37:22 error modo=alertas repaso=completo recibidos=1539 nuevos=53 con_cambios=121 avisos=0 llamadas=108 truncados=0 en_base=12049 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 20:22:54 error modo=alertas repaso=completo recibidos=1688 nuevos=139 con_cambios=206 avisos=0 llamadas=107 truncados=0 en_base=12188 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 21:09:03 error modo=alertas repaso=completo recibidos=0 nuevos=1 con_cambios=10 avisos=0 llamadas=47 truncados=0 en_base=12189 ErrorRed: Sin conexion o error de red: The read operation timed out
+13/11/2026 22:48:58 error modo=alertas repaso=completo recibidos=1658 nuevos=262 con_cambios=345 avisos=0 llamadas=109 truncados=0 en_base=12451 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 22:54:30 error modo=alertas repaso=reciente recibidos=135 nuevos=60 con_cambios=60 avisos=0 llamadas=9 truncados=0 en_base=12511 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 22:59:33 error modo=alertas repaso=reciente recibidos=135 nuevos=32 con_cambios=36 avisos=0 llamadas=9 truncados=0 en_base=12543 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 23:04:37 error modo=alertas repaso=completo recibidos=1610 nuevos=80 con_cambios=109 avisos=0 llamadas=109 truncados=0 en_base=12623 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+13/11/2026 23:57:53 error modo=alertas repaso=completo recibidos=0 nuevos=152 con_cambios=185 avisos=0 llamadas=81 truncados=0 en_base=12775 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 00:48:36 error modo=alertas repaso=completo recibidos=1626 nuevos=145 con_cambios=260 avisos=0 llamadas=107 truncados=0 en_base=12920 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+14/11/2026 02:23:42 error modo=silencio repaso=completo recibidos=0 nuevos=24 con_cambios=25 avisos=0 llamadas=24 truncados=0 en_base=12944 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 04:13:53 error modo=silencio repaso=completo recibidos=0 nuevos=277 con_cambios=340 avisos=0 llamadas=80 truncados=0 en_base=13221 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 05:49:21 error modo=silencio repaso=completo recibidos=1167 nuevos=172 con_cambios=256 avisos=0 llamadas=90 truncados=0 en_base=13393 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+14/11/2026 07:21:00 error modo=silencio repaso=completo recibidos=1153 nuevos=154 con_cambios=221 avisos=0 llamadas=89 truncados=0 en_base=13547 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+14/11/2026 08:50:33 error modo=silencio repaso=completo recibidos=1166 nuevos=147 con_cambios=212 avisos=0 llamadas=88 truncados=0 en_base=13694 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+14/11/2026 10:07:30 error modo=alertas repaso=completo recibidos=0 nuevos=40 con_cambios=61 avisos=0 llamadas=32 truncados=0 en_base=13734 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 11:39:44 error modo=alertas repaso=completo recibidos=1116 nuevos=63 con_cambios=202 avisos=0 llamadas=85 truncados=0 en_base=13797 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+14/11/2026 12:54:14 error modo=alertas repaso=completo recibidos=1153 nuevos=65 con_cambios=148 avisos=0 llamadas=85 truncados=0 en_base=13862 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+14/11/2026 13:42:39 error modo=alertas repaso=completo recibidos=1112 nuevos=37 con_cambios=105 avisos=0 llamadas=84 truncados=0 en_base=13899 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'
+14/11/2026 14:32:12 error modo=alertas repaso=completo recibidos=0 nuevos=1 con_cambios=16 avisos=0 llamadas=29 truncados=0 en_base=13900 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 14:41:42 error modo=alertas repaso=completo recibidos=0 nuevos=4 con_cambios=10 avisos=0 llamadas=37 truncados=0 en_base=13904 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 14:57:09 error modo=alertas repaso=completo recibidos=0 nuevos=4 con_cambios=6 avisos=0 llamadas=37 truncados=0 en_base=13908 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 15:57:11 error modo=alertas repaso=completo recibidos=0 nuevos=44 con_cambios=106 avisos=0 llamadas=73 truncados=0 en_base=13952 ErrorRed: Sin conexion o error de red: The read operation timed out
+14/11/2026 16:38:07 error modo=alertas repaso=completo recibidos=1097 nuevos=26 con_cambios=67 avisos=0 llamadas=84 truncados=0 en_base=13978 ErrorYouTube: No se pudo renovar el permiso de YouTube (HTTP 400): {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'}. Repite 'python3 clipper.py autorizar-youtube'

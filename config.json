@@ -19,7 +19,7 @@
 
   "avisar_si_la_nota_es_al_menos": 8,
   "avisar_si_tiene_al_menos_visualizaciones": 50,
-  "avisar_si_se_creo_hace_menos_de_minutos": 180,
+  "avisar_si_se_creo_hace_menos_de_minutos": 500,
   "max_avisos_por_ejecucion": 3,
   "resumen_al_despertar_momentos_de_las_ultimas_horas": 12,
   "max_momentos_en_el_resumen_al_despertar": 5,

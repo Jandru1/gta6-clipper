@@ -6,6 +6,7 @@ from pathlib import Path
 
 ETIQUETA = "com.gta6clipper.detector"
 ETIQUETA_CHAT = "com.gta6clipper.chat"
+ETIQUETA_TELEGRAM = "com.gta6clipper.telegram"
 CARPETAS_PROTEGIDAS = ("Desktop", "Documents", "Downloads")
 
 
@@ -64,6 +65,22 @@ def instalar_chat(proyecto: Path) -> str:
         "ThrottleInterval": 60,
         "StandardOutPath": str(datos / "chat_salida.log"),
         "StandardErrorPath": str(datos / "chat_errores.log"),
+    })
+
+
+def instalar_telegram(proyecto: Path) -> str:
+    datos = proyecto / "datos"
+    datos.mkdir(exist_ok=True)
+    return _cargar(ETIQUETA_TELEGRAM, {
+        "Label": ETIQUETA_TELEGRAM,
+        "ProgramArguments": ["/usr/bin/caffeinate", "-s", sys.executable, "-u", str(proyecto / "clipper.py"),
+                             "escuchar-telegram"],
+        "WorkingDirectory": str(proyecto),
+        "RunAtLoad": True,
+        "KeepAlive": True,
+        "ThrottleInterval": 30,
+        "StandardOutPath": str(datos / "telegram_salida.log"),
+        "StandardErrorPath": str(datos / "telegram_errores.log"),
     })
 
 

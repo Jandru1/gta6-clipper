@@ -1374,3 +1374,6 @@ Hay otra ejecucion en curso; esta se omite.
 16/11/2026 21:10:19 ok modo=alertas repaso=reciente recibidos=114 nuevos=30 con_cambios=35 avisos=0 llamadas=9 truncados=0 en_base=7829 
 16/11/2026 21:15:22 ok modo=alertas repaso=reciente recibidos=114 nuevos=14 con_cambios=19 avisos=0 llamadas=9 truncados=0 en_base=7843 
 16/11/2026 21:20:24 ok modo=alertas repaso=completo recibidos=838 nuevos=30 con_cambios=59 avisos=0 llamadas=86 truncados=0 en_base=7873 
+16/11/2026 21:25:49 ok modo=alertas repaso=reciente recibidos=120 nuevos=21 con_cambios=24 avisos=0 llamadas=10 truncados=0 en_base=7894 
+16/11/2026 21:28:08 ok modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=1 truncados=0 en_base=7894 
+16/11/2026 21:28:10 ok modo=alertas repaso=ninguno recibidos=0 nuevos=0 con_cambios=0 avisos=0 llamadas=1 truncados=0 en_base=7894 

@@ -157,7 +157,7 @@ class TelegramVideos:
         self.videos.append((Path(ruta).name, pie, botones))
         return {"message_id": 100 + len(self.videos)}
 
-    def actualizaciones(self, desde):
+    def actualizaciones(self, desde, espera_s=0):
         self.pendientes = [u for u in self.pendientes if u["update_id"] >= desde]
         return list(self.pendientes)
 
@@ -220,10 +220,13 @@ class TestFlujoDeVideos(unittest.TestCase):
         self.assertTrue(any("INSTAGRAM (copia todo esto)" in m for m in self.tg.mensajes))
         self.assertEqual(self.bd.con.execute("SELECT estado FROM cola_preparacion").fetchone()[0], "preparado")
 
-    def _pulsar(self, data, chat="9"):
-        self.tg.pendientes.append({"update_id": 7, "callback_query": {"id": "b1", "data": data,
-                                                                     "message": {"chat": {"id": chat}}}})
-        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, int(AHORA.timestamp()) + 60)
+    def _pulsar(self, data, chat="9", veces=1, ahora_s=None):
+        for _ in range(veces):
+            self.siguiente_update = getattr(self, "siguiente_update", 6) + 1
+            self.tg.pendientes.append({"update_id": self.siguiente_update, "callback_query": {
+                "id": f"b{self.siguiente_update}", "data": data, "message": {"chat": {"id": chat}, "message_id": 101}}})
+        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios,
+                                 ahora_s or int(AHORA.timestamp()) + 60)
 
     def test_boton_publicar_y_seguridad_del_chat(self):
         videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
@@ -234,7 +237,7 @@ class TestFlujoDeVideos(unittest.TestCase):
         self.assertEqual(self.bd.version(1)["estado"], "publicado")
         self.assertIn("https://youtube.com/shorts/yt1", self.tg.mensajes[-1])
         self._pulsar("p:1")
-        self.assertEqual(self.tg.respuestas[-1], "Ya estaba resuelto")
+        self.assertEqual(self.tg.respuestas[-1], "Ya estaba publicado. No hago nada.")
 
     def test_si_telegram_ya_no_acepta_la_respuesta_igual_confirma(self):
         videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
@@ -261,24 +264,101 @@ class TestFlujoDeVideos(unittest.TestCase):
         registro = (self.carpeta / "registro_botones.csv").read_text()
         self.assertIn(",7,d:1,descartado", registro)
 
-    def test_boton_de_version_aun_no_lista_se_reintenta_sin_perderlo(self):
-        estado = {}
-        self.tg.pendientes.append({"update_id": 7, "callback_query": {"id": "b1", "data": "d:1",
-                                                                     "message": {"chat": {"id": "9"}}}})
-        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
-        self.assertNotIn("telegram_siguiente_update", estado)
+    def test_pulsar_siete_veces_publica_una_sola_vez_y_sin_mensajes_de_mas(self):
         videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
-        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
-        self.assertEqual(self.bd.version(1)["estado"], "descartado")
-        self.assertEqual(estado["telegram_siguiente_update"], 8)
-
-    def test_boton_de_version_ya_resuelta_avisa_y_quita_botones(self):
-        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        antes = len(self.tg.mensajes)
+        self._pulsar("p:1", veces=7)
+        self.assertEqual(self.youtube.publicos, ["yt1"])
+        self.assertEqual(len(self.tg.mensajes), antes + 1)
+        self.assertEqual(self.tg.respuestas.count("Ya estaba publicado. No hago nada."), 6)
         self._pulsar("d:1")
-        self.tg.pendientes.append({"update_id": 8, "callback_query": {"id": "b2", "data": "d:1",
-                                                                     "message": {"chat": {"id": "9"}, "message_id": 101}}})
+        self.assertEqual(self.youtube.borrados, [])
+        self.assertEqual(self.bd.version(1)["estado"], "publicado")
+
+    def test_la_posicion_de_telegram_se_guarda_y_no_se_repite_nada(self):
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self._pulsar("p:1")
+        self.tg.pendientes.append({"update_id": 1, "callback_query": {"id": "viejo", "data": "d:1",
+                                                                     "message": {"chat": {"id": "9"}}}})
         videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
-        self.assertIn("ya estaba resuelto (estado: descartado)", self.tg.mensajes[-1])
+        self.assertEqual(self.youtube.borrados, [])
+        self.assertEqual(self.bd.valor(videos.CLAVE_OFFSET), "8")
+
+    def test_boton_de_video_aun_preparandose_se_aplaza_y_luego_se_hace(self):
+        ahora = int(AHORA.timestamp())
+        vid = self.bd.nueva_version({"clip_id": "c1", "cuenta": "kai", "con_aviso": 0, "estado": "preparado",
+                                     "creado_s": ahora, "youtube_id": "ytX"})
+        self._pulsar(f"p:{vid}", ahora_s=ahora + 30)
+        self.assertEqual(self.youtube.publicos, [])
+        self.assertIn("terminando de preparar", self.tg.respuestas[-1])
+        self.bd.actualizar_version(vid, estado="enviado")
+        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, ahora + 90)
+        self.assertEqual(self.youtube.publicos, ["ytX"])
+        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, ahora + 150)
+        self.assertEqual(self.youtube.publicos, ["ytX"])
+
+    def test_si_falla_se_reintenta_y_luego_avisa_sin_perder_las_siguientes(self):
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        original = self.tg.enviar
+        self.tg.pendientes.append({"update_id": 20, "message": {"chat": {"id": "9"}, "text": "/mejores"}})
+        self.tg.pendientes.append({"update_id": 21, "callback_query": {"id": "z", "data": "p:1",
+                                                                      "message": {"chat": {"id": "9"}}}})
+
+        def roto(texto, botones=None):
+            if "mejores" in texto or "No quedan" in texto:
+                raise RuntimeError("Telegram caido")
+            return original(texto)
+        self.tg.enviar = roto
+        for _ in range(2):
+            with self.assertRaises(RuntimeError):
+                videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+            self.assertEqual(self.youtube.publicos, [])
+        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self.assertEqual(self.youtube.publicos, ["yt1"])
+        self.assertTrue(any("No he podido atender" in m for m in self.tg.mensajes))
+
+    def test_descartar_dos_veces_aunque_youtube_ya_no_lo_tenga(self):
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+
+        def ya_borrado(video_id):
+            raise RuntimeError("Error de YouTube (HTTP 404): videoNotFound")
+        self.youtube.borrar = ya_borrado
+        self._pulsar("d:1")
+        self.assertEqual(self.bd.version(1)["estado"], "descartado")
+
+    def test_mejores_dos_veces_seguidas_no_duplica(self):
+        ahora = int(AHORA.timestamp())
+        self.bd.con.execute("INSERT INTO momentos (momento_id, streamer, inicio_s, clips, representante, vistas, "
+                            "vistas_mejor_clip, nota_maxima, actualizado_s) VALUES ('c1', 'kaicenat', ?, 1, 'c1', 5, 5, "
+                            "9, ?)", (ahora, ahora))
+        self.bd.con.execute("DELETE FROM cola_preparacion")
+        for i in (30, 31):
+            self.tg.pendientes.append({"update_id": i, "message": {"chat": {"id": "9"}, "text": "/mejores"}})
+        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, ahora)
+        self.assertIn("Ya estoy preparando", self.tg.mensajes[-1])
+        self.assertEqual(self.bd.cola_por_preparar(), 1)
+
+    def test_ejecutar_no_lee_telegram_si_la_escucha_continua_esta_viva(self):
+        ahora = int(AHORA.timestamp())
+        self.bd.fijar_valor(videos.CLAVE_LATIDO, str(ahora - 30))
+        self.assertTrue(videos.escucha_telegram_activa(self.bd, ahora))
+        self.assertFalse(videos.escucha_telegram_activa(self.bd, ahora + 600))
+
+    def test_escucha_continua_sobrevive_a_errores(self):
+        llamadas = {"n": 0}
+
+        class TelegramIntermitente(TelegramVideos):
+            def actualizaciones(self_, desde, espera_s=0):
+                llamadas["n"] += 1
+                if llamadas["n"] == 1:
+                    raise RuntimeError("sin red")
+                return super().actualizaciones(desde, espera_s)
+        tg = TelegramIntermitente()
+        registro = []
+        videos.escuchar_telegram(self.cfg, self.bd, tg, lambda: self.servicios, lambda: {}, registro=registro.append,
+                                 reloj=lambda: AHORA.timestamp(), dormir=lambda s: None, vueltas=2, espera_s=0)
+        self.assertEqual(llamadas["n"], 2)
+        self.assertIn("sin red", registro[0])
 
     def test_preparar_un_clip_concreto_no_coge_otro_de_la_cola(self):
         c = clip("c2", 900, AHORA)
@@ -320,10 +400,10 @@ class TestFlujoDeVideos(unittest.TestCase):
         self.assertEqual(encolados, {"c1", "m4", "m1", "m0", "m3"})
         self.assertIn("Los 3 mejores momentos de kaicenat", self.tg.mensajes[-1])
         self.tg.pendientes.append({"update_id": 10, "message": {"chat": {"id": "9"}, "text": "mejores"}})
-        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora)
+        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora + 200)
         self.assertIn("Los 1 mejores", self.tg.mensajes[-1])
         self.tg.pendientes.append({"update_id": 11, "message": {"chat": {"id": "9"}, "text": "/mejores"}})
-        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora)
+        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora + 400)
         self.assertIn("No quedan momentos", self.tg.mensajes[-1])
 
     def test_gta_vi_antes_del_lanzamiento_no_se_prepara(self):

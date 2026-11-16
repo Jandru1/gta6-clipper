@@ -14,7 +14,7 @@ from app.http import ErrorRed, Respuesta
 from app.telegram import ClienteTelegram
 from app.twitch import ClienteTwitch, ErrorLimiteTwitch
 
-VERSION = "2026-11-16.2"
+VERSION = "2026-11-16.3"
 PROYECTO = Path(__file__).resolve().parent
 RUTA_CONFIG = PROYECTO / "config.json"
 RUTA_CREDENCIALES = PROYECTO / "credenciales.json"
@@ -320,6 +320,30 @@ def cmd_escuchar_chat(_args):
     return 0
 
 
+def cmd_escuchar_telegram(_args):
+    from app.videos import escuchar_telegram
+    config = cargar_config(RUTA_CONFIG)
+    _, telegram = _clientes(Almacen(CARPETA_DATOS))
+    bd = BaseDatos(Almacen(CARPETA_DATOS).ruta_base_datos)
+    print(f"{hora_local(datetime.now(timezone.utc), config.zona_horaria)} Escuchando los botones y mensajes de Telegram",
+          flush=True)
+    cache = {}
+
+    def servicios_al_dia():
+        marca = RUTA_TOKENS_YOUTUBE.stat().st_mtime if RUTA_TOKENS_YOUTUBE.exists() else 0
+        if cache.get("marca") != marca:
+            cache.update(marca=marca, servicios=_servicios(config))
+        return cache["servicios"]
+
+    try:
+        escuchar_telegram(config, bd, telegram, servicios_al_dia, lambda: Almacen(CARPETA_DATOS).estado,
+                          registro=lambda t: print(f"{hora_local(datetime.now(timezone.utc), config.zona_horaria)} {t}",
+                                                   flush=True))
+    finally:
+        bd.cerrar()
+    return 0
+
+
 def cmd_informe_chat(args):
     import csv
     from app.chat import cruzar_con_clips
@@ -489,6 +513,11 @@ def cmd_instalar(_args):
     destino = launchd.instalar(PROYECTO, config.ejecucion_automatica_cada_minutos)
     print(f"Instalado: {destino}")
     print(f"El detector se ejecutara cada {config.ejecucion_automatica_cada_minutos} min mientras el portatil este despierto.")
+    if config.preparar_videos:
+        print(f"Instalado: {launchd.instalar_telegram(PROYECTO)}")
+        print("Los botones y mensajes de Telegram se atienden al momento, de forma continua.")
+    else:
+        launchd.desinstalar(launchd.ETIQUETA_TELEGRAM)
     if config.chat["activo"] and RUTA_TOKENS_TWITCH.exists():
         print(f"Instalado: {launchd.instalar_chat(PROYECTO)}")
         print(f"La escucha del chat de {', '.join(config.chat['streamers'])} queda en marcha de forma continua.")
@@ -505,6 +534,8 @@ def cmd_desinstalar(_args):
     print("Desinstalado." if launchd.desinstalar() else "No estaba instalado.")
     if launchd.desinstalar(launchd.ETIQUETA_CHAT):
         print("Escucha del chat desinstalada.")
+    if launchd.desinstalar(launchd.ETIQUETA_TELEGRAM):
+        print("Escucha de Telegram desinstalada.")
     return 0
 
 
@@ -545,6 +576,10 @@ def cmd_estado(_args):
             print("  Ultimos mensajes de error de la ejecucion automatica:")
             for linea in lineas[-3:]:
                 print(f"    {linea}")
+    botones = launchd.estado(launchd.ETIQUETA_TELEGRAM)
+    print("BOTONES DE TELEGRAM: " + ("NO instalados (python3 clipper.py instalar)." if botones is None else
+                                     "SI, al momento." if botones.get("state") == "running" else
+                                     f"instalados pero parados (estado: {botones.get('state', '?')})."))
     chat = launchd.estado(launchd.ETIQUETA_CHAT)
     if chat is None:
         print("ESCUCHA DEL CHAT: NO instalada (python3 clipper.py autorizar-twitch y luego instalar).")
@@ -587,6 +622,8 @@ def main():
     autorizar.set_defaults(func=cmd_autorizar_youtube)
     sub.add_parser("autorizar-twitch", help="Conecta tu cuenta de Twitch (leer el chat y crear clips)").set_defaults(
         func=cmd_autorizar_twitch)
+    sub.add_parser("escuchar-telegram", help="Atiende botones y mensajes de Telegram (lo lanza launchd)").set_defaults(
+        func=cmd_escuchar_telegram)
     sub.add_parser("escuchar-chat", help="Escucha el chat y apunta los picos (lo lanza launchd)").set_defaults(
         func=cmd_escuchar_chat)
     informe_chat = sub.add_parser("informe-chat", help="Picos de chat y si otros espectadores los clipearon")

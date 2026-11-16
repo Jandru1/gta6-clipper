@@ -113,6 +113,10 @@ CREATE TABLE IF NOT EXISTS medicion_manual (
     recibido_s INTEGER NOT NULL,
     PRIMARY KEY (semana, red, cuenta)
 );
+CREATE TABLE IF NOT EXISTS ajustes (
+    clave TEXT PRIMARY KEY,
+    valor TEXT
+);
 CREATE TABLE IF NOT EXISTS chat_ventanas (
     streamer TEXT NOT NULL,
     instante_s INTEGER NOT NULL,
@@ -173,6 +177,17 @@ class BaseDatos:
 
     def guardar(self):
         self.con.commit()
+
+    def valor(self, clave):
+        fila = self.con.execute("SELECT valor FROM ajustes WHERE clave = ?", (clave,)).fetchone()
+        return fila[0] if fila else None
+
+    def fijar_valor(self, clave, valor):
+        self.con.execute("INSERT OR REPLACE INTO ajustes VALUES (?, ?)", (clave, valor))
+
+    def cola_por_preparar(self) -> int:
+        return self.con.execute("SELECT COUNT(*) FROM cola_preparacion WHERE estado IN ('pendiente', 'en_curso')"
+                                ).fetchone()[0]
 
     def guardar_ventana_chat(self, v: dict):
         self.con.execute("INSERT OR REPLACE INTO chat_ventanas VALUES (?, ?, ?, ?, ?, ?)",

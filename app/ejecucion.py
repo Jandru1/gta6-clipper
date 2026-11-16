@@ -101,8 +101,11 @@ def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=ti
         bd.guardar()
 
         con_videos = servicios is not None and config.preparar_videos
-        if con_videos:
-            videos.procesar_telegram(config, estado, bd, telegram, servicios, ahora_s)
+        if con_videos and not videos.escucha_telegram_activa(bd, ahora_s):
+            try:
+                videos.procesar_telegram(config, estado, bd, telegram, servicios, ahora_s)
+            except Exception:
+                pass
         if modo == "alertas":
             if estado.get("ultimo_modo") == "silencio" and not base_vacia:
                 resumen["avisos_enviados"] += _resumen_al_despertar(config, bd, telegram, ahora_s, con_videos)

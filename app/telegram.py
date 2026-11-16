@@ -25,8 +25,9 @@ class ClienteTelegram:
             raise ErrorTelegram(f"Telegram respondio HTTP {r.estado}: {descripcion}")
         return r.cuerpo["result"]
 
-    def _llamar(self, metodo, cuerpo=None):
-        return self._respuesta(self.http("POST", URL_BOT.format(token=self.token, metodo=metodo), json_cuerpo=cuerpo or {}))
+    def _llamar(self, metodo, cuerpo=None, timeout=20):
+        return self._respuesta(self.http("POST", URL_BOT.format(token=self.token, metodo=metodo), json_cuerpo=cuerpo or {},
+                                         timeout=timeout))
 
     def enviar(self, texto: str, botones=None):
         cuerpo = {"chat_id": self.chat_id, "text": texto[:LONGITUD_MAXIMA], "disable_web_page_preview": True}
@@ -52,9 +53,9 @@ class ClienteTelegram:
     def responder_boton(self, callback_id, texto):
         self._llamar("answerCallbackQuery", {"callback_query_id": callback_id, "text": texto[:200]})
 
-    def actualizaciones(self, desde_id):
-        return self._llamar("getUpdates", {"offset": desde_id, "timeout": 0,
-                                           "allowed_updates": ["message", "callback_query"]})
+    def actualizaciones(self, desde_id, espera_s=0):
+        return self._llamar("getUpdates", {"offset": desde_id, "timeout": espera_s,
+                                           "allowed_updates": ["message", "callback_query"]}, timeout=espera_s + 20)
 
     def chats_recientes(self) -> list:
         chats = {}

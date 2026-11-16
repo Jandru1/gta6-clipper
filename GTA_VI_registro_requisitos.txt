@@ -423,6 +423,64 @@ INDICE
        por telefono, completar perfil y subir despacio.
      [VERIFICADO] Casilla de promocion pagada: YouTube no dice que
        afecte al alcance.
+1.69 Canales (14-11-2026): telefono verificado y foto de perfil puestos;
+     "Infracciones del canal: ninguna". El usuario RECHAZA dejar de
+     repetir clips entre canales: se mantiene la decision 1.56.
+     APROBADO: pausa corta (canal de Kai sin publicar hasta el 16-11,
+     canal de GTA hasta el lanzamiento del 19-11); despues, como maximo
+     3 Shorts al dia por canal (decidido por el usuario) y solo los
+     mejores clips. La ficha de
+     campana por streamer NO se amplia por ahora.
+1.70 RESULTADO CLAVE (16-11-2026): en el canal de podcasts del usuario,
+     el clip de Kai preparado por el script llega a 1,8k vis, MAS que el
+     clip de podcast publicado justo despues (1,2k). Conclusion: el
+     contenido de Kai y nuestra edicion (vertical, subtitulos, texto
+     inicial) SI funcionan; el problema esta en los canales nuevos de
+     Kai y GTA (casi 0 vis), no en el clip.
+     Kai no emite desde el 09-11-2026 (TwitchTracker); en sus ultimos
+     directos jugaba a "todos los GTA" (III, San Andreas, IV).
+1.71 Opcion A aprobada (16-11-2026): seguir con los canales actuales.
+     [VERIFICADO] YouTube (equipo de recomendaciones, 2024): "no borres
+       videos salvo muy buena razon"; mejor ocultarlos (no listados).
+       Borrar no "resetea" el canal.
+     [VERIFICADO] Politica de suplantacion: los canales de fans deben
+       indicarlo en el nombre o el identificador (los nuestros llevan
+       "Fan"); no copiar foto, banner ni colores del creador.
+     [NO OFICIAL] Muchos canales nuevos tienen 0 impresiones al
+       principio (comunidad de YouTube, r/NewTubers). Dato de TubeMind
+       (2.349 canales de 2026): el 85% de los canales nuevos con 20+
+       subidas tuvo un video de 1.000 vis en sus 5 primeras subidas:
+       lo nuestro (~15 subidas, ~0 vis) es anomalo.
+     Criterio: si tras ~10 subidas mas, espaciadas y con buenos clips,
+     siguen en ~0, crear un canal nuevo AL LADO (sin borrar el viejo) y
+     avisar a YouTube.
+1.72 Comando de Telegram "mejores" (16-11-2026, pedido por el usuario):
+     al escribir /mejores (o "mejores", o "/mejores xqc") el script
+     prepara los 3 mejores momentos del streamer (por defecto Kai) de
+     los ultimos 14 dias que nunca se hayan preparado ni enviado, y
+     los manda como siempre (video, textos, botones). Ordenados por
+     nota y visualizaciones. Usuario avisado: la foto de perfil real de
+     Kai es un riesgo de suplantacion; recomendado cambiarla.
+1.73 Botones de Telegram sin agujeros (16-11-2026, version 2026-11-16.3).
+     Causa del fallo: los botones solo se procesaban en la ejecucion de
+     cada 5 min; cualquier retraso los dejaba esperando. Ahora:
+     - Servicio continuo propio (launchd com.gta6clipper.telegram): cada
+       pulsacion se atiende en segundos. Si el servicio cae, la
+       ejecucion de cada 5 min lo sustituye (latido de 3 min).
+     - Posicion de Telegram guardada en la base de datos tras CADA
+       pulsacion (no se pierde ni se repite ninguna).
+     - Pulsar varias veces: se publica/descarta UNA vez; el resto solo
+       muestra "Ya estaba publicado" (sin mensajes de mas).
+     - Video aun preparandose: la pulsacion se aplaza (hasta 10 min) y
+       se ejecuta cuando esta listo.
+     - Error (red, YouTube): se reintenta 3 veces; si sigue fallando, se
+       avisa y se pasa a la siguiente; el video queda como estaba y el
+       boton se puede volver a pulsar.
+     - Sin permiso de YouTube: aviso con el comando para renovarlo.
+     - Descartar algo que YouTube ya no tiene: se da por descartado.
+     - /mejores repetido mientras se preparan los anteriores: no duplica.
+     Limite que no depende del script: Telegram guarda las pulsaciones
+     24 h; si el portatil esta apagado o dormido mas tiempo, se pierden.
 1.25 Repositorio publico del usuario en GitHub (proyecto ClipRed,
      30-10-2026): Devin NUNCA sube nada ni lo clona/descarga desde el
      Mac de empresa. Solo puede LEER el codigo por la web si hace falta.

@@ -23,7 +23,7 @@
   "max_avisos_por_ejecucion": 3,
   "resumen_al_despertar_momentos_de_las_ultimas_horas": 12,
   "max_momentos_en_el_resumen_al_despertar": 5,
-  "resumen_de_funcionamiento_cada_horas": 6,
+  "resumen_de_funcionamiento_cada_horas": 2,
   "clips_en_el_resumen": 3,
 
   "viralidad_minutos_para_medir_crecimiento": 60,
@@ -84,7 +84,7 @@
 
   "chat": {
     "activo": true,
-    "streamers": ["kaicenat"],
+    "streamers": ["kaicenat", "xqc", "jynxzi"],
     "segundos_por_ventana": 10,
     "minutos_de_base": 10,
     "factor_de_pico": 3,

@@ -56,7 +56,8 @@ def instalar_chat(proyecto: Path) -> str:
     datos.mkdir(exist_ok=True)
     return _cargar(ETIQUETA_CHAT, {
         "Label": ETIQUETA_CHAT,
-        "ProgramArguments": [sys.executable, "-u", str(proyecto / "clipper.py"), "escuchar-chat"],
+        "ProgramArguments": ["/usr/bin/caffeinate", "-s", sys.executable, "-u", str(proyecto / "clipper.py"),
+                             "escuchar-chat"],
         "WorkingDirectory": str(proyecto),
         "RunAtLoad": True,
         "KeepAlive": True,

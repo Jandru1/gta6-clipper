@@ -1,2 +1,6 @@
 16/11/2026 21:28:08 Escuchando los botones y mensajes de Telegram
 16/11/2026 21:28:10 Escuchando los botones y mensajes de Telegram
+16/11/2026 21:46:14 Telegram: OperationalError: attempt to write a readonly database. Reintento en 5 s.
+16/11/2026 21:46:19 Telegram: OperationalError: attempt to write a readonly database. Reintento en 10 s.
+16/11/2026 21:46:29 Telegram: OperationalError: attempt to write a readonly database. Reintento en 20 s.
+16/11/2026 21:47:02 Escuchando los botones y mensajes de Telegram

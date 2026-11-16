@@ -85,6 +85,7 @@ class Config:
     resumen_semanal_dia: int
     resumen_semanal_hora: int
     chat: dict
+    hashtags_en_el_titulo_de_youtube: list
 
 
 CAMPOS_ENTEROS = [f.name for f in fields(Config) if f.type is int or f.type == "int"]
@@ -168,6 +169,10 @@ def _validar(c: Config):
                        "10, 9, ..., 2) que sumen 100 como maximo")
     errores += _errores_de_videos(c)
     errores += _errores_de_chat(c.chat)
+    etiquetas = c.hashtags_en_el_titulo_de_youtube
+    if not isinstance(etiquetas, list) or not all(isinstance(h, str) and h.strip() for h in etiquetas) \
+            or len(" ".join(etiquetas)) > 40:
+        errores.append("'hashtags_en_el_titulo_de_youtube' debe ser una lista de hashtags (40 caracteres como maximo)")
     if errores:
         raise ErrorConfiguracion("config.json tiene errores:\n  - " + "\n  - ".join(errores))
 

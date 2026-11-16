@@ -82,12 +82,15 @@ def hashtags_para(cuenta, juego, con_aviso):
     return resultado
 
 
-def textos(cuenta, clip, juego, texto_gancho, con_aviso):
+def textos(cuenta, clip, juego, texto_gancho, con_aviso, hashtags_titulo=()):
     nombre = cuenta.get("nombre_streamer") or clip["streamer"]
     frase = _sin_gritos(texto_gancho)
     etiquetas = hashtags_para(cuenta, juego, con_aviso)
     lineas = (["#Ad"] if con_aviso else []) + [frase, f"Credit: twitch.tv/{clip['streamer']}"]
     titulo = frase if frase.strip('"').lower().startswith(nombre.lower()) else f"{nombre}: {frase}"
+    final = " ".join(h if h.startswith("#") else f"#{h}" for h in hashtags_titulo)
+    if final:
+        titulo = f"{titulo[:100 - len(final) - 1].rstrip()} {final}"
     return {
         "youtube_titulo": titulo[:100],
         "youtube_descripcion": "\n".join(lineas + [" ".join(etiquetas[:3])])[:5000],
@@ -275,6 +278,7 @@ class Preparador:
                                           palabras)
                 videos[sufijo] = self.renderizar(carpeta, documento, sufijo)
             versiones.append({"cuenta": cuenta["id"], "con_aviso": con_aviso, "video": str(videos[sufijo]),
-                              "textos": textos(cuenta, clip, juego, texto_gancho, con_aviso)})
+                              "textos": textos(cuenta, clip, juego, texto_gancho, con_aviso,
+                                               self.config.hashtags_en_el_titulo_de_youtube)})
         return {"versiones": versiones, "gancho": texto_gancho, "origen_gancho": origen,
                 "avisos": avisos_de_contenido(segmentos, idioma)}

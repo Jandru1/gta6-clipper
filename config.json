@@ -81,6 +81,7 @@
   ],
   "resumen_semanal_dia": 6,
   "resumen_semanal_hora": 11,
+  "hashtags_en_el_titulo_de_youtube": ["#shorts", "#shortvideo"],
 
   "chat": {
     "activo": true,

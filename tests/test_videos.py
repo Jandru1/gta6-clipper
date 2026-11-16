@@ -61,6 +61,9 @@ class TestTextos(unittest.TestCase):
     def test_textos_con_aviso_y_limites_de_hashtags(self):
         t = textos(CUENTA_KAI, ficha_clip(), JUEGOS["32982"], "KAI WAS SHOOK", True)
         self.assertEqual(t["youtube_titulo"], "Kai Cenat: Kai was shook")
+        largo = textos(CUENTA_KAI, ficha_clip(), None, "x" * 150, False, ["#short", "shortvideo"])["youtube_titulo"]
+        self.assertTrue(largo.endswith(" #short #shortvideo"))
+        self.assertLessEqual(len(largo), 100)
         self.assertTrue(t["instagram_texto"].startswith("#Ad\n"))
         self.assertIn("Credit: twitch.tv/kaicenat", t["instagram_texto"])
         self.assertEqual(t["youtube_descripcion"].splitlines()[-1], "#KaiCenatCampaign #KaiCenat #Twitch")
@@ -216,7 +219,7 @@ class TestFlujoDeVideos(unittest.TestCase):
         self.assertIn("subido en PRIVADO", pie_kai)
         self.assertEqual(botones_kai[0][0]["callback_data"], "p:1")
         self.assertIsNone(botones_gta)
-        self.assertEqual(self.youtube.subidos, [("Kai Cenat: \"no way bro look at this\"", False)])
+        self.assertEqual(self.youtube.subidos, [("Kai Cenat: \"no way bro look at this\" #shorts #shortvideo", False)])
         self.assertTrue(any("INSTAGRAM (copia todo esto)" in m for m in self.tg.mensajes))
         self.assertEqual(self.bd.con.execute("SELECT estado FROM cola_preparacion").fetchone()[0], "preparado")
 

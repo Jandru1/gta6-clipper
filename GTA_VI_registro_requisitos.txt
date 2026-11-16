@@ -481,6 +481,10 @@ INDICE
      - /mejores repetido mientras se preparan los anteriores: no duplica.
      Limite que no depende del script: Telegram guarda las pulsaciones
      24 h; si el portatil esta apagado o dormido mas tiempo, se pierden.
+1.74 Titulo de YouTube (16-11-2026, pedido por el usuario): todos los
+     Shorts llevan al final del titulo "#shorts #shortvideo" (config.json:
+     "hashtags_en_el_titulo_de_youtube"). Si el titulo es largo se
+     recorta la frase, nunca los hashtags (maximo 100 caracteres).
 1.25 Repositorio publico del usuario en GitHub (proyecto ClipRed,
      30-10-2026): Devin NUNCA sube nada ni lo clona/descarga desde el
      Mac de empresa. Solo puede LEER el codigo por la web si hace falta.

@@ -304,6 +304,28 @@ class TestFlujoDeVideos(unittest.TestCase):
         avisos = [m for m in self.tg.mensajes if "autorizar-youtube --cuenta kai" in m]
         self.assertEqual(len(avisos), 1)
 
+    def test_mensaje_mejores_encola_los_3_mejores_no_usados(self):
+        ahora = int(AHORA.timestamp())
+        for i, (nota, vistas) in enumerate([(9, 100), (10, 50), (7, 900), (8, 300), (10, 20)]):
+            cid = f"m{i}"
+            self.bd.observar_clip("kaicenat", clip(cid, vistas, AHORA), ahora, self.cfg)
+            self.bd.con.execute("INSERT INTO momentos (momento_id, streamer, inicio_s, clips, representante, vistas, "
+                                "vistas_mejor_clip, nota_maxima, actualizado_s) VALUES (?, 'kaicenat', ?, 1, ?, ?, ?, ?, ?)",
+                                (cid, ahora - 3600, cid, vistas, vistas, nota, ahora))
+        self.bd.encolar("m4", "m4", 10, ahora)
+        estado = {}
+        self.tg.pendientes.append({"update_id": 9, "message": {"chat": {"id": "9"}, "text": "/mejores"}})
+        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora)
+        encolados = {r[0] for r in self.bd.con.execute("SELECT clip_id FROM cola_preparacion WHERE estado = 'pendiente'")}
+        self.assertEqual(encolados, {"c1", "m4", "m1", "m0", "m3"})
+        self.assertIn("Los 3 mejores momentos de kaicenat", self.tg.mensajes[-1])
+        self.tg.pendientes.append({"update_id": 10, "message": {"chat": {"id": "9"}, "text": "mejores"}})
+        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora)
+        self.assertIn("Los 1 mejores", self.tg.mensajes[-1])
+        self.tg.pendientes.append({"update_id": 11, "message": {"chat": {"id": "9"}, "text": "/mejores"}})
+        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora)
+        self.assertIn("No quedan momentos", self.tg.mensajes[-1])
+
     def test_gta_vi_antes_del_lanzamiento_no_se_prepara(self):
         self.bd.con.execute("UPDATE clips SET juego_id = '1867279146'")
         videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))

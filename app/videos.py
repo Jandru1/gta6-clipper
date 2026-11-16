@@ -143,10 +143,40 @@ def procesar_telegram(config, estado, bd, telegram, servicios, ahora_s) -> int:
                 estado.pop("reintentos_boton", None)
                 procesados += 1
         elif mensaje and str((mensaje.get("chat") or {}).get("id")) == str(telegram.chat_id):
-            procesados += _leer_medicion(config, estado, bd, telegram, mensaje.get("text") or "", ahora_s)
+            texto = mensaje.get("text") or ""
+            pedido = PATRON_MEJORES.match(texto)
+            if pedido:
+                procesados += pedir_mejores(config, bd, telegram, ahora_s, pedido.group(1))
+            else:
+                procesados += _leer_medicion(config, estado, bd, telegram, texto, ahora_s)
         estado["telegram_siguiente_update"] = u["update_id"] + 1
     bd.guardar()
     return procesados
+
+
+PATRON_MEJORES = re.compile(r"^\s*/?mejores(?:@\w+)?(?:\s+(\w+))?\s*$", re.I)
+MEJORES_POR_PETICION = 3
+DIAS_PARA_BUSCAR_MEJORES = 14
+
+
+def pedir_mejores(config, bd, telegram, ahora_s, streamer=None) -> int:
+    streamers = [c["streamer"] for c in config.cuentas if c["tipo"] == "streamer"]
+    streamer = (streamer or (streamers[0] if streamers else "")).lower()
+    momentos = bd.mejores_sin_usar(streamer, ahora_s - DIAS_PARA_BUSCAR_MEJORES * 86400, MEJORES_POR_PETICION)
+    if not momentos:
+        telegram.enviar(f"No quedan momentos de {streamer} sin usar en los ultimos {DIAS_PARA_BUSCAR_MEJORES} dias.")
+        return 1
+    zona = ZoneInfo(config.zona_horaria)
+    lineas = [f"Los {len(momentos)} mejores momentos de {streamer} que aun no has usado. Preparo los videos: "
+              f"te llegaran en los proximos minutos, con sus botones."]
+    for i, m in enumerate(momentos, 1):
+        encolar_momentos(bd, [m], ahora_s)
+        cuando = datetime.fromtimestamp(m["inicio_s"], zona).strftime("%d/%m %H:%M")
+        lineas.append(f"{i}. Nota {m['nota_maxima']}/10 | {m['vistas']} vis | {cuando} | {m['titulo'] or '(sin titulo)'}\n"
+                      f"   {m['url']}")
+    bd.guardar()
+    telegram.enviar("\n".join(lineas))
+    return 1
 
 
 def _responder(telegram, callback_id, texto):

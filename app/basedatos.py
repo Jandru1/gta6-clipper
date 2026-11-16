@@ -388,6 +388,15 @@ class BaseDatos:
             " JOIN clips c ON c.clip_id = m.representante WHERE m.actualizado_s >= ?"
             " ORDER BY m.nota_maxima IS NULL, m.nota_maxima DESC, m.puntuacion_maxima DESC LIMIT ?", (desde_s, cuantos))]
 
+    def mejores_sin_usar(self, streamer, desde_s, cuantos) -> list:
+        return [dict(r) for r in self.con.execute(
+            "SELECT m.*, c.titulo, c.url, c.visualizaciones AS vistas_representante FROM momentos m"
+            " JOIN clips c ON c.clip_id = m.representante WHERE m.streamer = ? AND m.inicio_s >= ?"
+            " AND m.nota_maxima IS NOT NULL"
+            " AND m.momento_id NOT IN (SELECT momento_id FROM cola_preparacion WHERE momento_id IS NOT NULL)"
+            " AND m.representante NOT IN (SELECT clip_id FROM cola_preparacion)"
+            " ORDER BY m.nota_maxima DESC, m.vistas DESC LIMIT ?", (streamer, desde_s, cuantos))]
+
     def mas_vistos(self, desde_s, cuantos) -> list:
         return [dict(r) for r in self.con.execute(
             "SELECT * FROM clips WHERE ultima_vez_s >= ? ORDER BY visualizaciones DESC LIMIT ?", (desde_s, cuantos))]

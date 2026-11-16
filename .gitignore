@@ -1,6 +1,7 @@
 credenciales.json
 google_cliente.json
 youtube_tokens.json
+twitch_usuario.json
 *.tmp
 datos/modelos/
 datos/videos/

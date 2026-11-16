@@ -158,9 +158,8 @@ class TelegramVideos:
         return {"message_id": 100 + len(self.videos)}
 
     def actualizaciones(self, desde):
-        lista = [u for u in self.pendientes if u["update_id"] >= desde]
-        self.pendientes = []
-        return lista
+        self.pendientes = [u for u in self.pendientes if u["update_id"] >= desde]
+        return list(self.pendientes)
 
     def responder_boton(self, callback_id, texto):
         self.respuestas.append(texto)
@@ -253,6 +252,57 @@ class TestFlujoDeVideos(unittest.TestCase):
         self._pulsar("d:1")
         self.assertEqual(self.youtube.borrados, ["yt1"])
         self.assertEqual(self.bd.version(1)["estado"], "descartado")
+
+    def test_descartar_confirma_quita_botones_y_queda_registrado(self):
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self._pulsar("d:1")
+        self.assertIn("Descartado (kai)", self.tg.mensajes[-1])
+        self.assertEqual(self.tg.botones_quitados, [101])
+        registro = (self.carpeta / "registro_botones.csv").read_text()
+        self.assertIn(",7,d:1,descartado", registro)
+
+    def test_boton_de_version_aun_no_lista_se_reintenta_sin_perderlo(self):
+        estado = {}
+        self.tg.pendientes.append({"update_id": 7, "callback_query": {"id": "b1", "data": "d:1",
+                                                                     "message": {"chat": {"id": "9"}}}})
+        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self.assertNotIn("telegram_siguiente_update", estado)
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self.assertEqual(self.bd.version(1)["estado"], "descartado")
+        self.assertEqual(estado["telegram_siguiente_update"], 8)
+
+    def test_boton_de_version_ya_resuelta_avisa_y_quita_botones(self):
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self._pulsar("d:1")
+        self.tg.pendientes.append({"update_id": 8, "callback_query": {"id": "b2", "data": "d:1",
+                                                                     "message": {"chat": {"id": "9"}, "message_id": 101}}})
+        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self.assertIn("ya estaba resuelto (estado: descartado)", self.tg.mensajes[-1])
+
+    def test_preparar_un_clip_concreto_no_coge_otro_de_la_cola(self):
+        c = clip("c2", 900, AHORA)
+        self.bd.observar_clip("kaicenat", c, int(AHORA.timestamp()), self.cfg)
+        self.bd.encolar("c2", "c2", 9, int(AHORA.timestamp()) + 5)
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()), solo_clip="c2")
+        estados = dict(self.bd.con.execute("SELECT clip_id, estado FROM cola_preparacion").fetchall())
+        self.assertEqual(estados, {"c1": "pendiente", "c2": "preparado"})
+
+    def test_permiso_de_youtube_caducado_no_rompe_y_avisa_una_vez_al_dia(self):
+        from app.ejecucion import _avisar_permiso_youtube
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self._pulsar("p:1")
+
+        def caducado(ids):
+            raise RuntimeError("Token has been expired or revoked")
+        self.youtube.visualizaciones = caducado
+        errores, estado = {}, {}
+        videos.medir(self.bd, self.servicios, int(AHORA.timestamp()) + 7200, errores)
+        self.assertIn("kai", errores)
+        _avisar_permiso_youtube(estado, self.tg, errores, AHORA)
+        _avisar_permiso_youtube(estado, self.tg, errores, AHORA)
+        avisos = [m for m in self.tg.mensajes if "autorizar-youtube --cuenta kai" in m]
+        self.assertEqual(len(avisos), 1)
 
     def test_gta_vi_antes_del_lanzamiento_no_se_prepara(self):
         self.bd.con.execute("UPDATE clips SET juego_id = '1867279146'")

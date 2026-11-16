@@ -55,6 +55,19 @@ def _texto_aviso(momento, clip, ahora_s, zona):
     )
 
 
+def _avisar_permiso_youtube(estado, telegram, errores, ahora):
+    hoy = ahora.date().isoformat()
+    if not errores or estado.get("aviso_permiso_youtube") == hoy:
+        return
+    estado["aviso_permiso_youtube"] = hoy
+    comandos = "\n".join(f"python3 clipper.py autorizar-youtube --cuenta {c}" for c in sorted(errores))
+    try:
+        telegram.enviar("El permiso de YouTube ha caducado o falla (cada 7 dias en modo Prueba). El detector sigue "
+                        f"funcionando, pero no puedo subir ni medir en YouTube hasta que lo renueves:\n{comandos}")
+    except Exception:
+        pass
+
+
 def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=time.time, servicios=None):
     inicio = reloj()
     ahora = ahora or datetime.now(timezone.utc)
@@ -101,7 +114,9 @@ def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=ti
             resumen["avisos_enviados"] += videos.procesar_cola(config, bd, telegram, servicios, ahora_s)
             resumen["avisos_enviados"] += videos.resumen_semanal(config, estado, bd, telegram, servicios, ahora)
         if con_videos:
-            videos.medir(bd, servicios, ahora_s)
+            errores_youtube = {}
+            videos.medir(bd, servicios, ahora_s, errores_youtube)
+            _avisar_permiso_youtube(estado, telegram, errores_youtube, ahora)
 
         if _toca(estado, "ultima_limpieza_s", config.limpieza_cada_minutos, ahora_s):
             resumen.update(bd.limpiar(config, ahora_s))

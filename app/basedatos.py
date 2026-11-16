@@ -113,6 +113,28 @@ CREATE TABLE IF NOT EXISTS medicion_manual (
     recibido_s INTEGER NOT NULL,
     PRIMARY KEY (semana, red, cuenta)
 );
+CREATE TABLE IF NOT EXISTS chat_ventanas (
+    streamer TEXT NOT NULL,
+    instante_s INTEGER NOT NULL,
+    mensajes INTEGER NOT NULL,
+    usuarios INTEGER NOT NULL,
+    reacciones INTEGER NOT NULL,
+    repeticion REAL NOT NULL,
+    PRIMARY KEY (streamer, instante_s)
+) WITHOUT ROWID;
+CREATE TABLE IF NOT EXISTS chat_picos (
+    streamer TEXT NOT NULL,
+    inicio_s INTEGER NOT NULL,
+    fin_s INTEGER NOT NULL,
+    factor_maximo REAL NOT NULL,
+    mensajes_maximo INTEGER NOT NULL,
+    usuarios_maximo INTEGER NOT NULL,
+    mensajes INTEGER NOT NULL,
+    reacciones INTEGER NOT NULL,
+    texto_top TEXT,
+    base REAL,
+    PRIMARY KEY (streamer, inicio_s)
+);
 """
 
 
@@ -129,7 +151,7 @@ def texto_local(instante_s, zona: str) -> str:
 class BaseDatos:
     def __init__(self, ruta: Path):
         self.ruta = ruta
-        self.con = sqlite3.connect(ruta)
+        self.con = sqlite3.connect(ruta, timeout=60)
         self.con.row_factory = sqlite3.Row
         self.con.executescript(ESQUEMA)
         self._migrar()
@@ -151,6 +173,33 @@ class BaseDatos:
 
     def guardar(self):
         self.con.commit()
+
+    def guardar_ventana_chat(self, v: dict):
+        self.con.execute("INSERT OR REPLACE INTO chat_ventanas VALUES (?, ?, ?, ?, ?, ?)",
+                         (v["streamer"], v["instante_s"], v["mensajes"], v["usuarios"], v["reacciones"], v["repeticion"]))
+
+    def guardar_pico_chat(self, p: dict):
+        self.con.execute("INSERT OR REPLACE INTO chat_picos VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                         (p["streamer"], p["inicio_s"], p["fin_s"], p["factor_maximo"], p["mensajes_maximo"],
+                          p["usuarios_maximo"], p["mensajes"], p["reacciones"], p["texto_top"], p["base"]))
+
+    def limpiar_chat(self, antes_s):
+        self.con.execute("DELETE FROM chat_ventanas WHERE instante_s < ?", (antes_s,))
+        self.con.execute("DELETE FROM chat_picos WHERE inicio_s < ?", (antes_s,))
+
+    def picos_chat_desde(self, desde_s) -> list:
+        return [dict(r) for r in self.con.execute("SELECT * FROM chat_picos WHERE inicio_s >= ? ORDER BY inicio_s",
+                                                  (desde_s,))]
+
+    def minutos_de_chat_escuchados(self, streamer, desde_s) -> int:
+        fila = self.con.execute("SELECT COUNT(*), MAX(instante_s) - MIN(instante_s) FROM chat_ventanas "
+                                "WHERE streamer = ? AND instante_s >= ?", (streamer, desde_s)).fetchone()
+        return int((fila[1] or 0) // 60) if fila[0] else 0
+
+    def clips_de_streamer_desde(self, streamer, desde_s) -> list:
+        return [dict(r) for r in self.con.execute(
+            "SELECT clip_id, streamer, url, creador, creado_s, visualizaciones FROM clips "
+            "WHERE streamer = ? AND creado_s >= ?", (streamer, desde_s))]
 
     def observar_clip(self, streamer, clip, ahora_s, config) -> dict:
         creado_s = segundos(clip["created_at"])
@@ -263,9 +312,10 @@ class BaseDatos:
         self.con.execute("INSERT OR IGNORE INTO cola_preparacion (clip_id, momento_id, nota, encolado_s) VALUES (?, ?, ?, ?)",
                          (clip_id, momento_id, nota, ahora_s))
 
-    def pendientes_de_preparar(self, cuantos) -> list:
+    def pendientes_de_preparar(self, cuantos, clip_id=None) -> list:
+        filtro, valores = ("AND clip_id = ?", (clip_id, cuantos)) if clip_id else ("", (cuantos,))
         return [dict(r) for r in self.con.execute(
-            "SELECT * FROM cola_preparacion WHERE estado = 'pendiente' ORDER BY encolado_s LIMIT ?", (cuantos,))]
+            f"SELECT * FROM cola_preparacion WHERE estado = 'pendiente' {filtro} ORDER BY encolado_s LIMIT ?", valores)]
 
     def marcar_cola(self, clip_id, estado, detalle=""):
         self.con.execute("UPDATE cola_preparacion SET estado = ?, detalle = ? WHERE clip_id = ?", (estado, detalle, clip_id))

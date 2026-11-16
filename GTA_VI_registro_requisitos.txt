@@ -316,9 +316,118 @@ INDICE
      ve. Sin limite diario ni horas de publicacion programadas por
      defecto (quedan como parametros opcionales en config.json,
      desactivados).
+1.60 OBJETIVO DEL PROYECTO (fijado por el usuario, 14-11-2026):
+     LA VIRALIDAD EN REDES CON OBJETIVO DE LAS CAMPANAS DE STREAMERS.
+     Estar al tanto de las campanas de clipping y generar contenido
+     automatizable que consiga visualizaciones (y por tanto pago) en
+     esas campanas. Descartadas expresamente: contenido original propio
+     (comentario/voz), pivotar la cuenta GTA a gameplay propio y vender
+     clipping como servicio a streamers.
+1.61 Hallazgos que motivan repensar la deteccion (14-11-2026):
+     - ~15 Shorts en los canales nuevos: ~7 visualizaciones en total;
+       2 subidos a mano, igual. Tecnicamente correctos (publicos, aptos
+       para Shorts, todos los paises). Prueba en curso: el mismo clip
+       de Kai subido al canal de podcasts del usuario (canal sano, ~1k
+       vis/clip despues del 01-10-2026).
+     - YouTube anuncio el 01-10-2026 menos alcance en Shorts para
+       canales que resuben clips de otros sin cambios significativos
+       (vertical, subtitulos y plantillas NO cuentan como cambio).
+     - Los clips de Twitch tienen muy pocas visualizaciones (Kai: maximo
+       49 en 48 h) y la nota es RELATIVA al streamer (un 10 puede tener
+       75 vis): mide ranking, no viralidad real. Hay que repensar de
+       donde sale la senal de viralidad.
+1.62 Prueba en el canal de podcasts (14-11-2026, mismo dia): clip de
+     podcast 74 vis; clip de Kai (el saludo flojo) 8 vis. El contenido
+     de Kai se reparte bastante menos incluso en un canal sano, pero el
+     clip era muy flojo: falta repetir con un clip de Kai bueno.
+     Segunda prueba (clip de Kai elegido por el usuario, mismo canal de
+     podcasts): 15 vis. Pocas frente al podcast, pero muy por encima del
+     canal de Kai: el canal nuevo es parte del problema.
+1.63 Investigacion de fuentes de viralidad (14-11-2026):
+     [VERIFICADO] Chat de Twitch: lectura oficial con un usuario
+       autenticado (EventSub WebSocket con scope user:read:chat, o IRC
+       con OAuth). Limite: 100 canales a la vez por usuario. La lectura
+       anonima ("justinfan") NO esta documentada oficialmente: no usarla.
+       (dev.twitch.tv, foro oficial de desarrolladores)
+     [VERIFICADO] Video del momento: Create Clip (POST /helix/clips,
+       scope clips:edit) crea un clip del directo de cualquier canal en
+       nombre del usuario: ventana de 90 s, duracion 5-60 s. "Clip from
+       VOD" (beta abierta) permite clipear un momento anterior del
+       directo si el canal tiene VODs. (dev.twitch.tv)
+     [VERIFICADO] Reddit: dejo de aceptar nuevas solicitudes de API el
+       31-10-2026 -> descartado. API de X de pago; API de investigacion
+       de TikTok solo academica -> descartadas.
+     [PENDIENTE] Campanas: Content Rewards (Whop) no tiene API oficial
+       publica encontrada; existen lectores de terceros (Apify, omkar)
+       y agregadores con API de pago (ClipRadar). Revisar condiciones
+       de uso antes de automatizar.
+     [PENDIENTE] Si el streamer desactiva los clips, Create Clip falla.
+1.64 Campanas: como enterarse (14-11-2026):
+     [VERIFICADO] Las condiciones de Whop PROHIBEN leer su servicio con
+       medios automaticos (robots, scrapers) sin permiso escrito
+       (whop.com/tos, Community Guidelines). Los lectores de terceros
+       (Apify, etc.) incumplen esas condiciones y podrian costar la
+       cuenta de Whop con la que se cobra -> DESCARTADOS.
+     [VERIFICADO] ClipRadar: agregador con API propia de pago (500
+       peticiones/mes con la suscripcion de 25 $/mes; plan Dev 9 $/mes
+       con 6.000). Usarlo es legitimo segun sus condiciones; la forma en
+       que ellos obtienen los datos es responsabilidad suya.
+     Propuesta: revision MANUAL de contentrewards.com (gratis, las
+     campanas no cambian cada hora); ClipRadar solo si compensa.
+     [PARCIAL] Twitch: leer el chat de forma pasiva (sin escribir) esta
+       permitido cumpliendo el Developer Services Agreement y las Normas
+       de la comunidad (foro oficial de desarrolladores). El acuerdo no
+       prohibe expresamente crear clips por API en canales de terceros;
+       el riesgo es el abuso: limitar el numero de clips creados.
+1.65 APROBADO por el usuario (14-11-2026): nuevo detector por picos de
+     chat + clip creado por API, en 3 fases (registro/calibracion,
+     prueba sin subir, completa). Campanas: revision MANUAL (evitar
+     pagos siempre). Streamer vigilado: solo Kai Cenat por ahora. El
+     usuario autorizara su cuenta de Twitch cuando toque.
+     Condicion del usuario: no perder el criterio humano ni las metricas
+     de exito (ver 1.66).
+1.66 Criterio humano y metricas en el nuevo detector (14-11-2026,
+     propuesta pendiente de confirmar):
+     - El pico de chat ES una senal humana (reaccion de miles de
+       espectadores a la vez).
+     - Si un espectador crea un clip del mismo momento en los minutos
+       siguientes, se usa SU clip (corte humano) en lugar del nuestro.
+     - Se siguen midiendo las visualizaciones de los clips de Twitch y
+       el consenso (cuantas personas clipean el momento).
+     - La metrica de exito final son las visualizaciones de NUESTROS
+       videos en YouTube/Instagram (medicion E5).
+     - El usuario sigue decidiendo en Telegram si se publica.
+1.67 El usuario duerme durante los directos de Kai (franja 01:00-09:00,
+     decision 1.58): con aprobacion manual la rapidez del detector no
+     aporta. ELEGIDO por el usuario (14-11-2026) el CAMINO 1 (corregido
+     por el usuario: no el 2): NADA se publica sin su boton. De noche
+     la rapidez no importa, asi que se espera a tener todas las senales
+     (chat, cuantos clipean, sus visualizaciones) y a las 09:00 llega
+     el resumen con los mejores momentos ya confirmados. De dia sigue el
+     aviso inmediato con boton.
+     Horas de directo de Kai observadas (pocos datos, ~2 dias): de 17:00
+     a 02:00 y de 04:00 a 11:00 (hora de Espana); directos muy largos,
+     parte de dia y parte de noche.
+1.68 Investigacion: por que los canales nuevos no reciben alcance
+     (14-11-2026). Hechos: canales creados ~04/09-11-2026; varios Shorts
+     subidos en pocas horas (09-11: 9 versiones en 21 h); el mismo clip
+     de Kai en el canal sano del usuario SI se reparte (8-32 vis).
+     [VERIFICADO] Politica de spam de YouTube: incluye "redes coordinadas
+       de canales" y la produccion masiva de contenido similar con
+       cambios minimos; el contenido resubido sin aportar nada entra en
+       "scraped content" (support.google.com/youtube/answer/2801973).
+     [VERIFICADO] YouTube Help: un canal nuevo puede tardar dias en
+       aparecer en busquedas; recomienda mirar "Mostrado en el feed".
+     [NO OFICIAL] Guias de creadores: canales nuevos con muchas subidas
+       el primer dia quedan "en cuarentena" 24-72 h; verificar el canal
+       por telefono, completar perfil y subir despacio.
+     [VERIFICADO] Casilla de promocion pagada: YouTube no dice que
+       afecte al alcance.
 1.25 Repositorio publico del usuario en GitHub (proyecto ClipRed,
      30-10-2026): Devin NUNCA sube nada ni lo clona/descarga desde el
      Mac de empresa. Solo puede LEER el codigo por la web si hace falta.
+     Reforzado el 14-11-2026: tampoco descargar ficheros aunque sea
+     solo en memoria (p. ej. clips.db); desde este Mac solo LEER.
      Al ser publico, nunca debe contener credenciales.json ni datos/.
 
 

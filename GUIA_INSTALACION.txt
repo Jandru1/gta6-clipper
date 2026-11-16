@@ -475,3 +475,25 @@ PROBLEMAS FRECUENTES
   "alertas", ejecuta "python3 clipper.py estado" y mira
   datos/launchd_errores.log. Recuerda: solo avisa de clips con
   potencial; si el streamer no esta en directo, lo normal es silencio.
+
+---------------------------------------------------------------------
+ESCUCHA DEL CHAT (FASE 1, version 2026-11-14.1)
+---------------------------------------------------------------------
+Que hace: escucha el chat de los streamers de "chat.streamers" en
+config.json y apunta los PICOS (momentos en que el chat se dispara).
+En esta fase NO crea clips, NO avisa y NO publica nada.
+
+1. Autoriza tu cuenta de Twitch (una vez):
+     python3 clipper.py autorizar-twitch
+   Abre el enlace que aparece, entra con tu cuenta de Twitch, confirma
+   el codigo y pulsa "Autorizar". Se crea twitch_usuario.json.
+   CONSERVALO en cada reemplazo del proyecto, como credenciales.json.
+2. Ponlo en marcha:
+     python3 clipper.py instalar
+     python3 clipper.py estado      (debe decir "ESCUCHA DEL CHAT: SI")
+3. Tras 2-3 dias con el Mac despierto:
+     python3 clipper.py informe-chat --horas 48
+   Muestra los picos y si otros espectadores clipearon ese momento.
+   Crea datos/picos_chat.csv: marca en la ultima columna si/no segun
+   fuera un buen momento. Con eso se calibran los umbrales.
+Registro de la escucha: datos/chat_salida.log

@@ -2,7 +2,7 @@ import json
 import re
 import shutil
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -51,10 +51,10 @@ def _texto_para_copiar(cuenta, textos, con_aviso, recordatorio):
     return "\n".join(partes + ["", recordatorio])
 
 
-def procesar_cola(config, bd, telegram, servicios, ahora_s) -> int:
+def procesar_cola(config, bd, telegram, servicios, ahora_s, solo_clip=None) -> int:
     enviados = 0
     lanzamiento = date.fromisoformat(config.fecha_lanzamiento_gta_vi)
-    for cola in bd.pendientes_de_preparar(config.max_videos_por_ejecucion):
+    for cola in bd.pendientes_de_preparar(config.max_videos_por_ejecucion, solo_clip):
         clip = bd.clip(cola["clip_id"])
         destino, motivo = cuentas_destino(clip, config.cuentas, config.juegos, lanzamiento)
         if not destino:
@@ -89,6 +89,7 @@ def _enviar_version(config, bd, telegram, servicios, cola, clip, v, resultado, a
                "avisos": json.dumps(resultado["avisos"], ensure_ascii=False), "nota": cola["nota"],
                "estado": "preparado", "creado_s": ahora_s}
     version_id = bd.nueva_version(version)
+    bd.guardar()
     youtube = servicios.youtube.get(v["cuenta"]) if cuenta.get("youtube_automatico") else None
     aviso_youtube = ""
     if youtube:
@@ -108,18 +109,42 @@ def _enviar_version(config, bd, telegram, servicios, cola, clip, v, resultado, a
     return 2
 
 
+MAX_REINTENTOS_BOTON = 6
+
+
+def _registrar_boton(bd, ahora_s, update_id, datos, resultado):
+    ruta = Path(bd.ruta).parent / "registro_botones.csv"
+    nueva = not ruta.exists()
+    with ruta.open("a", encoding="utf-8") as f:
+        if nueva:
+            f.write("hora_utc,update_id,boton,resultado\n")
+        hora = datetime.fromtimestamp(ahora_s, timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"{hora},{update_id},{datos},{str(resultado).replace(',', ';')}\n")
+
+
 def procesar_telegram(config, estado, bd, telegram, servicios, ahora_s) -> int:
     procesados = 0
     actualizaciones = telegram.actualizaciones(estado.get("telegram_siguiente_update", 0))
     for u in actualizaciones:
-        estado["telegram_siguiente_update"] = u["update_id"] + 1
         boton = u.get("callback_query")
         mensaje = u.get("message")
-        if boton and str(((boton.get("message") or {}).get("chat") or {}).get("id")) == str(telegram.chat_id):
-            _pulsar_boton(bd, telegram, servicios, boton, ahora_s)
-            procesados += 1
+        if boton:
+            chat = str(((boton.get("message") or {}).get("chat") or {}).get("id"))
+            if chat != str(telegram.chat_id):
+                _registrar_boton(bd, ahora_s, u["update_id"], boton.get("data"), f"ignorado: otro chat ({chat})")
+            else:
+                reintentos = estado.get("reintentos_boton") or {}
+                ultimo_intento = reintentos.get(str(u["update_id"]), 0) + 1 >= MAX_REINTENTOS_BOTON
+                resultado = _pulsar_boton(bd, telegram, servicios, boton, ahora_s, ultimo_intento)
+                _registrar_boton(bd, ahora_s, u["update_id"], boton.get("data"), resultado)
+                if resultado == "reintentar":
+                    estado["reintentos_boton"] = {str(u["update_id"]): reintentos.get(str(u["update_id"]), 0) + 1}
+                    break
+                estado.pop("reintentos_boton", None)
+                procesados += 1
         elif mensaje and str((mensaje.get("chat") or {}).get("id")) == str(telegram.chat_id):
             procesados += _leer_medicion(config, estado, bd, telegram, mensaje.get("text") or "", ahora_s)
+        estado["telegram_siguiente_update"] = u["update_id"] + 1
     bd.guardar()
     return procesados
 
@@ -131,20 +156,26 @@ def _responder(telegram, callback_id, texto):
         pass
 
 
-def _pulsar_boton(bd, telegram, servicios, boton, ahora_s):
+def _quitar_botones(telegram, mensaje_id):
+    if mensaje_id:
+        try:
+            telegram.quitar_botones(mensaje_id)
+        except Exception:
+            pass
+
+
+def _pulsar_boton(bd, telegram, servicios, boton, ahora_s, ultimo_intento=True) -> str:
     accion, _, identificador = (boton.get("data") or "").partition(":")
     version = bd.version(int(identificador)) if identificador.isdigit() else {}
-    if not version or version["estado"] != "enviado":
+    mensaje_id = (boton.get("message") or {}).get("message_id")
+    estado = version.get("estado") if version else None
+    if estado in (None, "preparado") and not ultimo_intento:
+        return "reintentar"
+    if estado != "enviado":
         _responder(telegram, boton["id"], "Ya estaba resuelto")
-        estado = version.get("estado", "desconocido") if version else "desconocido"
-        telegram.enviar(f"Ese video ya estaba resuelto (estado: {estado}). No he hecho nada.")
-        mensaje_id = (boton.get("message") or {}).get("message_id")
-        if mensaje_id:
-            try:
-                telegram.quitar_botones(mensaje_id)
-            except Exception:
-                pass
-        return
+        telegram.enviar(f"Ese video ya estaba resuelto (estado: {estado or 'desconocido'}). No he hecho nada.")
+        _quitar_botones(telegram, mensaje_id)
+        return f"ya resuelto ({estado or 'desconocido'})"
     youtube = servicios.youtube.get(version["cuenta"])
     try:
         if accion == "p":
@@ -153,6 +184,7 @@ def _pulsar_boton(bd, telegram, servicios, boton, ahora_s):
             bd.guardar()
             _responder(telegram, boton["id"], "Publicado en YouTube")
             telegram.enviar(f"Publicado en YouTube ({version['cuenta']}): https://youtube.com/shorts/{version['youtube_id']}")
+            resultado = "publicado"
         else:
             if youtube and version["youtube_id"]:
                 youtube.borrar(version["youtube_id"])
@@ -160,15 +192,13 @@ def _pulsar_boton(bd, telegram, servicios, boton, ahora_s):
             bd.guardar()
             _responder(telegram, boton["id"], "Descartado")
             telegram.enviar(f"Descartado ({version['cuenta']}): el video se ha borrado de YouTube.")
+            resultado = "descartado"
     except Exception as e:
         _responder(telegram, boton["id"], "Ha fallado; mira el mensaje")
         telegram.enviar(f"No he podido completar la accion en YouTube ({version['cuenta']}): {e}")
-        return
-    if version["mensaje_id"]:
-        try:
-            telegram.quitar_botones(version["mensaje_id"])
-        except Exception:
-            pass
+        return f"error: {e}"
+    _quitar_botones(telegram, version["mensaje_id"] or mensaje_id)
+    return resultado
 
 
 def _leer_medicion(config, estado, bd, telegram, texto, ahora_s) -> int:
@@ -186,7 +216,7 @@ def _leer_medicion(config, estado, bd, telegram, texto, ahora_s) -> int:
     return 1
 
 
-def medir(bd, servicios, ahora_s) -> int:
+def medir(bd, servicios, ahora_s, errores=None) -> int:
     pendientes = bd.versiones_para_medir(ahora_s)
     por_cuenta = {}
     for v in pendientes:
@@ -196,7 +226,12 @@ def medir(bd, servicios, ahora_s) -> int:
         youtube = servicios.youtube.get(cuenta)
         if not youtube:
             continue
-        vistas = youtube.visualizaciones([v["youtube_id"] for v in versiones])
+        try:
+            vistas = youtube.visualizaciones([v["youtube_id"] for v in versiones])
+        except Exception as e:
+            if errores is not None:
+                errores[cuenta] = str(e)
+            continue
         for v in versiones:
             if v["youtube_id"] not in vistas:
                 continue

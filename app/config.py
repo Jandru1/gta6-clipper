@@ -84,6 +84,7 @@ class Config:
     cuentas: list
     resumen_semanal_dia: int
     resumen_semanal_hora: int
+    chat: dict
 
 
 CAMPOS_ENTEROS = [f.name for f in fields(Config) if f.type is int or f.type == "int"]
@@ -118,6 +119,8 @@ def cargar_config(ruta: Path) -> Config:
         if not isinstance(valor, int) or isinstance(valor, bool) or valor < 0:
             raise ErrorConfiguracion(f"'{nombre}' debe ser un numero entero mayor o igual que 0 (ahora: {valor!r})")
     valores["streamers"] = [s.strip().lower() for s in valores["streamers"]]
+    if isinstance(valores["chat"], dict) and isinstance(valores["chat"].get("streamers"), list):
+        valores["chat"] = {**valores["chat"], "streamers": [str(s).strip().lower() for s in valores["chat"]["streamers"]]}
     try:
         valores["franjas"] = [Franja(f["desde"], f["hasta"], f["modo"]) for f in valores["franjas"]]
     except (KeyError, TypeError):
@@ -164,8 +167,31 @@ def _validar(c: Config):
         errores.append("'cortes_de_nota_en_porcentaje' debe ser una lista de 9 enteros (porcentajes para las notas "
                        "10, 9, ..., 2) que sumen 100 como maximo")
     errores += _errores_de_videos(c)
+    errores += _errores_de_chat(c.chat)
     if errores:
         raise ErrorConfiguracion("config.json tiene errores:\n  - " + "\n  - ".join(errores))
+
+
+MINIMOS_CHAT = {"segundos_por_ventana": 5, "minutos_de_base": 2, "usuarios_minimos_en_la_ventana": 1,
+                "segundos_para_unir_picos": 0, "dias_de_registro": 1}
+
+
+def _errores_de_chat(chat) -> list:
+    if not isinstance(chat, dict):
+        return ["'chat' debe ser un apartado { ... }"]
+    errores = []
+    if not isinstance(chat.get("activo"), bool):
+        errores.append("'chat.activo' debe ser true o false")
+    if not isinstance(chat.get("streamers"), list) or not all(isinstance(s, str) and s for s in chat["streamers"]):
+        errores.append("'chat.streamers' debe ser una lista de nombres de canal")
+    for clave, minimo in MINIMOS_CHAT.items():
+        valor = chat.get(clave)
+        if not isinstance(valor, int) or isinstance(valor, bool) or valor < minimo:
+            errores.append(f"'chat.{clave}' debe ser un numero entero de {minimo} o mas")
+    factor = chat.get("factor_de_pico")
+    if not isinstance(factor, (int, float)) or isinstance(factor, bool) or factor <= 1:
+        errores.append("'chat.factor_de_pico' debe ser un numero mayor que 1")
+    return errores
 
 
 def _errores_de_videos(c: Config) -> list:

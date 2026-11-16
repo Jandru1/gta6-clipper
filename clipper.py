@@ -14,12 +14,13 @@ from app.http import ErrorRed, Respuesta
 from app.telegram import ClienteTelegram
 from app.twitch import ClienteTwitch, ErrorLimiteTwitch
 
-VERSION = "2026-11-05.3"
+VERSION = "2026-11-14.2"
 PROYECTO = Path(__file__).resolve().parent
 RUTA_CONFIG = PROYECTO / "config.json"
 RUTA_CREDENCIALES = PROYECTO / "credenciales.json"
 RUTA_CLIENTE_GOOGLE = PROYECTO / "google_cliente.json"
 RUTA_TOKENS_YOUTUBE = PROYECTO / "youtube_tokens.json"
+RUTA_TOKENS_TWITCH = PROYECTO / "twitch_usuario.json"
 CARPETA_DATOS = PROYECTO / "datos"
 CARPETA_VIDEOS = CARPETA_DATOS / "videos"
 CARPETA_MODELOS = CARPETA_DATOS / "modelos"
@@ -244,23 +245,31 @@ def cmd_preparar_clip(args):
     config = cargar_config(RUTA_CONFIG)
     almacen = Almacen(CARPETA_DATOS)
     _, telegram = _clientes(almacen)
-    bd = BaseDatos(almacen.ruta_base_datos)
-    try:
-        clip = bd.clip(args.clip_id)
-        if not clip:
-            print(f"No encuentro el clip '{args.clip_id}' en la base de datos (usa el id del final de su enlace).")
-            return 1
-        bd.con.execute("DELETE FROM cola_preparacion WHERE clip_id = ?", (args.clip_id,))
-        bd.encolar(args.clip_id, clip.get("momento_id"), clip.get("nota_maxima"), int(datetime.now(timezone.utc).timestamp()))
-        bd.guardar()
-        servicios = _servicios(config)
-        config.max_videos_por_ejecucion = 1
-        enviados = videos.procesar_cola(config, bd, telegram, servicios, int(datetime.now(timezone.utc).timestamp()))
-        fila = bd.con.execute("SELECT estado, detalle FROM cola_preparacion WHERE clip_id = ?", (args.clip_id,)).fetchone()
-        print(f"Resultado: {fila['estado']} {fila['detalle'] or ''} ({enviados} mensajes enviados a Telegram)")
-        return 0 if fila["estado"] == "preparado" else 1
-    finally:
-        bd.cerrar()
+    with almacen.ruta_bloqueo.open("w") as bloqueo:
+        try:
+            fcntl.flock(bloqueo, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print("Esperando a que termine la ejecucion automatica en curso...")
+            fcntl.flock(bloqueo, fcntl.LOCK_EX)
+        bd = BaseDatos(almacen.ruta_base_datos)
+        try:
+            clip = bd.clip(args.clip_id)
+            if not clip:
+                print(f"No encuentro el clip '{args.clip_id}' en la base de datos (usa el id del final de su enlace).")
+                return 1
+            bd.con.execute("DELETE FROM cola_preparacion WHERE clip_id = ?", (args.clip_id,))
+            bd.encolar(args.clip_id, clip.get("momento_id"), clip.get("nota_maxima"),
+                       int(datetime.now(timezone.utc).timestamp()))
+            bd.guardar()
+            servicios = _servicios(config)
+            enviados = videos.procesar_cola(config, bd, telegram, servicios, int(datetime.now(timezone.utc).timestamp()),
+                                            solo_clip=args.clip_id)
+            fila = bd.con.execute("SELECT estado, detalle FROM cola_preparacion WHERE clip_id = ?",
+                                  (args.clip_id,)).fetchone()
+            print(f"Resultado: {fila['estado']} {fila['detalle'] or ''} ({enviados} mensajes enviados a Telegram)")
+            return 0 if fila["estado"] == "preparado" else 1
+        finally:
+            bd.cerrar()
 
 
 def cmd_autorizar_youtube(args):
@@ -279,6 +288,75 @@ def cmd_autorizar_youtube(args):
     guardar_tokens(RUTA_TOKENS_YOUTUBE, tokens)
     _ok(f"Cuenta '{args.cuenta}' conectada al canal de YouTube '{canal['titulo']}'.")
     print("Si no es el canal correcto, repite el comando y elige otro canal.")
+    return 0
+
+
+def cmd_autorizar_twitch(_args):
+    from app.chat import autorizar_dispositivo
+    from app.youtube import guardar_tokens
+    creds = cargar_credenciales(RUTA_CREDENCIALES, exigir_telegram=False)
+    print("Vas a dar permiso al script para LEER el chat de Twitch y CREAR clips con tu cuenta de Twitch.")
+    datos = autorizar_dispositivo(creds.twitch_client_id, creds.twitch_client_secret)
+    guardar_tokens(RUTA_TOKENS_TWITCH, datos)
+    _ok(f"Cuenta de Twitch '{datos['login']}' conectada (permisos: {', '.join(datos['permisos'])}).")
+    print("Siguiente paso: python3 clipper.py instalar   (pone en marcha la escucha del chat)")
+    return 0
+
+
+def cmd_escuchar_chat(_args):
+    from app.chat import TokenUsuario, escuchar
+    config = cargar_config(RUTA_CONFIG)
+    if not config.chat["activo"]:
+        print("La escucha del chat esta desactivada en config.json (chat.activo = false).")
+        return 0
+    creds = cargar_credenciales(RUTA_CREDENCIALES, exigir_telegram=False)
+    token = TokenUsuario(RUTA_TOKENS_TWITCH, creds.twitch_client_id, creds.twitch_client_secret)
+    bd = BaseDatos(Almacen(CARPETA_DATOS).ruta_base_datos)
+    try:
+        escuchar(config.chat, bd, token,
+                 registro=lambda t: print(f"{hora_local(datetime.now(timezone.utc), config.zona_horaria)} {t}", flush=True))
+    finally:
+        bd.cerrar()
+    return 0
+
+
+def cmd_informe_chat(args):
+    import csv
+    from app.chat import cruzar_con_clips
+    config = cargar_config(RUTA_CONFIG)
+    almacen = Almacen(CARPETA_DATOS)
+    bd = BaseDatos(almacen.ruta_base_datos)
+    zona = config.zona_horaria
+    desde_s = int((datetime.now(timezone.utc) - timedelta(hours=args.horas)).timestamp())
+    try:
+        filas = []
+        for streamer in config.chat["streamers"]:
+            minutos = bd.minutos_de_chat_escuchados(streamer, desde_s)
+            picos = [p for p in bd.picos_chat_desde(desde_s) if p["streamer"] == streamer]
+            cruzados = cruzar_con_clips(picos, bd.clips_de_streamer_desde(streamer, desde_s - 3600))
+            con_clips = sum(1 for p in cruzados if p["clips_humanos"])
+            print(f"{streamer}: chat escuchado ~{minutos // 60} h {minutos % 60} min en las ultimas {args.horas} h | "
+                  f"{len(picos)} picos | {con_clips} con algun clip de espectadores")
+            for p in sorted(cruzados, key=lambda p: -p["factor_maximo"])[:args.top]:
+                print(f"  {texto_local(p['inicio_s'], zona)} | x{p['factor_maximo']} | {p['usuarios_maximo']} personas | "
+                      f"{p['fin_s'] - p['inicio_s']} s | clips: {p['clips_humanos']} de {p['personas_que_clipean']} "
+                      f"personas (mejor: {p['vis_mejor_clip']} vis) | \"{p['texto_top']}\"")
+                if p["url_mejor_clip"]:
+                    print(f"      {p['url_mejor_clip']}")
+            filas += cruzados
+    finally:
+        bd.cerrar()
+    ruta = CARPETA_DATOS / "picos_chat.csv"
+    with ruta.open("w", newline="", encoding="utf-8") as f:
+        escritor = csv.writer(f)
+        escritor.writerow(["streamer", "inicio_espana", "segundos", "veces_lo_normal", "personas", "mensajes",
+                           "reacciones", "texto_mas_repetido", "clips_de_espectadores", "personas_que_clipean",
+                           "vis_mejor_clip", "enlace_mejor_clip", "bueno_si_no"])
+        for p in filas:
+            escritor.writerow([p["streamer"], texto_local(p["inicio_s"], zona), p["fin_s"] - p["inicio_s"],
+                               p["factor_maximo"], p["usuarios_maximo"], p["mensajes"], p["reacciones"], p["texto_top"],
+                               p["clips_humanos"], p["personas_que_clipean"], p["vis_mejor_clip"], p["url_mejor_clip"], ""])
+    print(f"\nLista completa para revisar: {ruta} (rellena la ultima columna con si/no)")
     return 0
 
 
@@ -411,12 +489,22 @@ def cmd_instalar(_args):
     destino = launchd.instalar(PROYECTO, config.ejecucion_automatica_cada_minutos)
     print(f"Instalado: {destino}")
     print(f"El detector se ejecutara cada {config.ejecucion_automatica_cada_minutos} min mientras el portatil este despierto.")
+    if config.chat["activo"] and RUTA_TOKENS_TWITCH.exists():
+        print(f"Instalado: {launchd.instalar_chat(PROYECTO)}")
+        print(f"La escucha del chat de {', '.join(config.chat['streamers'])} queda en marcha de forma continua.")
+    elif config.chat["activo"]:
+        print("La escucha del chat NO se ha instalado: falta autorizar tu cuenta de Twitch "
+              "(python3 clipper.py autorizar-twitch) y repetir 'instalar'.")
+    else:
+        launchd.desinstalar(launchd.ETIQUETA_CHAT)
     print("Comprueba el estado con: python3 clipper.py estado")
     return 0
 
 
 def cmd_desinstalar(_args):
     print("Desinstalado." if launchd.desinstalar() else "No estaba instalado.")
+    if launchd.desinstalar(launchd.ETIQUETA_CHAT):
+        print("Escucha del chat desinstalada.")
     return 0
 
 
@@ -457,6 +545,17 @@ def cmd_estado(_args):
             print("  Ultimos mensajes de error de la ejecucion automatica:")
             for linea in lineas[-3:]:
                 print(f"    {linea}")
+    chat = launchd.estado(launchd.ETIQUETA_CHAT)
+    if chat is None:
+        print("ESCUCHA DEL CHAT: NO instalada (python3 clipper.py autorizar-twitch y luego instalar).")
+    else:
+        print("ESCUCHA DEL CHAT: " + ("SI, en marcha." if chat.get("state") == "running" else
+                                      f"instalada pero parada (estado: {chat.get('state', '?')})."))
+        registro = CARPETA_DATOS / "chat_salida.log"
+        if registro.exists():
+            ultimas = [l for l in registro.read_text(encoding="utf-8", errors="replace").splitlines() if l.strip()][-2:]
+            for linea in ultimas:
+                print(f"  {linea}")
     return 0
 
 
@@ -486,6 +585,14 @@ def main():
     autorizar = sub.add_parser("autorizar-youtube", help="Conecta una cuenta de config.json con su canal de YouTube")
     autorizar.add_argument("--cuenta", required=True)
     autorizar.set_defaults(func=cmd_autorizar_youtube)
+    sub.add_parser("autorizar-twitch", help="Conecta tu cuenta de Twitch (leer el chat y crear clips)").set_defaults(
+        func=cmd_autorizar_twitch)
+    sub.add_parser("escuchar-chat", help="Escucha el chat y apunta los picos (lo lanza launchd)").set_defaults(
+        func=cmd_escuchar_chat)
+    informe_chat = sub.add_parser("informe-chat", help="Picos de chat y si otros espectadores los clipearon")
+    informe_chat.add_argument("--horas", type=int, default=24)
+    informe_chat.add_argument("--top", type=int, default=15)
+    informe_chat.set_defaults(func=cmd_informe_chat)
     revisar = sub.add_parser("revisar-ejecuciones", help="T6: comprueba huecos y errores")
     revisar.add_argument("--horas", type=float, default=12)
     revisar.set_defaults(func=cmd_revisar)

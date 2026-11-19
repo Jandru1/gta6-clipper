@@ -46,9 +46,12 @@ class ClienteTelegram:
                       timeout=300)
         return self._respuesta(r)
 
-    def quitar_botones(self, message_id):
+    def cambiar_botones(self, message_id, botones):
         self._llamar("editMessageReplyMarkup", {"chat_id": self.chat_id, "message_id": message_id,
-                                                "reply_markup": {"inline_keyboard": []}})
+                                                "reply_markup": {"inline_keyboard": botones}})
+
+    def quitar_botones(self, message_id):
+        self.cambiar_botones(message_id, [])
 
     def responder_boton(self, callback_id, texto):
         self._llamar("answerCallbackQuery", {"callback_query_id": callback_id, "text": texto[:200]})

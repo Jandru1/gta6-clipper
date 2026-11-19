@@ -117,6 +117,17 @@ CREATE TABLE IF NOT EXISTS ajustes (
     clave TEXT PRIMARY KEY,
     valor TEXT
 );
+CREATE TABLE IF NOT EXISTS chat_clips (
+    clip_id TEXT PRIMARY KEY,
+    streamer TEXT NOT NULL,
+    pico_inicio_s INTEGER NOT NULL,
+    creado_s INTEGER NOT NULL,
+    factor REAL,
+    usuarios INTEGER,
+    texto_top TEXT,
+    estado TEXT NOT NULL DEFAULT 'creado',
+    detalle TEXT
+);
 CREATE TABLE IF NOT EXISTS chat_ventanas (
     streamer TEXT NOT NULL,
     instante_s INTEGER NOT NULL,
@@ -153,10 +164,15 @@ def texto_local(instante_s, zona: str) -> str:
 
 
 class BaseDatos:
-    def __init__(self, ruta: Path):
+    def __init__(self, ruta: Path, solo_lectura=False):
         self.ruta = ruta
+        if solo_lectura:
+            self.con = sqlite3.connect(f"file:{ruta}?mode=ro", uri=True, timeout=60)
+            self.con.row_factory = sqlite3.Row
+            return
         self.con = sqlite3.connect(ruta, timeout=60)
         self.con.row_factory = sqlite3.Row
+        self.con.execute("PRAGMA journal_mode=WAL")
         self.con.executescript(ESQUEMA)
         self._migrar()
 
@@ -185,9 +201,33 @@ class BaseDatos:
     def fijar_valor(self, clave, valor):
         self.con.execute("INSERT OR REPLACE INTO ajustes VALUES (?, ?)", (clave, valor))
 
+    def publicados_desde(self, cuenta, desde_s) -> int:
+        return self.con.execute("SELECT COUNT(*) FROM versiones WHERE cuenta = ? AND estado = 'publicado' AND "
+                                "publicado_s >= ?", (cuenta, desde_s)).fetchone()[0]
+
     def cola_por_preparar(self) -> int:
         return self.con.execute("SELECT COUNT(*) FROM cola_preparacion WHERE estado IN ('pendiente', 'en_curso')"
                                 ).fetchone()[0]
+
+    def guardar_clip_de_chat(self, c: dict):
+        self.con.execute("INSERT OR IGNORE INTO chat_clips (clip_id, streamer, pico_inicio_s, creado_s, factor, usuarios, "
+                         "texto_top) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                         (c["clip_id"], c["streamer"], c["inicio_s"], c["creado_s"], c["factor_maximo"],
+                          c["usuarios_maximo"], c.get("texto_top")))
+
+    def clips_de_chat_desde(self, streamer, desde_s) -> list:
+        return [dict(r) for r in self.con.execute("SELECT * FROM chat_clips WHERE streamer = ? AND creado_s >= ?",
+                                                  (streamer, desde_s))]
+
+    def clips_de_chat_pendientes(self) -> list:
+        return [dict(r) for r in self.con.execute("SELECT * FROM chat_clips WHERE estado = 'creado' ORDER BY creado_s")]
+
+    def marcar_clip_de_chat(self, clip_id, estado, detalle=""):
+        self.con.execute("UPDATE chat_clips SET estado = ?, detalle = ? WHERE clip_id = ?", (estado, detalle, clip_id))
+
+    def pico_de_chat_encolado_cerca(self, streamer, instante_s, margen_s) -> bool:
+        return self.con.execute("SELECT 1 FROM chat_clips WHERE streamer = ? AND estado = 'encolado' AND "
+                                "ABS(pico_inicio_s - ?) <= ? LIMIT 1", (streamer, instante_s, margen_s)).fetchone() is not None
 
     def guardar_ventana_chat(self, v: dict):
         self.con.execute("INSERT OR REPLACE INTO chat_ventanas VALUES (?, ?, ?, ?, ?, ?)",

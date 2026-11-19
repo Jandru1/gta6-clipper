@@ -1,6 +1,6 @@
 {
   "zona_horaria": "Europe/Madrid",
-  "streamers": ["kaicenat", "xqc", "jynxzi"],
+  "streamers": ["kaicenat", "lacy", "clix"],
   "franjas": [
     {"desde": "09:00", "hasta": "01:00", "modo": "alertas"},
     {"desde": "01:00", "hasta": "09:00", "modo": "silencio"}
@@ -23,7 +23,7 @@
   "max_avisos_por_ejecucion": 3,
   "resumen_al_despertar_momentos_de_las_ultimas_horas": 12,
   "max_momentos_en_el_resumen_al_despertar": 5,
-  "resumen_de_funcionamiento_cada_horas": 2,
+  "resumen_de_funcionamiento_cada_horas": 0,
   "clips_en_el_resumen": 3,
 
   "viralidad_minutos_para_medir_crecimiento": 60,
@@ -67,30 +67,46 @@
   },
   "palabras_a_censurar": ["fuck", "shit", "bitch", "nigga", "nigger", "cunt", "fag", "retard", "pussy", "dick"],
   "recordatorio_antes_de_publicar": "Antes de publicar: sin spoilers, sin musica de fondo, sin dejar mal al streamer, sin contenido sexual o violento.",
-  "fecha_lanzamiento_gta_vi": "2026-11-19",
+  "fecha_lanzamiento_gta_vi": "2026-11-18",
   "juegos": {
     "1867279146": {"nombre": "GTA VI", "hashtag": "#GTA6", "es_gta": true, "es_gta_vi": true},
-    "32982": {"nombre": "GTA V", "hashtag": "#GTA5", "es_gta": true, "es_gta_vi": false}
+    "32982": {"nombre": "GTA V", "hashtag": "#GTA5", "es_gta": true, "es_gta_vi": false},
+    "18707": {"nombre": "GTA IV", "hashtag": "#GTA4", "es_gta": true, "es_gta_vi": false},
+    "6521": {"nombre": "GTA San Andreas", "hashtag": "#GTASanAndreas", "es_gta": true, "es_gta_vi": false},
+    "3412": {"nombre": "GTA III", "hashtag": "#GTA3", "es_gta": true, "es_gta_vi": false}
   },
   "cuentas": [
     {"id": "kai", "tipo": "streamer", "streamer": "kaicenat", "nombre_streamer": "Kai Cenat",
      "hashtags": ["#KaiCenat", "#Twitch"], "youtube_automatico": true,
-     "campana": {"activa": false, "hashtag_obligatorio": "#KaiCenat", "desde": "2026-11-19", "hasta": "2026-12-31"}},
+     "campana": {"activa": true, "hashtag_obligatorio": "#KaiCenat", "desde": "2026-11-18", "hasta": "2026-12-31"}},
+    {"id": "lacy", "tipo": "streamer", "streamer": "lacy", "nombre_streamer": "Lacy",
+     "hashtags": ["#Lacy", "#Twitch"], "youtube_automatico": true,
+     "campana": {"activa": true, "hashtag_obligatorio": "#LACY", "desde": "2026-11-18", "hasta": "2026-12-31"}},
+    {"id": "clix", "tipo": "streamer", "streamer": "clix", "nombre_streamer": "Clix",
+     "hashtags": ["#Clix", "#Twitch"], "youtube_automatico": true,
+     "campana": {"activa": true, "hashtag_obligatorio": "#Clix", "desde": "2026-11-18", "hasta": "2026-12-31"}},
     {"id": "gta", "tipo": "gta", "hashtags": ["#GTA", "#Twitch"], "youtube_automatico": true,
      "campana": {"activa": false}}
   ],
   "resumen_semanal_dia": 6,
   "resumen_semanal_hora": 11,
   "hashtags_en_el_titulo_de_youtube": ["#shorts", "#shortvideo"],
+  "max_publicaciones_al_dia_por_cuenta": 3,
 
   "chat": {
     "activo": true,
-    "streamers": ["kaicenat", "xqc", "jynxzi"],
+    "streamers": ["kaicenat", "lacy", "clix"],
     "segundos_por_ventana": 10,
     "minutos_de_base": 10,
     "factor_de_pico": 3,
     "usuarios_minimos_en_la_ventana": 30,
     "segundos_para_unir_picos": 30,
-    "dias_de_registro": 14
+    "dias_de_registro": 14,
+    "crear_clips": true,
+    "factor_para_crear_clip": 15,
+    "usuarios_para_crear_clip": 60,
+    "segundos_de_clip": 45,
+    "max_clips_por_hora": 2,
+    "minutos_entre_clips": 10
   }
 }

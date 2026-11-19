@@ -379,12 +379,13 @@ class TestEjecucion(unittest.TestCase):
 
     def test_resumen_de_funcionamiento_llega_en_silencio_y_respeta_el_intervalo(self):
         tw = TwitchFalso([clip("a", 900, AHORA - timedelta(minutes=10)), clip("b", 50, AHORA - timedelta(hours=3))])
-        _, tg = self._ejecutar(tw)
+        cfg = config_base(resumen_de_funcionamiento_cada_horas=2)
+        _, tg = self._ejecutar(tw, cfg=cfg)
         self.assertEqual(len(self._resumenes(tg)), 1)
         self.assertIn("clip a", self._resumenes(tg)[0])
-        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=1))
+        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=1), cfg=cfg)
         self.assertEqual(self._resumenes(tg), [])
-        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=6))
+        _, tg = self._ejecutar(tw, AHORA + timedelta(hours=6), cfg=cfg)
         self.assertEqual(len(self._resumenes(tg)), 1)
 
     def test_resumen_desactivado_con_cero(self):

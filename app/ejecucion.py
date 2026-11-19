@@ -106,6 +106,9 @@ def ejecutar_una_vez(config, almacen, bd, twitch, telegram, ahora=None, reloj=ti
                 videos.procesar_telegram(config, estado, bd, telegram, servicios, ahora_s)
             except Exception:
                 pass
+        if con_videos and config.chat.get("crear_clips"):
+            resumen["avisos_enviados"] += videos.encolar_clips_de_chat(config, bd, telegram, ahora_s, modo == "alertas",
+                                                                       twitch)
         if modo == "alertas":
             if estado.get("ultimo_modo") == "silencio" and not base_vacia:
                 resumen["avisos_enviados"] += _resumen_al_despertar(config, bd, telegram, ahora_s, con_videos)
@@ -291,7 +294,8 @@ def _avisar(config, bd, telegram, observaciones, momentos, ahora_s, base_vacia, 
                   if m["nota"] is not None and m["nota"] >= config.avisar_si_la_nota_es_al_menos
                   and m["vistas"] >= config.avisar_si_tiene_al_menos_visualizaciones
                   and ahora_s - m["inicio_s"] <= edad_maxima_s
-                  and not m["avisado"]]
+                  and not m["avisado"]
+                  and not bd.pico_de_chat_encolado_cerca(m["streamer"], m["inicio_s"], videos.SEGUNDOS_MISMO_MOMENTO)]
     candidatos.sort(key=lambda m: (m["nota"], m["puntuacion"]), reverse=True)
     for m in candidatos[:config.max_avisos_por_ejecucion]:
         telegram.enviar(_texto_aviso(m, bd.clip(m["representante"]), ahora_s, config.zona_horaria)

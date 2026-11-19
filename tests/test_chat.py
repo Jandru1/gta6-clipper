@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from app.basedatos import BaseDatos
-from app.chat import (ConexionChat, DetectorPicos, ErrorAutenticacionChat, ErrorChat, TokenUsuario,
+from app.chat import (ConexionChat, CreadorDeClips, DetectorPicos, ErrorAutenticacionChat, ErrorChat, TokenUsuario,
                       autorizar_dispositivo, cruzar_con_clips, es_reaccion, escuchar, leer_privmsg)
 from app.http import Respuesta
 from app.youtube import guardar_tokens
@@ -217,6 +217,63 @@ class TestEscucharYCruzar(unittest.TestCase):
         r = cruzar_con_clips([pico], clips)[0]
         self.assertEqual((r["clips_humanos"], r["personas_que_clipean"], r["vis_mejor_clip"], r["url_mejor_clip"]),
                          (2, 2, 900, "u2"))
+
+
+AJUSTES_CLIPS = {**AJUSTES, "crear_clips": True, "factor_para_crear_clip": 4, "usuarios_para_crear_clip": 20,
+                 "segundos_de_clip": 45, "max_clips_por_hora": 2, "minutos_entre_clips": 10}
+
+
+class ClipsFalso:
+    def __init__(self, falla=False):
+        self.creados = []
+        self.falla = falla
+
+    def crear(self, login, segundos):
+        if self.falla:
+            raise ErrorChat("clips desactivados por el streamer")
+        self.creados.append((login, segundos))
+        return f"clip{len(self.creados)}"
+
+
+def pico(inicio, factor=6, usuarios=50, streamer="kaicenat"):
+    return {"streamer": streamer, "inicio_s": inicio, "fin_s": inicio + 10, "factor_maximo": factor,
+            "usuarios_maximo": usuarios, "mensajes": 300, "reacciones": 200, "texto_top": "kekw", "base": 10}
+
+
+class TestFase2(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.bd = BaseDatos(Path(self.tmp.name) / "clips.db")
+
+    def tearDown(self):
+        self.bd.cerrar()
+        self.tmp.cleanup()
+
+    def test_crea_un_clip_por_pico_fuerte_y_respeta_los_limites(self):
+        clips = ClipsFalso()
+        creador = CreadorDeClips(AJUSTES_CLIPS, clips, self.bd, registro=lambda t: None)
+        creador.revisar([pico(1000), pico(1000)], 1010)
+        creador.revisar([pico(1100, factor=2)], 1110)
+        creador.revisar([pico(1200)], 1210)
+        creador.revisar([pico(2000)], 2010)
+        creador.revisar([pico(3000)], 3010)
+        self.assertEqual(clips.creados, [("kaicenat", 45), ("kaicenat", 45)])
+        self.assertEqual(len(self.bd.clips_de_chat_desde("kaicenat", 0)), 2)
+
+    def test_si_twitch_no_deja_crear_el_clip_no_se_rompe(self):
+        creador = CreadorDeClips(AJUSTES_CLIPS, ClipsFalso(falla=True), self.bd, registro=lambda t: None)
+        creador.revisar([pico(1000)], 1010)
+        self.assertEqual(self.bd.clips_de_chat_desde("kaicenat", 0), [])
+
+    def test_cliente_de_clips_llama_a_la_api_oficial(self):
+        http = HttpGuion([Respuesta(200, {}, {"data": [{"id": "123"}]}),
+                          Respuesta(202, {}, {"data": [{"id": "ClipNuevo", "edit_url": "x"}]})])
+        from app.chat import ClienteClips
+        cliente = ClienteClips(TokenFalso(), "id", http=http)
+        self.assertEqual(cliente.crear("kaicenat", 45), "ClipNuevo")
+        metodo, url, kwargs = http.llamadas[1]
+        self.assertEqual((metodo, url.endswith("/helix/clips"), kwargs["params"]),
+                         ("POST", True, {"broadcaster_id": "123", "duration": 45}))
 
 
 if __name__ == "__main__":

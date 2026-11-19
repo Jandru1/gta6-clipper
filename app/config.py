@@ -86,6 +86,7 @@ class Config:
     resumen_semanal_hora: int
     chat: dict
     hashtags_en_el_titulo_de_youtube: list
+    max_publicaciones_al_dia_por_cuenta: int
 
 
 CAMPOS_ENTEROS = [f.name for f in fields(Config) if f.type is int or f.type == "int"]
@@ -178,7 +179,8 @@ def _validar(c: Config):
 
 
 MINIMOS_CHAT = {"segundos_por_ventana": 5, "minutos_de_base": 2, "usuarios_minimos_en_la_ventana": 1,
-                "segundos_para_unir_picos": 0, "dias_de_registro": 1}
+                "segundos_para_unir_picos": 0, "dias_de_registro": 1, "usuarios_para_crear_clip": 1,
+                "segundos_de_clip": 5, "max_clips_por_hora": 0, "minutos_entre_clips": 0}
 
 
 def _errores_de_chat(chat) -> list:
@@ -193,9 +195,14 @@ def _errores_de_chat(chat) -> list:
         valor = chat.get(clave)
         if not isinstance(valor, int) or isinstance(valor, bool) or valor < minimo:
             errores.append(f"'chat.{clave}' debe ser un numero entero de {minimo} o mas")
-    factor = chat.get("factor_de_pico")
-    if not isinstance(factor, (int, float)) or isinstance(factor, bool) or factor <= 1:
-        errores.append("'chat.factor_de_pico' debe ser un numero mayor que 1")
+    for clave in ("factor_de_pico", "factor_para_crear_clip"):
+        factor = chat.get(clave)
+        if not isinstance(factor, (int, float)) or isinstance(factor, bool) or factor <= 1:
+            errores.append(f"'chat.{clave}' debe ser un numero mayor que 1")
+    if not isinstance(chat.get("crear_clips"), bool):
+        errores.append("'chat.crear_clips' debe ser true o false")
+    if isinstance(chat.get("segundos_de_clip"), int) and chat["segundos_de_clip"] > 60:
+        errores.append("'chat.segundos_de_clip' no puede pasar de 60 (limite de Twitch)")
     return errores
 
 

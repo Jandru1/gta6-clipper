@@ -24,6 +24,50 @@ def encolar_momentos(bd, momentos, ahora_s):
         bd.encolar(m["representante"], m["momento_id"], m.get("nota") or m.get("nota_maxima"), ahora_s)
 
 
+MINUTOS_ESPERANDO_CLIP_DE_CHAT = 30
+SEGUNDOS_MISMO_MOMENTO = 300
+
+
+def encolar_clips_de_chat(config, bd, telegram, ahora_s, avisar=True, twitch=None) -> int:
+    enviados = 0
+    pendientes = bd.clips_de_chat_pendientes()
+    faltan = [c["clip_id"] for c in pendientes if not c["clip_id"].startswith("sin:") and not bd.clip(c["clip_id"])]
+    if faltan and twitch:
+        try:
+            streamer_de = {c["clip_id"]: c["streamer"] for c in pendientes}
+            for datos in twitch.clips_por_id(faltan):
+                if datos.get("id") in streamer_de:
+                    bd.observar_clip(streamer_de[datos["id"]], datos, ahora_s, config)
+        except Exception:
+            pass
+    for c in pendientes:
+        sin_clip_propio = c["clip_id"].startswith("sin:")
+        nuestro = None if sin_clip_propio else bd.clip(c["clip_id"])
+        if not sin_clip_propio and not nuestro:
+            if ahora_s - c["creado_s"] > MINUTOS_ESPERANDO_CLIP_DE_CHAT * 60:
+                bd.marcar_clip_de_chat(c["clip_id"], "fallido", "Twitch no lo ha publicado")
+            continue
+        humanos = [x for x in bd.clips_de_streamer_desde(c["streamer"], c["pico_inicio_s"] - 60)
+                   if x["clip_id"] != c["clip_id"] and (not nuestro or x["creador"] != nuestro.get("creador"))
+                   and x["creado_s"] <= c["pico_inicio_s"] + SEGUNDOS_MISMO_MOMENTO]
+        if sin_clip_propio and not humanos:
+            if ahora_s - c["creado_s"] > MINUTOS_ESPERANDO_CLIP_DE_CHAT * 60:
+                bd.marcar_clip_de_chat(c["clip_id"], "fallido", "nadie lo clipeo y el canal no deja crear clips")
+            continue
+        elegido = max(humanos, key=lambda x: x["visualizaciones"]) if humanos else nuestro
+        momento_id = f"chat:{c['streamer']}:{c['pico_inicio_s']}"
+        bd.encolar(elegido["clip_id"], momento_id, None, ahora_s)
+        origen = "clip de un espectador" if humanos else "clip creado por el script"
+        bd.marcar_clip_de_chat(c["clip_id"], "encolado", f"{origen}: {elegido['clip_id']}")
+        if avisar:
+            telegram.enviar(f"Pico de chat en {c['streamer']}: x{c['factor']} lo normal, {c['usuarios']} personas "
+                            f"escribiendo a la vez | \"{c['texto_top'] or ''}\"\nUso el {origen}: {elegido.get('url', '')}\n"
+                            f"(Preparando el video vertical...)")
+            enviados += 1
+    bd.guardar()
+    return enviados
+
+
 def _cuenta(config, cuenta_id):
     return next(c for c in config.cuentas if c["id"] == cuenta_id)
 
@@ -75,39 +119,84 @@ def procesar_cola(config, bd, telegram, servicios, ahora_s, solo_clip=None) -> i
                             f"Puedes reintentarlo con: python3 clipper.py preparar-clip {cola['clip_id']}")
             enviados += 1
             continue
+        grupos = {}
         for v in resultado["versiones"]:
-            enviados += _enviar_version(config, bd, telegram, servicios, cola, clip, v, resultado, ahora_s)
+            grupos.setdefault(v["video"], []).append(v)
+        for grupo in grupos.values():
+            enviados += _enviar_grupo(config, bd, telegram, servicios, cola, clip, grupo, resultado, ahora_s)
         bd.marcar_cola(cola["clip_id"], "preparado")
         bd.guardar()
     return enviados
 
 
-def _enviar_version(config, bd, telegram, servicios, cola, clip, v, resultado, ahora_s) -> int:
-    cuenta = _cuenta(config, v["cuenta"])
-    version = {"clip_id": clip["clip_id"], "momento_id": cola["momento_id"], "cuenta": v["cuenta"],
-               "con_aviso": int(v["con_aviso"]), "video": v["video"], "textos": json.dumps(v["textos"], ensure_ascii=False),
-               "gancho": resultado["gancho"], "origen_gancho": resultado["origen_gancho"],
-               "avisos": json.dumps(resultado["avisos"], ensure_ascii=False), "nota": cola["nota"],
-               "estado": "preparado", "creado_s": ahora_s}
-    version_id = bd.nueva_version(version)
+def _nombre_cuenta(cuenta):
+    return cuenta.get("nombre_streamer") or cuenta["id"].upper()
+
+
+def _enviar_grupo(config, bd, telegram, servicios, cola, clip, grupo, resultado, ahora_s) -> int:
+    preparadas, filas, lineas_youtube = [], [], []
+    for v in grupo:
+        cuenta = _cuenta(config, v["cuenta"])
+        version = {"clip_id": clip["clip_id"], "momento_id": cola["momento_id"], "cuenta": v["cuenta"],
+                   "con_aviso": int(v["con_aviso"]), "video": v["video"],
+                   "textos": json.dumps(v["textos"], ensure_ascii=False), "gancho": resultado["gancho"],
+                   "origen_gancho": resultado["origen_gancho"],
+                   "avisos": json.dumps(resultado["avisos"], ensure_ascii=False), "nota": cola["nota"],
+                   "estado": "preparado", "creado_s": ahora_s}
+        version_id = bd.nueva_version(version)
+        bd.guardar()
+        youtube = servicios.youtube.get(v["cuenta"]) if cuenta.get("youtube_automatico") else None
+        aviso_youtube = ""
+        if youtube:
+            try:
+                youtube_id, aviso_youtube = youtube.subir(Path(v["video"]), v["textos"]["youtube_titulo"],
+                                                          v["textos"]["youtube_descripcion"], bool(v["con_aviso"]))
+                bd.actualizar_version(version_id, youtube_id=youtube_id)
+            except Exception as e:
+                youtube, aviso_youtube = None, f"no se pudo subir a YouTube ({e})"
+        nombre = _nombre_cuenta(cuenta)
+        if youtube:
+            filas.append([{"text": f"Publicar en {nombre}", "callback_data": f"p:{version_id}"},
+                          {"text": f"Descartar {nombre}", "callback_data": f"d:{version_id}"}])
+            lineas_youtube.append(f"YouTube {nombre}: subido en PRIVADO. Pulsa 'Publicar en {nombre}'.")
+        else:
+            lineas_youtube.append(f"YouTube {nombre}: subelo tu a mano (publicacion automatica desactivada o sin "
+                                  f"autorizar).")
+        if aviso_youtube:
+            lineas_youtube.append(f"ATENCION ({nombre}): {aviso_youtube}")
+        preparadas.append((version_id, cuenta, v, version, aviso_youtube))
+    primera = preparadas[0][3]
+    lineas = [f"Cuentas: {', '.join(c['id'] for _, c, _, _, _ in preparadas)} | viralidad {cola['nota'] or '?'}/10 | "
+              f"gancho ({primera['origen_gancho']}): {primera['gancho']}"]
+    if any(v["con_aviso"] for _, _, v, _, _ in preparadas):
+        lineas.append("Version de CAMPANA: lleva '#Ad' en el video y en el texto.")
+    lineas += [f"ATENCION: {a}" for a in json.loads(primera["avisos"] or "[]")] + lineas_youtube
+    mensaje = telegram.enviar_video(Path(grupo[0]["video"]), "\n".join(lineas), filas or None)
+    mensaje_id = (mensaje or {}).get("message_id")
+    if filas and mensaje_id:
+        bd.fijar_valor(f"botones:{mensaje_id}", json.dumps(filas))
+    for version_id, cuenta, v, _, aviso_youtube in preparadas:
+        telegram.enviar(_texto_para_copiar(cuenta, v["textos"], v["con_aviso"], config.recordatorio_antes_de_publicar))
+        bd.actualizar_version(version_id, estado="enviado", mensaje_id=mensaje_id, detalle=aviso_youtube)
     bd.guardar()
-    youtube = servicios.youtube.get(v["cuenta"]) if cuenta.get("youtube_automatico") else None
-    aviso_youtube = ""
-    if youtube:
-        try:
-            youtube_id, aviso_youtube = youtube.subir(Path(v["video"]), v["textos"]["youtube_titulo"],
-                                                      v["textos"]["youtube_descripcion"], bool(v["con_aviso"]))
-            bd.actualizar_version(version_id, youtube_id=youtube_id)
-        except Exception as e:
-            youtube, aviso_youtube = None, f"no se pudo subir a YouTube ({e})"
-    botones = [[{"text": "Publicar en YouTube", "callback_data": f"p:{version_id}"},
-                {"text": "Descartar", "callback_data": f"d:{version_id}"}]] if youtube else None
-    mensaje = telegram.enviar_video(Path(v["video"]), _pie(cuenta, version, cola, bool(youtube), aviso_youtube), botones)
-    telegram.enviar(_texto_para_copiar(cuenta, v["textos"], v["con_aviso"], config.recordatorio_antes_de_publicar))
-    bd.actualizar_version(version_id, estado="enviado", mensaje_id=(mensaje or {}).get("message_id"),
-                          detalle=aviso_youtube)
+    return 1 + len(preparadas)
+
+
+def _quitar_botones_de_version(bd, telegram, mensaje_id, version_id):
+    if not mensaje_id:
+        return
+    guardadas = bd.valor(f"botones:{mensaje_id}")
+    filas = json.loads(guardadas) if guardadas else []
+    quedan = [f for f in filas if not any(b["callback_data"].split(":")[1] == str(version_id) for b in f)]
+    bd.fijar_valor(f"botones:{mensaje_id}", json.dumps(quedan))
     bd.guardar()
-    return 2
+    try:
+        if quedan:
+            telegram.cambiar_botones(mensaje_id, quedan)
+        else:
+            telegram.quitar_botones(mensaje_id)
+    except Exception:
+        pass
 
 
 CLAVE_OFFSET = "telegram_offset"
@@ -172,7 +261,7 @@ def _atender(config, estado, bd, telegram, servicios, u, ahora_s) -> int:
         if chat != str(telegram.chat_id):
             _registrar_boton(bd, ahora_s, u["update_id"], boton.get("data"), f"ignorado: otro chat ({chat})")
             return 0
-        resultado = _pulsar_boton(bd, telegram, servicios, boton, ahora_s)
+        resultado = _pulsar_boton(bd, telegram, servicios, boton, ahora_s, config=config)
         _registrar_boton(bd, ahora_s, u["update_id"], boton.get("data"), resultado)
         return 1
     if mensaje and str((mensaje.get("chat") or {}).get("id")) == str(telegram.chat_id):
@@ -180,6 +269,10 @@ def _atender(config, estado, bd, telegram, servicios, u, ahora_s) -> int:
         pedido = PATRON_MEJORES.match(texto)
         if pedido:
             return pedir_mejores(config, bd, telegram, ahora_s, pedido.group(1))
+        consulta = PATRON_PUBLICADOS.match(texto)
+        if consulta:
+            telegram.enviar(texto_publicados(bd, config.zona_horaria, int(consulta.group(1) or 7), ahora_s))
+            return 1
         return _leer_medicion(config, estado, bd, telegram, texto, ahora_s)
     return 0
 
@@ -208,6 +301,29 @@ def _aplazar(bd, boton, version_id, ahora_s):
     aplazados.append({"version_id": version_id, "desde_s": ahora_s, "boton": boton})
     bd.fijar_valor(CLAVE_APLAZADOS, json.dumps(aplazados))
     bd.guardar()
+
+
+PATRON_PUBLICADOS = re.compile(r"^\s*/?publicados(?:@\w+)?(?:\s+(\d+))?\s*$", re.I)
+
+
+def texto_publicados(bd, zona_horaria, dias, ahora_s) -> str:
+    zona = ZoneInfo(zona_horaria)
+    filas = bd.con.execute("SELECT cuenta, estado, creado_s, publicado_s FROM versiones WHERE youtube_id IS NOT NULL "
+                           "AND estado IN ('publicado', 'enviado') AND COALESCE(publicado_s, creado_s) >= ?",
+                           (ahora_s - dias * 86400,)).fetchall()
+    tabla = {}
+    for cuenta, estado, creado_s, publicado_s in filas:
+        momento = datetime.fromtimestamp(publicado_s or creado_s, zona)
+        tabla.setdefault((cuenta, momento.date()), [0, 0])[0 if estado == "publicado" else 1] += 1
+    lineas = [f"Shorts subidos a YouTube en los ultimos {dias} dias (por dia de publicacion o de subida, hora de Espana)"]
+    if not tabla:
+        lineas.append("  (ninguno)")
+    for cuenta in sorted({c for c, _ in tabla}):
+        dias_cuenta = sorted((d, v) for (c, d), v in tabla.items() if c == cuenta)
+        lineas.append(f"\n{cuenta}: {sum(v[0] for _, v in dias_cuenta)} publicos | "
+                      f"{sum(v[1] for _, v in dias_cuenta)} privados (sin publicar ni descartar)")
+        lineas += [f"  {d:%d/%m/%Y}: {pub} publicos | {priv} privados" for d, (pub, priv) in dias_cuenta]
+    return "\n".join(lineas)
 
 
 PATRON_MEJORES = re.compile(r"^\s*/?mejores(?:@\w+)?(?:\s+(\w+))?\s*$", re.I)
@@ -254,7 +370,17 @@ def _quitar_botones(telegram, mensaje_id):
             pass
 
 
-def _pulsar_boton(bd, telegram, servicios, boton, ahora_s, aplazable=True) -> str:
+def _limite_diario_alcanzado(config, bd, cuenta, ahora_s):
+    limite = getattr(config, "max_publicaciones_al_dia_por_cuenta", 0) if config else 0
+    if not limite:
+        return None
+    local = datetime.fromtimestamp(ahora_s, ZoneInfo(config.zona_horaria))
+    medianoche = int(local.replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
+    hechas = bd.publicados_desde(cuenta, medianoche)
+    return hechas if hechas >= limite else None
+
+
+def _pulsar_boton(bd, telegram, servicios, boton, ahora_s, aplazable=True, config=None) -> str:
     accion, _, identificador = (boton.get("data") or "").partition(":")
     mensaje_id = (boton.get("message") or {}).get("message_id")
     if accion not in ("p", "d") or not identificador.isdigit():
@@ -268,7 +394,7 @@ def _pulsar_boton(bd, telegram, servicios, boton, ahora_s, aplazable=True) -> st
         return "aplazado"
     if estado in ("publicado", "descartado"):
         _responder(telegram, boton["id"], f"Ya estaba {estado}. No hago nada.")
-        _quitar_botones(telegram, version.get("mensaje_id") or mensaje_id)
+        _quitar_botones_de_version(bd, telegram, version.get("mensaje_id") or mensaje_id, version["version_id"])
         return f"repetido ({estado})"
     if estado != "enviado":
         _responder(telegram, boton["id"], "No encuentro ese video")
@@ -281,6 +407,13 @@ def _pulsar_boton(bd, telegram, servicios, boton, ahora_s, aplazable=True) -> st
         telegram.enviar(f"No tengo permiso de YouTube para la cuenta {version['cuenta']}. Renuevalo con:\n"
                         f"python3 clipper.py autorizar-youtube --cuenta {version['cuenta']}\ny vuelve a pulsar el boton.")
         return "sin permiso de youtube"
+    hechas = _limite_diario_alcanzado(config, bd, version["cuenta"], ahora_s) if accion == "p" else None
+    if hechas is not None:
+        _responder(telegram, boton["id"], "Limite diario alcanzado")
+        telegram.enviar(f"Hoy ya has publicado {hechas} Shorts en la cuenta {version['cuenta']} (limite: "
+                        f"{config.max_publicaciones_al_dia_por_cuenta}). No publico este: pulsa el boton manana o "
+                        f"cambia 'max_publicaciones_al_dia_por_cuenta' en config.json.")
+        return "limite diario"
     try:
         if accion == "p":
             youtube.hacer_publico(version["youtube_id"])
@@ -306,7 +439,7 @@ def _pulsar_boton(bd, telegram, servicios, boton, ahora_s, aplazable=True) -> st
         telegram.enviar(f"No he podido completar la accion en YouTube ({version['cuenta']}): {e}\n"
                         f"El video sigue como estaba: puedes volver a pulsar el boton.")
         return f"error: {e}"
-    _quitar_botones(telegram, version["mensaje_id"] or mensaje_id)
+    _quitar_botones_de_version(bd, telegram, version["mensaje_id"] or mensaje_id, version["version_id"])
     return resultado
 
 

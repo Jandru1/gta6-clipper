@@ -170,6 +170,9 @@ class TelegramVideos:
     def quitar_botones(self, message_id):
         self.botones_quitados.append(message_id)
 
+    def cambiar_botones(self, message_id, botones):
+        self.botones_cambiados = getattr(self, "botones_cambiados", []) + [(message_id, botones)]
+
 
 class YouTubeFalso:
     def __init__(self):
@@ -213,12 +216,14 @@ class TestFlujoDeVideos(unittest.TestCase):
 
     def test_prepara_envia_y_sube_en_privado_solo_a_cuentas_autorizadas(self):
         videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
-        self.assertEqual(len(self.tg.videos), 2)
-        (nombre_kai, pie_kai, botones_kai), (_, pie_gta, botones_gta) = self.tg.videos
-        self.assertEqual(nombre_kai, "vertical_sin_aviso.mp4")
-        self.assertIn("subido en PRIVADO", pie_kai)
-        self.assertEqual(botones_kai[0][0]["callback_data"], "p:1")
-        self.assertIsNone(botones_gta)
+        self.assertEqual(len(self.tg.videos), 1)
+        nombre, pie, botones = self.tg.videos[0]
+        self.assertEqual(nombre, "vertical_sin_aviso.mp4")
+        self.assertIn("Cuentas: kai, gta", pie)
+        self.assertIn("YouTube Kai Cenat: subido en PRIVADO", pie)
+        self.assertIn("YouTube GTA: subelo tu a mano", pie)
+        self.assertEqual([b["callback_data"] for b in botones[0]], ["p:1", "d:1"])
+        self.assertEqual(len(botones), 1)
         self.assertEqual(self.youtube.subidos, [("Kai Cenat: \"no way bro look at this\" #shorts #shortvideo", False)])
         self.assertTrue(any("INSTAGRAM (copia todo esto)" in m for m in self.tg.mensajes))
         self.assertEqual(self.bd.con.execute("SELECT estado FROM cola_preparacion").fetchone()[0], "preparado")
@@ -408,6 +413,100 @@ class TestFlujoDeVideos(unittest.TestCase):
         self.tg.pendientes.append({"update_id": 11, "message": {"chat": {"id": "9"}, "text": "/mejores"}})
         videos.procesar_telegram(self.cfg, estado, self.bd, self.tg, self.servicios, ahora + 400)
         self.assertIn("No quedan momentos", self.tg.mensajes[-1])
+
+    def test_clip_de_chat_prefiere_el_de_un_espectador_y_evita_avisos_dobles(self):
+        ahora = int(AHORA.timestamp())
+        self.bd.con.execute("DELETE FROM cola_preparacion")
+        self.bd.con.execute("DELETE FROM clips")
+        propio = clip("nuestro", 3, AHORA)
+        propio["creator_name"] = "jandru1"
+        humano = clip("humano", 80, AHORA)
+        for c in (propio, humano):
+            self.bd.observar_clip("kaicenat", c, ahora, self.cfg)
+        self.bd.con.execute("UPDATE clips SET creador = 'jandru1' WHERE clip_id = 'nuestro'")
+        self.bd.con.execute("UPDATE clips SET creador = 'otro' WHERE clip_id = 'humano'")
+        inicio = self.bd.clip("nuestro")["creado_s"] - 20
+        self.bd.guardar_clip_de_chat({"clip_id": "nuestro", "streamer": "kaicenat", "inicio_s": inicio,
+                                      "creado_s": ahora, "factor_maximo": 6, "usuarios_maximo": 90, "texto_top": "kekw"})
+        avisos = videos.encolar_clips_de_chat(self.cfg, self.bd, self.tg, ahora)
+        self.assertEqual(avisos, 1)
+        self.assertIn("clip de un espectador", self.tg.mensajes[-1])
+        cola = [r[0] for r in self.bd.con.execute("SELECT clip_id FROM cola_preparacion")]
+        self.assertEqual(cola, ["humano"])
+        self.assertTrue(self.bd.pico_de_chat_encolado_cerca("kaicenat", inicio + 100, 300))
+        self.assertEqual(videos.encolar_clips_de_chat(self.cfg, self.bd, self.tg, ahora), 0)
+
+    def test_clip_de_chat_que_twitch_no_publica_se_da_por_fallido(self):
+        ahora = int(AHORA.timestamp())
+        self.bd.guardar_clip_de_chat({"clip_id": "nunca", "streamer": "kaicenat", "inicio_s": ahora, "creado_s": ahora,
+                                      "factor_maximo": 6, "usuarios_maximo": 90})
+        videos.encolar_clips_de_chat(self.cfg, self.bd, self.tg, ahora + 60)
+        self.assertEqual(self.bd.clips_de_chat_pendientes()[0]["estado"], "creado")
+        videos.encolar_clips_de_chat(self.cfg, self.bd, self.tg, ahora + 3600)
+        self.assertEqual(self.bd.clips_de_chat_pendientes(), [])
+
+    def test_un_solo_video_con_botones_por_cuenta_y_se_quitan_por_separado(self):
+        yt_gta = YouTubeFalso()
+        self.servicios.youtube["gta"] = yt_gta
+        videos.procesar_cola(self.cfg, self.bd, self.tg, self.servicios, int(AHORA.timestamp()))
+        self.assertEqual(len(self.tg.videos), 1)
+        _, _, botones = self.tg.videos[0]
+        self.assertEqual([[b["text"] for b in fila] for fila in botones],
+                         [["Publicar en Kai Cenat", "Descartar Kai Cenat"], ["Publicar en GTA", "Descartar GTA"]])
+        self._pulsar("p:1")
+        self.assertEqual(self.youtube.publicos, ["yt1"])
+        self.assertEqual(yt_gta.publicos, [])
+        self.assertEqual(self.tg.botones_cambiados[-1][1], [botones[1]])
+        self._pulsar("p:2")
+        self.assertEqual(yt_gta.publicos, ["yt1"])
+        self.assertEqual(self.tg.botones_quitados, [101])
+
+    def test_canal_que_no_deja_crear_clips_usa_el_de_un_espectador(self):
+        ahora = int(AHORA.timestamp())
+        self.bd.con.execute("DELETE FROM cola_preparacion")
+        inicio = self.bd.clip("c1")["creado_s"] - 20
+        self.bd.guardar_clip_de_chat({"clip_id": f"sin:kaicenat:{inicio}", "streamer": "kaicenat", "inicio_s": inicio,
+                                      "creado_s": ahora, "factor_maximo": 20, "usuarios_maximo": 300})
+        videos.encolar_clips_de_chat(self.cfg, self.bd, self.tg, ahora)
+        self.assertEqual([r[0] for r in self.bd.con.execute("SELECT clip_id FROM cola_preparacion")], ["c1"])
+        self.assertIn("clip de un espectador", self.tg.mensajes[-1])
+
+    def test_clip_propio_que_no_llega_en_el_repaso_se_busca_por_su_id(self):
+        ahora = int(AHORA.timestamp())
+        self.bd.con.execute("DELETE FROM clips")
+        self.bd.con.execute("DELETE FROM cola_preparacion")
+
+        class TwitchFalso:
+            def clips_por_id(self_, ids):
+                return [clip(i, 0, AHORA) for i in ids]
+        self.bd.guardar_clip_de_chat({"clip_id": "propio", "streamer": "kaicenat", "inicio_s": ahora - 30,
+                                      "creado_s": ahora, "factor_maximo": 20, "usuarios_maximo": 300})
+        videos.encolar_clips_de_chat(self.cfg, self.bd, self.tg, ahora, twitch=TwitchFalso())
+        self.assertEqual([r[0] for r in self.bd.con.execute("SELECT clip_id FROM cola_preparacion")], ["propio"])
+
+    def test_limite_diario_de_publicaciones_por_cuenta(self):
+        from dataclasses import replace
+        self.cfg = replace(self.cfg, max_publicaciones_al_dia_por_cuenta=1)
+        ahora = int(AHORA.timestamp())
+        for vid in (1, 2):
+            self.bd.nueva_version({"clip_id": "c1", "cuenta": "kai", "con_aviso": 0, "estado": "enviado",
+                                   "creado_s": ahora, "youtube_id": f"y{vid}"})
+        self._pulsar("p:1")
+        self._pulsar("p:2")
+        self.assertEqual(self.youtube.publicos, ["y1"])
+        self.assertIn("limite: 1", self.tg.mensajes[-1])
+        self.assertEqual(self.bd.version(2)["estado"], "enviado")
+
+    def test_publicados_por_telegram(self):
+        ahora = int(AHORA.timestamp())
+        self.bd.nueva_version({"clip_id": "c1", "cuenta": "kai", "con_aviso": 0, "estado": "publicado",
+                               "creado_s": ahora, "publicado_s": ahora, "youtube_id": "y1"})
+        self.bd.nueva_version({"clip_id": "c1", "cuenta": "kai", "con_aviso": 0, "estado": "enviado",
+                               "creado_s": ahora - 86400, "youtube_id": "y2"})
+        self.tg.pendientes.append({"update_id": 40, "message": {"chat": {"id": "9"}, "text": "/publicados 3"}})
+        videos.procesar_telegram(self.cfg, {}, self.bd, self.tg, self.servicios, ahora)
+        self.assertIn("ultimos 3 dias", self.tg.mensajes[-1])
+        self.assertIn("kai: 1 publicos | 1 privados", self.tg.mensajes[-1])
 
     def test_gta_vi_antes_del_lanzamiento_no_se_prepara(self):
         self.bd.con.execute("UPDATE clips SET juego_id = '1867279146'")

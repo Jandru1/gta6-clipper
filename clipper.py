@@ -14,7 +14,7 @@ from app.http import ErrorRed, Respuesta
 from app.telegram import ClienteTelegram
 from app.twitch import ClienteTwitch, ErrorLimiteTwitch
 
-VERSION = "2026-11-16.4"
+VERSION = "2026-11-19.7"
 PROYECTO = Path(__file__).resolve().parent
 RUTA_CONFIG = PROYECTO / "config.json"
 RUTA_CREDENCIALES = PROYECTO / "credenciales.json"
@@ -174,7 +174,7 @@ def cmd_exportar(_args):
     if not almacen.ruta_base_datos.exists():
         print("Todavia no hay base de datos (datos/clips.db). Ejecuta antes el detector.")
         return 1
-    bd = BaseDatos(almacen.ruta_base_datos)
+    bd = BaseDatos(almacen.ruta_base_datos, solo_lectura=True)
     try:
         rutas = bd.exportar(CARPETA_DATOS, config.zona_horaria)
         totales = bd.totales()
@@ -192,7 +192,7 @@ def cmd_informe(args):
     if not almacen.ruta_base_datos.exists():
         print("Todavia no hay base de datos (datos/clips.db): el detector aun no ha guardado nada.")
         return 1
-    bd = BaseDatos(almacen.ruta_base_datos)
+    bd = BaseDatos(almacen.ruta_base_datos, solo_lectura=True)
     try:
         zona = config.zona_horaria
         totales = bd.totales()
@@ -304,7 +304,7 @@ def cmd_autorizar_twitch(_args):
 
 
 def cmd_escuchar_chat(_args):
-    from app.chat import TokenUsuario, escuchar
+    from app.chat import ClienteClips, CreadorDeClips, TokenUsuario, escuchar
     config = cargar_config(RUTA_CONFIG)
     if not config.chat["activo"]:
         print("La escucha del chat esta desactivada en config.json (chat.activo = false).")
@@ -312,9 +312,13 @@ def cmd_escuchar_chat(_args):
     creds = cargar_credenciales(RUTA_CREDENCIALES, exigir_telegram=False)
     token = TokenUsuario(RUTA_TOKENS_TWITCH, creds.twitch_client_id, creds.twitch_client_secret)
     bd = BaseDatos(Almacen(CARPETA_DATOS).ruta_base_datos)
+
+    def registro(t):
+        print(f"{hora_local(datetime.now(timezone.utc), config.zona_horaria)} {t}", flush=True)
+    creador = CreadorDeClips(config.chat, ClienteClips(token, creds.twitch_client_id), bd, registro) \
+        if config.chat["crear_clips"] else None
     try:
-        escuchar(config.chat, bd, token,
-                 registro=lambda t: print(f"{hora_local(datetime.now(timezone.utc), config.zona_horaria)} {t}", flush=True))
+        escuchar(config.chat, bd, token, registro=registro, creador=creador)
     finally:
         bd.cerrar()
     return 0
@@ -344,12 +348,23 @@ def cmd_escuchar_telegram(_args):
     return 0
 
 
+def cmd_publicados(args):
+    from app.videos import texto_publicados
+    config = cargar_config(RUTA_CONFIG)
+    bd = BaseDatos(Almacen(CARPETA_DATOS).ruta_base_datos, solo_lectura=True)
+    try:
+        print(texto_publicados(bd, config.zona_horaria, args.dias, int(datetime.now(timezone.utc).timestamp())))
+    finally:
+        bd.cerrar()
+    return 0
+
+
 def cmd_informe_chat(args):
     import csv
     from app.chat import cruzar_con_clips
     config = cargar_config(RUTA_CONFIG)
     almacen = Almacen(CARPETA_DATOS)
-    bd = BaseDatos(almacen.ruta_base_datos)
+    bd = BaseDatos(almacen.ruta_base_datos, solo_lectura=True)
     zona = config.zona_horaria
     desde_s = int((datetime.now(timezone.utc) - timedelta(hours=args.horas)).timestamp())
     try:
@@ -391,7 +406,7 @@ def cmd_prueba_algoritmo(_args):
     if not almacen.ruta_base_datos.exists():
         print("Todavia no hay base de datos (datos/clips.db).")
         return 1
-    bd = BaseDatos(almacen.ruta_base_datos)
+    bd = BaseDatos(almacen.ruta_base_datos, solo_lectura=True)
     try:
         informe = prueba_hacia_atras(bd.clips_desde(0), bd.historiales_desde(0), bd.directos_desde(0),
                                      int(datetime.now(timezone.utc).timestamp()), config)
@@ -626,6 +641,9 @@ def main():
         func=cmd_escuchar_telegram)
     sub.add_parser("escuchar-chat", help="Escucha el chat y apunta los picos (lo lanza launchd)").set_defaults(
         func=cmd_escuchar_chat)
+    publicados = sub.add_parser("publicados", help="Shorts publicos y privados por canal y dia")
+    publicados.add_argument("--dias", type=int, default=7)
+    publicados.set_defaults(func=cmd_publicados)
     informe_chat = sub.add_parser("informe-chat", help="Picos de chat y si otros espectadores los clipearon")
     informe_chat.add_argument("--horas", type=int, default=24)
     informe_chat.add_argument("--top", type=int, default=15)

@@ -96,6 +96,77 @@ class TokenUsuario:
         return self.datos["access_token"]
 
 
+URL_API = "https://api.twitch.tv/helix"
+
+
+class ClienteClips:
+    def __init__(self, token: TokenUsuario, client_id, http=peticion):
+        self.token = token
+        self.client_id = client_id
+        self.http = http
+        self.ids = {}
+
+    def _cabeceras(self):
+        return {"Client-Id": self.client_id, "Authorization": f"Bearer {self.token.acceso()}"}
+
+    def id_de(self, login):
+        if login not in self.ids:
+            r = self.http("GET", f"{URL_API}/users", cabeceras=self._cabeceras(), params={"login": login})
+            datos = (r.cuerpo or {}).get("data") if isinstance(r.cuerpo, dict) else None
+            if r.estado != 200 or not datos:
+                raise ErrorChat(f"No encuentro el canal de Twitch '{login}' (HTTP {r.estado})")
+            self.ids[login] = datos[0]["id"]
+        return self.ids[login]
+
+    def crear(self, login, segundos) -> str:
+        r = self.http("POST", f"{URL_API}/clips", cabeceras=self._cabeceras(),
+                      params={"broadcaster_id": self.id_de(login), "duration": segundos})
+        datos = (r.cuerpo or {}).get("data") if isinstance(r.cuerpo, dict) else None
+        if r.estado not in (200, 202) or not datos:
+            raise ErrorChat(f"Twitch no ha creado el clip de {login} (HTTP {r.estado}): {r.cuerpo}")
+        return datos[0]["id"]
+
+
+class CreadorDeClips:
+    def __init__(self, ajustes, clips: ClienteClips, bd, registro=print):
+        self.ajustes = ajustes
+        self.clips = clips
+        self.bd = bd
+        self.registro = registro
+        self.atendidos = set()
+
+    def merece_clip(self, pico) -> bool:
+        return (pico["factor_maximo"] >= self.ajustes["factor_para_crear_clip"]
+                and pico["usuarios_maximo"] >= self.ajustes["usuarios_para_crear_clip"])
+
+    def revisar(self, picos, ahora):
+        for p in picos:
+            clave = (p["streamer"], p["inicio_s"])
+            if clave in self.atendidos or not self.merece_clip(p):
+                continue
+            self.atendidos.add(clave)
+            recientes = self.bd.clips_de_chat_desde(p["streamer"], ahora - 3600)
+            if len(recientes) >= self.ajustes["max_clips_por_hora"]:
+                self.registro(f"Pico fuerte en {p['streamer']} sin clip: ya hay {len(recientes)} en la ultima hora")
+                continue
+            if recientes and ahora - max(c["creado_s"] for c in recientes) < self.ajustes["minutos_entre_clips"] * 60:
+                self.registro(f"Pico fuerte en {p['streamer']} sin clip: el anterior es muy reciente")
+                continue
+            try:
+                clip_id = self.clips.crear(p["streamer"], self.ajustes["segundos_de_clip"])
+            except Exception as e:
+                self.registro(f"No he podido crear el clip de {p['streamer']}: {e}")
+                if "403" in str(e):
+                    self.bd.guardar_clip_de_chat({**p, "clip_id": f"sin:{p['streamer']}:{p['inicio_s']}",
+                                                  "creado_s": int(ahora)})
+                    self.bd.guardar()
+                continue
+            self.bd.guardar_clip_de_chat({**p, "clip_id": clip_id, "creado_s": int(ahora)})
+            self.bd.guardar()
+            self.registro(f"Clip creado en {p['streamer']}: {clip_id} (x{p['factor_maximo']}, "
+                          f"{p['usuarios_maximo']} personas)")
+
+
 def leer_privmsg(linea: str):
     m = PATRON_PRIVMSG.match(linea)
     return (m.group(2).lower(), m.group(1).lower(), m.group(3)) if m else None
@@ -264,7 +335,8 @@ class ConexionChat:
                         yield leido
 
 
-def escuchar(ajustes, bd, token, registro=print, conexion=None, reloj=time.time, dormir=time.sleep, vueltas=None):
+def escuchar(ajustes, bd, token, registro=print, conexion=None, reloj=time.time, dormir=time.sleep, vueltas=None,
+             creador=None):
     detector = DetectorPicos(ajustes)
     conexion = conexion or ConexionChat(token, ajustes["streamers"], reloj=reloj)
     espera = 5
@@ -289,6 +361,8 @@ def escuchar(ajustes, bd, token, registro=print, conexion=None, reloj=time.time,
                                  f"| \"{p['texto_top']}\"")
                     if ventanas or picos:
                         bd.guardar()
+                    if creador and ventanas:
+                        creador.revisar(detector.picos_abiertos() + picos, ahora)
                 if ahora - ultima_limpieza > 3600:
                     bd.limpiar_chat(ahora - ajustes["dias_de_registro"] * 86400)
                     bd.guardar()

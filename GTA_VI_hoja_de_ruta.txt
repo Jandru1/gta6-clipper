@@ -4,6 +4,58 @@
   Creada: 03-11-2026            Lanzamiento de GTA VI: 19-11-2026
 =====================================================================
 
+ESTADO ACTUAL (19-11-2026, version del script 2026-11-19.2)
+  Objetivo (R-1.60): viralidad en redes para las campanas de streamers.
+  Streamers (R-1.76): Kai Cenat, Lacy y Clix (Twitch, con campanas).
+  [HECHO]  Detector de clips de Twitch cada 5 min, avisos por nota,
+           franjas (silencio 01-09 + resumen al despertar), comando
+           /mejores en Telegram.
+  [HECHO]  Edicion (diseno 1: fondo difuminado, subtitulos palabra a
+           palabra, texto inicial, titulo con #shorts #shortvideo).
+  [HECHO]  Telegram: video + textos + botones Publicar/Descartar,
+           atendidos al momento y sin agujeros (R-1.73).
+  [HECHO]  YouTube: subida en privado y publicacion con el boton, en la
+           cuenta de cada streamer (permiso de 7 dias, modo Prueba).
+  [HECHO]  Escucha del chat (fase 1) y creacion de clips por picos de
+           chat (fase 2, sin calibrar, R-1.77).
+  [HECHO]  GTA VI desbloqueado desde el 18-11; GTA III/SA/IV/V/VI van al
+           canal de GTA (R-1.75).
+  PENDIENTE (usuario): canales de Lacy y Clix (YouTube revisando la
+           verificacion por video); conectarlos con autorizar-youtube;
+           renovar el permiso de YouTube cada 7 dias; cambiar la foto del
+           canal de Kai; cuenta en Content Rewards y unirse a las
+           campanas (revisar si piden #Ad u otras normas).
+  EN SEGUIMIENTO: canal de Kai sin visualizaciones (R-1.71, R-1.70);
+           calibrar los umbrales de la fase 2 con los primeros directos.
+  NO PRIORITARIO: diseno 2 de edicion (camara detectada, R-1.78);
+           TikTok (aparcado, R-1.57).
+
+TAREAS PENDIENTES (anotadas el 19-11-2026)
+  [ ] Copiar al portatil la version 2026-11-19.7.
+  [ ] Leer las normas de la campana de Kai (estan tras "Join") y
+      pasarlas para comprobar que los videos las cumplen.
+  [ ] Enviar a su campana el enlace de cada Short publicado (las
+      visualizaciones solo cuentan si el clip esta enviado; los fondos se
+      cierran al acabar la maraton).
+  [ ] Comprobar si Kai ya deja crear clips tras seguirle (buscar "Clip
+      creado en kaicenat" en datos/chat_salida.log).
+  [ ] En 2-3 dias: calibrar la fase 2 (informe-chat --horas 48).
+  [ ] En 2-3 dias: ver si los canales nuevos reciben visualizaciones;
+      si siguen en ~0, enviar comentarios a YouTube.
+  [ ] Vigilar que >= 50% del publico sea de paises de habla inglesa
+      (norma de Clix; dato en el resumen semanal del domingo).
+  [ ] Cada 7 dias (proximo ~26-11): renovar el permiso de YouTube de los
+      4 canales (kai, lacy, clix, gta).
+  [ ] Cada pocos dias: revisar campanas nuevas (al acabar las maratones
+      de GTA 6 puede convenir cambiar de streamer).
+  [ ] Diseno 2 de edicion (opcion A: posicion fija de la camara por
+      streamer y juego; capturas de cada streamer).
+  [ ] Opcional: que "publicados" separe por canal de YouTube.
+  [ ] Opcional: Instagram (lo decide el usuario).
+  [ ] Opcional: actualizar GTA_VI_metricas.txt.
+  [ ] Opcional: que "instalar" funcione siempre a la primera.
+  [ ] Opcional: enlace de la campana en el mensaje "Publicado en YouTube".
+
 COMO SE USA ESTE FICHERO
   - Es el MAPA del proyecto: que piezas hay, en que estado esta cada
     una, que falta y en que orden se hace.

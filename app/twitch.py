@@ -82,6 +82,9 @@ class ClienteTwitch:
             resultado.update({s["user_login"]: s for s in cuerpo.get("data", []) if s.get("type") == "live"})
         return resultado
 
+    def clips_por_id(self, ids: list) -> list:
+        return self._get("clips", [("id", i) for i in ids[:100]]).get("data", []) if ids else []
+
     def clips(self, broadcaster_id: str, desde_iso: str, hasta_iso: str, max_paginas: int, por_pagina: int = 100):
         params = {"broadcaster_id": broadcaster_id, "started_at": desde_iso, "ended_at": hasta_iso, "first": por_pagina}
         resultado = []
